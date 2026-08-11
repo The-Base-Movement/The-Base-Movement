@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
 import { useAuth } from '@/context/AuthContext'
 import { adminService } from '@/services/adminService'
+import { supabase } from '@/lib/supabase'
 
 export interface MovementEvent {
   id: string
@@ -22,79 +23,7 @@ export interface MovementEvent {
   imageUrl?: string
 }
 
-export const PUBLIC_EVENTS: MovementEvent[] = [
-  {
-    id: 'evt-001',
-    title: 'Greater Accra Youth Jobs & Empowerment Town Hall',
-    category: 'Town Hall',
-    date: '2026-10-15T09:00:00+00:00',
-    locationName: 'Tesano Innovation Center, Accra',
-    gpsAddress: 'GI-208-9132, Tesano / Abeka 208, Accra',
-    region: 'Greater Accra',
-    description:
-      'Join Movement Founder Dr. George Oti Bonsu and national executive leaders for an interactive town hall detailing the 1 Million Youth Jobs plan and local apprenticeship placements.',
-    attendingCount: 480,
-    organizer: 'The Base Movement LBG - Greater Accra Chapter',
-    status: 'Planned',
-    imageUrl: 'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729',
-  },
-  {
-    id: 'evt-002',
-    title: 'Kumasi National Mobilization Walk for Accountability',
-    category: 'Mobilization Walk',
-    date: '2026-10-22T06:30:00+00:00',
-    locationName: 'Jubilee Park, Kumasi',
-    gpsAddress: 'AK-039-4112, Jubilee Park, Kumasi',
-    region: 'Ashanti',
-    description:
-      'Mass peaceful solidarity walk advocating for job creation, youth empowerment, and accountable leadership across the Ashanti Region.',
-    attendingCount: 1250,
-    organizer: 'The Base Movement LBG - Ashanti Regional Secretariat',
-    status: 'Planned',
-  },
-  {
-    id: 'evt-003',
-    title: 'Tamale Tech & Agricultural Job Skills Workshop',
-    category: 'Job Workshop',
-    date: '2026-11-05T10:00:00+00:00',
-    locationName: 'Tamale Jubilee Center, Northern Region',
-    gpsAddress: 'NT-012-9931, Tamale Central',
-    region: 'Northern',
-    description:
-      'Hands-on vocational and tech skills training workshop connecting young graduates with agribusiness and digital apprenticeships.',
-    attendingCount: 310,
-    organizer: 'The Base Movement LBG - Northern Regional Hub',
-    status: 'Planned',
-  },
-  {
-    id: 'evt-004',
-    title: 'Takoradi Harbor Community Infrastructure Cleanup',
-    category: 'Community Action',
-    date: '2026-11-12T07:00:00+00:00',
-    locationName: 'Market Circle & Port Area, Takoradi',
-    gpsAddress: 'WS-004-1829, Market Circle, Takoradi',
-    region: 'Western',
-    description:
-      'Community-led environmental sanitation and civic restoration action organized by local constituency youth volunteers.',
-    attendingCount: 290,
-    organizer: 'The Base Movement LBG - Western Region Youth Wing',
-    status: 'Planned',
-  },
-  {
-    id: 'evt-005',
-    title: 'London & UK Diaspora Global Policy Conference',
-    category: 'Diaspora Meetup',
-    date: '2026-11-28T14:00:00+00:00',
-    locationName: 'Ghana High Commission Annex, London UK',
-    gpsAddress: '13 Belgrave Square, London SW1X 8PN',
-    region: 'Diaspora',
-    description:
-      'Strategic networking conference connecting Ghanaian professionals across the UK and Europe with domestic industrialization projects.',
-    attendingCount: 410,
-    organizer: 'The Base Movement LBG - UK & Europe Chapter',
-    status: 'Planned',
-  },
-]
+export const PUBLIC_EVENTS: MovementEvent[] = []
 
 const CATEGORIES = [
   'All',
@@ -130,7 +59,45 @@ export default function Events() {
   const [shareEvent, setShareEvent] = useState<{ title: string; url: string } | null>(null)
   const [canCreate, setCanCreate] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [eventsList, setEventsList] = useState<MovementEvent[]>(PUBLIC_EVENTS)
+  const [eventsList, setEventsList] = useState<MovementEvent[]>([])
+
+  // Fetch live published events from Supabase
+  useEffect(() => {
+    let cancelled = false
+    async function loadLiveEvents() {
+      try {
+        const { data, error } = await supabase
+          .from('field_events')
+          .select('*')
+          .in('status', ['Planned', 'In Progress'])
+          .order('date', { ascending: false })
+
+        if (error || !data || cancelled) return
+
+        const liveEvts: MovementEvent[] = (data || []).map((evt: Record<string, any>) => ({
+          id: evt.id as string,
+          title: evt.title as string,
+          category: evt.type === 'Rally' ? 'Mobilization Walk' : evt.type === 'Training' ? 'Job Workshop' : (evt.type as MovementEvent['category']) || 'Town Hall',
+          date: evt.date as string,
+          locationName: (evt.location as string) || 'Location TBA',
+          gpsAddress: (evt.location as string) || '',
+          region: (evt.chapter as string) || 'Greater Accra',
+          description: (evt.description as string) || '',
+          attendingCount: (evt.attendees_actual as number) || (evt.attendees_expected as number) || 0,
+          organizer: `The Base Movement LBG - ${(evt.chapter as string) || 'Secretariat'}`,
+          status: evt.status === 'Completed' ? 'Completed' : evt.status === 'In Progress' ? 'In Progress' : 'Planned',
+        }))
+
+        if (!cancelled) setEventsList(liveEvts)
+      } catch (err) {
+        console.error('[EVENTS] Failed to fetch live events:', err)
+      }
+    }
+    loadLiveEvents()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // New Event Form State
   const [newEvent, setNewEvent] = useState({

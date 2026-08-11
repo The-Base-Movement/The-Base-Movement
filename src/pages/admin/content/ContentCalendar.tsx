@@ -141,7 +141,7 @@ export default function ContentCalendar() {
               fullTimestamp: evt.date,
               author: evt.location || 'Regional Mobilization',
               snippet: evt.description || '',
-              editUrl: `/events/${evt.id}`,
+              editUrl: `/admin/events?edit=${evt.id}`,
             })
           }
         }

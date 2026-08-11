@@ -2492,6 +2492,22 @@ class AdminService {
     return success
   }
 
+  async createFieldEvent(event: Omit<FieldEvent, 'id'>): Promise<boolean> {
+    const success = await intelligenceService.createFieldEvent(event)
+    if (success) {
+      await this.logAction('FIELD_EVENT_CREATE', `EVENTS/${event.title}`, 'Success', { title: event.title, date: event.date })
+    }
+    return success
+  }
+
+  async deleteFieldEvent(eventId: string): Promise<boolean> {
+    const success = await intelligenceService.deleteFieldEvent(eventId)
+    if (success) {
+      await this.logAction('FIELD_EVENT_DELETE', `EVENTS/${eventId}`, 'Success', { eventId })
+    }
+    return success
+  }
+
   async getChapterMobilizationLedger(chapterName?: string): Promise<MobilizationLedger[]> {
     return gamificationService.getMobilizationLedger(chapterName)
   }
