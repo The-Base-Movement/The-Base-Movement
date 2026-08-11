@@ -22,14 +22,31 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url
   })
 
+export function getRadianAngle(degreeValue: number) {
+  return (degreeValue * Math.PI) / 180
+}
+
+export function rotateSize(width: number, height: number, rotation: number) {
+  const rotRad = getRadianAngle(rotation)
+  return {
+    width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
+    height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),
+  }
+}
+
 /**
- * Crops an image based on pixel bounding values and returns it as a WEBP Blob.
+ * Crops an image based on pixel bounding values and optional rotation angle, returning a WEBP Blob.
  *
  * @param imageSrc - URL or local storage representation of the image
  * @param pixelCrop - Coordinates and dimensions representing the cropped section
+ * @param rotation - Rotation angle in degrees (e.g. 0, 90, 180, 270)
  * @returns Promise resolving to cropped image Blob, or null if context creation fails
  */
-export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<Blob | null> {
+export async function getCroppedImg(
+  imageSrc: string,
+  pixelCrop: Area,
+  rotation = 0
+): Promise<Blob | null> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -38,13 +55,30 @@ export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<
     return null
   }
 
-  // Set canvas size to match the cropped area
-  canvas.width = pixelCrop.width
-  canvas.height = pixelCrop.height
+  const rotRad = getRadianAngle(rotation)
+  const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation)
 
-  // Draw the cropped image onto the canvas
-  ctx.drawImage(
-    image,
+  canvas.width = bBoxWidth
+  canvas.height = bBoxHeight
+
+  ctx.translate(bBoxWidth / 2, bBoxHeight / 2)
+  ctx.rotate(rotRad)
+  ctx.translate(-image.width / 2, -image.height / 2)
+
+  ctx.drawImage(image, 0, 0)
+
+  const croppedCanvas = document.createElement('canvas')
+  const croppedCtx = croppedCanvas.getContext('2d')
+
+  if (!croppedCtx) {
+    return null
+  }
+
+  croppedCanvas.width = pixelCrop.width
+  croppedCanvas.height = pixelCrop.height
+
+  croppedCtx.drawImage(
+    canvas,
     pixelCrop.x,
     pixelCrop.y,
     pixelCrop.width,
@@ -55,9 +89,8 @@ export async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<
     pixelCrop.height
   )
 
-  // As a blob
   return new Promise((resolve) => {
-    canvas.toBlob(
+    croppedCanvas.toBlob(
       (blob) => {
         resolve(blob)
       },

@@ -16,6 +16,7 @@ interface PhotoCropStepProps {
 export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: PhotoCropStepProps) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
+  const [rotation, setRotation] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
 
@@ -28,6 +29,7 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
       onCropComplete(null)
       setCrop({ x: 0, y: 0 })
       setZoom(1)
+      setRotation(0)
     }
     reader.readAsDataURL(file)
   }
@@ -35,8 +37,12 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
   const removePhoto = () => {
     onPhotoChange(null)
     onCropComplete(null)
+    setRotation(0)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
+
+  const rotateLeft = () => setRotation((r) => (r - 90 + 360) % 360)
+  const rotateRight = () => setRotation((r) => (r + 90) % 360)
 
   return (
     <div className="flex flex-col gap-4">
@@ -109,9 +115,11 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
               image={photoUrl}
               crop={crop}
               zoom={zoom}
+              rotation={rotation}
               aspect={CARD_PHOTO_ASPECT}
               onCropChange={setCrop}
               onZoomChange={setZoom}
+              onRotationChange={setRotation}
               onCropComplete={(_, areaPixels) => onCropComplete(areaPixels)}
             />
           </div>
@@ -141,6 +149,29 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
             >
               zoom_in
             </span>
+
+            <div className="flex items-center gap-1 pl-2 border-l border-border/60">
+              <button
+                type="button"
+                onClick={rotateLeft}
+                title="Rotate 90° Left"
+                className="w-8 h-8 rounded border border-border bg-white text-on-surface flex items-center justify-center cursor-pointer hover:bg-container-low transition-colors"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  rotate_left
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={rotateRight}
+                title="Rotate 90° Right"
+                className="w-8 h-8 rounded border border-border bg-white text-on-surface flex items-center justify-center cursor-pointer hover:bg-container-low transition-colors"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  rotate_right
+                </span>
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-2">
