@@ -8,7 +8,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { canManageMembers, requireAuthorizedAdmin, getSenderEmail } from '../_shared/admin-auth.ts'
-import { welcomeEmail } from '../_shared/email-templates.ts'
+import { welcomeEmail, unloggedMemberNudgeEmail } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
 import { sendEmail } from '../_shared/email.ts'
 
@@ -44,8 +44,8 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { userId, sendToAllActive = false } = await req.json()
-    if (!userId && !sendToAllActive) throw new Error('userId is required')
+    const { userId, sendToAllActive = false, type = 'welcome', email: targetEmail, name: targetName, regNo: targetRegNo, chapter: targetChapter } = await req.json()
+    if (!userId && !sendToAllActive && type !== 'unlogged_nudge') throw new Error('userId is required')
 
     // Live active member count for the template
     const { count } = await supabase
@@ -67,7 +67,17 @@ Deno.serve(async (req) => {
     }
 
     let recipients: UserRow[] = []
-    if (sendToAllActive) {
+    if (type === 'unlogged_nudge' && targetEmail) {
+      recipients = [{
+        id: 'direct',
+        full_name: targetName || 'Compatriot',
+        email: targetEmail,
+        phone_number: null,
+        registration_number: targetRegNo || '',
+        chapter: targetChapter || null,
+        status: 'Active',
+      }]
+    } else if (sendToAllActive) {
       const { data: users, error: usersErr } = await supabase
         .from('users')
         .select('id, full_name, email, phone_number, registration_number, chapter, status')
@@ -93,14 +103,23 @@ Deno.serve(async (req) => {
 
     for (const row of recipients) {
       const firstName = row.full_name.split(' ')[0] || row.full_name
-      const html = welcomeEmail({
-        name: firstName,
-        regNo: row.registration_number,
-        chapter: row.chapter ?? 'TBM',
-        dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard',
-        cardDownloadUrl: 'https://www.thebasemovement.org.gh/dashboard',
-        totalMembers,
-      })
+      const isNudge = type === 'unlogged_nudge'
+
+      const html = isNudge
+        ? unloggedMemberNudgeEmail({
+            name: firstName,
+            regNo: row.registration_number,
+            chapter: row.chapter ?? undefined,
+            loginUrl: 'https://www.thebasemovement.org.gh/login',
+          })
+        : welcomeEmail({
+            name: firstName,
+            regNo: row.registration_number,
+            chapter: row.chapter ?? 'TBM',
+            dashboardUrl: 'https://www.thebasemovement.org.gh/dashboard',
+            cardDownloadUrl: 'https://www.thebasemovement.org.gh/dashboard',
+            totalMembers,
+          })
 
       if (!row.email && !row.phone_number) {
         skipped++
@@ -108,10 +127,14 @@ Deno.serve(async (req) => {
       }
 
       if (row.email) {
+        const subject = isNudge
+          ? `Activate your member dashboard & verify your membership — The Base`
+          : `Welcome to The Base, ${firstName} — you're now a verified member`
+
         const r = await sendEmail({
           to: row.email,
           from: `The Base Movement <${senderEmail}>`,
-          subject: `Welcome to The Base, ${firstName} — you're now a verified member`,
+          subject,
           html,
         })
         if (r.ok) emailSent++
