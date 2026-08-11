@@ -24,16 +24,6 @@ interface JobSelectorProps {
   onLabelChange?: (label: string) => void
 }
 
-const labelStyle: CSSProperties = {
-  display: 'block',
-  fontSize: 11,
-  fontWeight: 'var(--font-weight-medium, 500)',
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-  color: 'hsl(var(--on-surface-muted))',
-  marginBottom: 6,
-}
-
 const fieldStyle: CSSProperties = {
   width: '100%',
   height: 44,
@@ -49,9 +39,18 @@ const fieldStyle: CSSProperties = {
   outline: 'none',
 }
 
+const labelStyle: CSSProperties = {
+  fontSize: 10.5,
+  fontWeight: 'var(--font-weight-medium, 500)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  color: 'hsl(var(--on-surface-muted))',
+}
+
 /**
  * Streamlined single-tier top-level Industry / Sector selector.
- * Reduces registration friction while maintaining 100% analytics compatibility.
+ * Renders a search-filtered scrollable clickable list instead of a native
+ * <select> dropdown to reduce mobile friction.
  */
 export function JobSelector({
   value,
@@ -66,6 +65,7 @@ export function JobSelector({
   const [industries, setIndustries] = useState<JobIndustry[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     let alive = true
@@ -92,26 +92,27 @@ export function JobSelector({
   const customTitle = value?.customTitle ?? ''
   const isOther = value?.isOther ?? false
 
-  const handleSectorChange = (industryIdStr: string) => {
-    const indId = industryIdStr ? Number(industryIdStr) : null
-    const sector = industries.find((i) => i.id === indId)
-    const checkIsOther = sector ? sector.name.toLowerCase().includes('other') : false
+  const filtered = industries.filter((i) =>
+    i.name.toLowerCase().includes(search.toLowerCase())
+  )
 
+  const handleSectorSelect = (industry: JobIndustry) => {
+    if (disabled) return
+    const checkIsOther = industry.name.toLowerCase().includes('other')
     const nextSelection: JobSelection = {
-      industryId: indId,
+      industryId: industry.id,
       subCategoryId: null,
       roleId: null,
       isOther: checkIsOther,
       customTitle: checkIsOther ? customTitle : '',
     }
-
-    const label = checkIsOther ? (customTitle.trim() || 'Other') : (sector?.name || '')
+    const label = checkIsOther ? (customTitle.trim() || 'Other') : industry.name
 
     startTransition(() => {
       onChange?.(nextSelection)
       onLabelChange?.(label)
       onSelectionChange?.({
-        job_industry_id: indId,
+        job_industry_id: industry.id,
         job_sub_category_id: null,
         job_role_id: null,
         profession: label,
@@ -128,7 +129,6 @@ export function JobSelector({
       isOther: true,
       customTitle: newTitle,
     }
-
     const label = newTitle.trim() || 'Other'
 
     startTransition(() => {
@@ -149,44 +149,172 @@ export function JobSelector({
   if (loadError) {
     return (
       <p style={{ fontSize: 13, color: 'hsl(var(--destructive))', margin: 0 }}>
-        Couldn’t load the industry list. Please refresh and try again.
+        Couldn't load the industry list. Please refresh and try again.
       </p>
     )
   }
 
-  const selectStyle: CSSProperties = {
-    ...fieldStyle,
-    cursor: !disabled && !loading ? 'pointer' : 'not-allowed',
-    opacity: !disabled && !loading ? 1 : 0.55,
-  }
+  const selectedIndustry = industries.find((i) => i.id === selectedIndustryId)
 
   return (
-    <div style={{ display: 'grid', gap: 14 }}>
-      {/* Industry / Sector Dropdown */}
-      <div>
-        <label htmlFor={`${idPrefix}-industry`} style={labelStyle}>
-          Occupation / Primary Industry{star}
-        </label>
-        <select
-          id={`${idPrefix}-industry`}
-          value={selectedIndustryId ?? ''}
-          disabled={disabled || loading}
-          style={selectStyle}
-          onChange={(e) => handleSectorChange(e.target.value)}
+    <div style={{ display: 'grid', gap: 10 }}>
+      {/* Two-column label row: Profession | Occupation / Primary Industry */}
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+        <span style={labelStyle}>Profession{star}</span>
+        <span style={{ ...labelStyle, color: 'hsl(var(--on-surface-muted) / 0.7)', fontSize: 10 }}>
+          Occupation / Primary Industry
+        </span>
+      </div>
+
+      {/* Search box */}
+      <div style={{ position: 'relative' }}>
+        <span
+          className="material-symbols-outlined"
+          style={{
+            position: 'absolute',
+            left: 10,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 16,
+            color: 'hsl(var(--on-surface-muted))',
+            pointerEvents: 'none',
+          }}
         >
-          <option value="">{loading ? 'Loading industries…' : '-- Select Industry / Sector --'}</option>
-          {industries.map((i) => (
-            <option key={i.id} value={i.id}>
-              {i.name}
-            </option>
-          ))}
-        </select>
+          search
+        </span>
+        <input
+          id={`${idPrefix}-search`}
+          type="text"
+          placeholder={loading ? 'Loading industries…' : 'Search sector or industry…'}
+          value={search}
+          disabled={disabled || loading}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            ...fieldStyle,
+            height: 40,
+            paddingLeft: 34,
+            fontSize: 13,
+            opacity: disabled || loading ? 0.55 : 1,
+          }}
+        />
+      </div>
+
+      {/* Selected value badge */}
+      {selectedIndustry && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '5px 10px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'hsl(var(--primary) / 0.1)',
+            border: '1px solid hsl(var(--primary) / 0.3)',
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'hsl(var(--primary))',
+            fontFamily: "'Public Sans', sans-serif",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+            check_circle
+          </span>
+          {selectedIndustry.name}
+        </div>
+      )}
+
+      {/* Scrollable industry list */}
+      <div
+        style={{
+          maxHeight: 210,
+          overflowY: 'auto',
+          border: '1px solid hsl(var(--border))',
+          borderRadius: 'var(--radius-sm)',
+          background: 'hsl(var(--card))',
+          opacity: disabled ? 0.55 : 1,
+          pointerEvents: disabled ? 'none' : 'auto',
+        }}
+      >
+        {loading && (
+          <div
+            style={{
+              padding: '16px 12px',
+              textAlign: 'center',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            Loading industries…
+          </div>
+        )}
+        {!loading && filtered.length === 0 && (
+          <div
+            style={{
+              padding: '16px 12px',
+              textAlign: 'center',
+              fontSize: 12,
+              color: 'hsl(var(--on-surface-muted))',
+              fontFamily: "'Public Sans', sans-serif",
+            }}
+          >
+            No results for &ldquo;{search}&rdquo;
+          </div>
+        )}
+        {!loading &&
+          filtered.map((industry, idx) => {
+            const isSelected = industry.id === selectedIndustryId
+            return (
+              <button
+                key={industry.id}
+                type="button"
+                onClick={() => handleSectorSelect(industry)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  padding: '10px 12px',
+                  background: isSelected ? 'hsl(var(--primary) / 0.08)' : 'transparent',
+                  border: 'none',
+                  borderBottom:
+                    idx < filtered.length - 1 ? '1px solid hsl(var(--border) / 0.5)' : 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: isSelected ? 600 : 500,
+                  fontSize: 13,
+                  color: isSelected ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
+                  transition: 'background 0.1s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected)
+                    (e.currentTarget as HTMLButtonElement).style.background =
+                      'hsl(var(--container-low))'
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected)
+                    (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                }}
+              >
+                <span>{industry.name}</span>
+                {isSelected && (
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                    check
+                  </span>
+                )}
+              </button>
+            )
+          })}
       </div>
 
       {/* Custom Title Input — rendered when "Other" is selected */}
       {isOther && (
         <div>
-          <label htmlFor={`${idPrefix}-custom`} style={labelStyle}>
+          <label
+            htmlFor={`${idPrefix}-custom`}
+            style={{ ...labelStyle, display: 'block', marginBottom: 6 }}
+          >
             Please specify your job title{star}
           </label>
           <input

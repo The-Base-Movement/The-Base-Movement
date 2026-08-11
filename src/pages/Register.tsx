@@ -292,7 +292,7 @@ export default function Register() {
       if (!formData.password || formData.password.length < 8)
         errs.password = 'Password must be at least 8 characters.'
     }
-    if (step === 4) {
+    if (step === 3) {
       if (
         formData.emergencyContactName.trim() &&
         !/^[\p{L}\s.'’-]+$/u.test(formData.emergencyContactName.trim())
