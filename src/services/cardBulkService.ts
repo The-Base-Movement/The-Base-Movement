@@ -210,6 +210,32 @@ export async function downloadBulkCardsZip(
   return await zip.generateAsync({ type: 'blob' })
 }
 
+export async function downloadBulkIndividualPngs(
+  cardElements: { member: CardMember; element: HTMLElement }[],
+  onProgress?: (current: number, total: number) => void
+): Promise<number> {
+  const total = cardElements.length
+  let downloadedCount = 0
+
+  for (let i = 0; i < total; i++) {
+    const item = cardElements[i]
+    const pngBlob = await captureElementToPngBlob(item.element)
+    const url = URL.createObjectURL(pngBlob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${sanitizeFilename(item.member.id)}_${sanitizeFilename(item.member.fullName)}.png`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    downloadedCount++
+    if (onProgress) onProgress(i + 1, total)
+    await new Promise((resolve) => setTimeout(resolve, 200))
+  }
+
+  return downloadedCount
+}
+
 export async function downloadBulkCardsPdf(
   cardElements: { member: CardMember; element: HTMLElement }[],
   onProgress?: (current: number, total: number) => void

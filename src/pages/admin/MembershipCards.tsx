@@ -9,6 +9,7 @@ import {
   getBulkCardMembers,
   updateMemberPhoto,
   downloadBulkCardsZip,
+  downloadBulkIndividualPngs,
   downloadBulkCardsPdf,
   captureElementToPngBlob,
   type CardMember,
@@ -212,6 +213,34 @@ export default function MembershipCards() {
     } catch (err: unknown) {
       console.error('[BULK-CARDS] Download failed:', err)
       toast.error('Failed to generate ZIP archive')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  // Bulk direct individual PNG download
+  const handleBulkDirectPngDownload = async () => {
+    const targetCards = getSelectedCardRefs()
+    if (targetCards.length === 0) {
+      toast.error('Please select at least one member card to download')
+      return
+    }
+
+    setIsProcessing(true)
+    setProgressMsg('Rendering individual PNG files...')
+    setProgressPct(0)
+
+    try {
+      const count = await downloadBulkIndividualPngs(targetCards, (curr, total) => {
+        const pct = Math.round((curr / total) * 100)
+        setProgressPct(pct)
+        setProgressMsg(`Downloading PNG image ${curr} of ${total} (${pct}%)`)
+      })
+
+      toast.success(`Downloaded ${count} individual PNG membership cards`)
+    } catch (err: unknown) {
+      console.error('[BULK-CARDS] Direct PNG download failed:', err)
+      toast.error('Failed to download individual PNG images')
     } finally {
       setIsProcessing(false)
     }
@@ -608,19 +637,34 @@ export default function MembershipCards() {
                 className="btn btn-secondary btn-sm"
                 onClick={handleBulkZipDownload}
                 disabled={isProcessing || selectedIds.size === 0}
-                style={{ height: 38 }}
+                style={{ height: 38, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                title="Download high-resolution PNG images for selected cards in a ZIP archive"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                   folder_zip
                 </span>
-                Download ZIP ({selectedIds.size})
+                Bulk PNGs (ZIP) ({selectedIds.size})
+              </button>
+
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={handleBulkDirectPngDownload}
+                disabled={isProcessing || selectedIds.size === 0}
+                style={{ height: 38, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                title="Download individual PNG files directly to your browser downloads folder"
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  image
+                </span>
+                Bulk PNG Direct
               </button>
 
               <button
                 className="btn btn-primary btn-sm"
                 onClick={handleBulkPdfExport}
                 disabled={isProcessing || selectedIds.size === 0}
-                style={{ height: 38 }}
+                style={{ height: 38, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                title="Export 4-up A4 printable PDF sheet"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                   picture_as_pdf
