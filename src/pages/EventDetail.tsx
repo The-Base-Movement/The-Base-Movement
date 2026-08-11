@@ -221,6 +221,9 @@ export default function EventDetail() {
           <img
             src={eventBanner}
             alt={event.title}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
           <div
