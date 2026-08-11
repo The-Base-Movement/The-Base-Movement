@@ -487,14 +487,24 @@ class MessagingService {
    */
   async getLeaderInfo(
     leaderId: string,
-    scopeType?: Conversation['scope_type']
+    scopeType?: Conversation['scope_type'],
+    departmentId?: string | null
   ): Promise<ConversationLeaderInfo | null> {
+    if (scopeType === 'department' && departmentId) {
+      const deptInfo = await this.getDepartmentInfo(departmentId)
+      if (deptInfo) return deptInfo
+    }
     const [[profile], { data: admin }] = await Promise.all([
       getPublicDirectoryProfiles([leaderId]),
       supabase.from('admins').select('role').eq('id', leaderId).maybeSingle(),
     ])
     if (!profile) return null
-    const fallbackRole = scopeType === 'chapter' ? 'BASE_DIASPORA_LEAD' : 'CONSTITUENCY_LEAD'
+    const fallbackRole =
+      scopeType === 'department'
+        ? 'DEPARTMENT'
+        : scopeType === 'chapter'
+        ? 'BASE_DIASPORA_LEAD'
+        : 'CONSTITUENCY_LEAD'
     return {
       id: profile.id as string,
       full_name: (profile.full_name as string | null) ?? 'Leader',

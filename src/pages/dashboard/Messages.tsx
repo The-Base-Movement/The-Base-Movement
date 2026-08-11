@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { messagingService } from '@/services/messagingService'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
 import type { Conversation, ConversationLeaderInfo, Message } from '@/types/admin'
@@ -18,6 +19,7 @@ function scopeLabel(conv: Conversation): string {
   if (conv.scope_type === 'constituency') return `Constituency: ${conv.scope_value}`
   if (conv.scope_type === 'group_chapter') return `📢 ${conv.scope_value} Forum`
   if (conv.scope_type === 'group_constituency') return `📢 ${conv.scope_value} Forum`
+  if (conv.scope_type === 'department') return `🏢 ${conv.scope_value}`
   return conv.scope_value
 }
 
@@ -38,6 +40,9 @@ export default function DashboardMessages() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [leaderInfoMap, setLeaderInfoMap] = useState<Record<string, ConversationLeaderInfo>>({})
   const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({})
+  const [memberProfilesMap, setMemberProfilesMap] = useState<
+    Record<string, { full_name: string | null; avatar_url: string | null }>
+  >({})
   const [sending, setSending] = useState(false)
   const [expandDepartments, setExpandDepartments] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -81,7 +86,7 @@ export default function DashboardMessages() {
           allConvs.map(async (conv) => {
             const [msgs, leader] = await Promise.all([
               messagingService.getMessages(conv.id),
-              messagingService.getLeaderInfo(conv.leader_id, conv.scope_type),
+              messagingService.getLeaderInfo(conv.leader_id, conv.scope_type, conv.department_id),
             ])
             if (!isMounted) return
             setMessagesMap((prev) => ({ ...prev, [conv.id]: msgs }))
@@ -112,6 +117,33 @@ export default function DashboardMessages() {
     })
     return unsub
   }, [activeId])
+
+  // Resolve sender names for member messages in active thread
+  useEffect(() => {
+    if (!messages || messages.length === 0) return
+    const missingSenderIds = messages
+      .map((m) => m.sender_id)
+      .filter((id) => id && id !== user?.id && !memberProfilesMap[id])
+
+    const uniqueMissing = Array.from(new Set(missingSenderIds))
+    if (uniqueMissing.length === 0) return
+
+    let isMounted = true
+    void (async () => {
+      const profiles = await getPublicDirectoryProfiles(uniqueMissing)
+      if (!isMounted) return
+      setMemberProfilesMap((prev) => {
+        const next = { ...prev }
+        for (const p of profiles) {
+          next[p.id] = { full_name: p.full_name, avatar_url: p.avatar_url }
+        }
+        return next
+      })
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [messages, user?.id, memberProfilesMap])
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -241,7 +273,22 @@ export default function DashboardMessages() {
   }
 
   const isClosed = activeConv?.status === 'closed'
+  const isGroupChat = activeConv?.scope_type?.startsWith('group_')
+  const isDeptChat = activeConv?.scope_type === 'department'
   const leaderInitial = leaderInfo?.full_name?.charAt(0)?.toUpperCase() || '?'
+
+  const filteredSearch = (list: Conversation[]) =>
+    list.filter((c) => scopeLabel(c).toLowerCase().includes(searchQuery.toLowerCase()))
+
+  const directConvs = filteredSearch(
+    conversations.filter(
+      (c) => !c.scope_type?.startsWith('group_') && c.scope_type !== 'department'
+    )
+  )
+  const groupConvs = filteredSearch(
+    conversations.filter((c) => c.scope_type?.startsWith('group_'))
+  )
+  const deptConvs = filteredSearch(conversations.filter((c) => c.scope_type === 'department'))
 
   return (
     <div
@@ -271,7 +318,7 @@ export default function DashboardMessages() {
         />
       )}
 
-      {/* Aside: Conversations list - full screen on mobile, sidebar on desktop */}
+      {/* Aside: Conversations list */}
       {!isMobile || !activeId ? (
         <aside
           style={{
@@ -324,7 +371,7 @@ export default function DashboardMessages() {
           >
             <input
               type="text"
-              placeholder="Search conversations..."
+              placeholder="Search chats..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -343,7 +390,7 @@ export default function DashboardMessages() {
             />
           </div>
 
-          {/* Conversations list - with internal scrollbar */}
+          {/* Conversations list */}
           <div
             style={{
               flex: 1,
@@ -354,120 +401,130 @@ export default function DashboardMessages() {
               scrollBehavior: 'auto',
             }}
           >
-            {/* Personal conversations (with leaders/departments) */}
-            {conversations
-              .filter((c) => !c.scope_type?.startsWith('group_'))
-              .filter((c) => c.scope_value.toLowerCase().includes(searchQuery.toLowerCase()))
-              .map((conv) => {
-                const isActive = conv.id === activeId
-                const convMessages = messagesMap[conv.id] ?? []
-                const unreadCount = convMessages.filter(
-                  (m) => !m.read_at && m.sender_type === 'leader'
-                ).length
+            {/* Direct Leader Conversations */}
+            {directConvs.length > 0 && (
+              <div>
+                <div
+                  style={{
+                    padding: '10px 16px 4px',
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textTransform: 'uppercase',
+                    color: 'hsl(var(--on-surface-muted))',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  💬 Direct Messages
+                </div>
+                {directConvs.map((conv) => {
+                  const isActive = conv.id === activeId
+                  const convMessages = messagesMap[conv.id] ?? []
+                  const unreadCount = convMessages.filter(
+                    (m) => !m.read_at && m.sender_type === 'leader'
+                  ).length
 
-                return (
-                  <button
-                    key={conv.id}
-                    onClick={() => {
-                      setActiveId(conv.id)
-                      setSidebarOpen(false)
-                    }}
-                    style={{
-                      padding: '12px 16px',
-                      background: isActive ? 'hsl(var(--container-low))' : 'transparent',
-                      border: 'none',
-                      borderLeft: isActive
-                        ? '3px solid hsl(var(--primary))'
-                        : '3px solid transparent',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      color: 'hsl(var(--on-surface))',
-                      fontSize: 13,
-                      transition: 'background 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive)
-                        e.currentTarget.style.background = 'hsl(var(--container-low) / 0.5)'
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.background = 'transparent'
-                    }}
-                  >
-                    <span
-                      className="material-symbols-outlined"
+                  return (
+                    <button
+                      key={conv.id}
+                      onClick={() => {
+                        setActiveId(conv.id)
+                        setSidebarOpen(false)
+                      }}
                       style={{
-                        fontSize: 18,
-                        flexShrink: 0,
-                        color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                        padding: '12px 16px',
+                        background: isActive ? 'hsl(var(--container-low))' : 'transparent',
+                        border: 'none',
+                        borderLeft: isActive
+                          ? '3px solid hsl(var(--primary))'
+                          : '3px solid transparent',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        color: 'hsl(var(--on-surface))',
+                        fontSize: 13,
+                        transition: 'background 0.2s',
+                        width: '100%',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive)
+                          e.currentTarget.style.background = 'hsl(var(--container-low) / 0.5)'
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) e.currentTarget.style.background = 'transparent'
                       }}
                     >
-                      {conv.scope_type === 'chapter' ? 'groups' : 'location_city'}
-                    </span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: 12,
-                          fontWeight: isActive ? 'var(--font-weight-medium, 500)' : 'normal',
-                          color: 'hsl(var(--on-surface))',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {scopeLabel(conv)}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 11,
-                          color: 'hsl(var(--on-surface-muted))',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
-                        {convMessages.length} {convMessages.length === 1 ? 'message' : 'messages'}
-                      </div>
-                    </div>
-                    {unreadCount > 0 && (
                       <span
+                        className="material-symbols-outlined"
                         style={{
-                          background: 'hsl(var(--accent))',
-                          color: '#000',
-                          fontSize: 10,
-                          fontWeight: 'var(--font-weight-medium, 500)',
-                          padding: '2px 6px',
-                          borderRadius: 'var(--radius-pill)',
+                          fontSize: 18,
                           flexShrink: 0,
-                          minWidth: 20,
-                          textAlign: 'center',
+                          color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        {unreadCount}
+                        {conv.scope_type === 'chapter' ? 'groups' : 'location_city'}
                       </span>
-                    )}
-                  </button>
-                )
-              })}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            fontWeight: isActive ? 'var(--font-weight-medium, 500)' : 'normal',
+                            color: 'hsl(var(--on-surface))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {scopeLabel(conv)}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {convMessages.length} {convMessages.length === 1 ? 'message' : 'messages'}
+                        </div>
+                      </div>
+                      {unreadCount > 0 && (
+                        <span
+                          style={{
+                            background: 'hsl(var(--accent))',
+                            color: '#000',
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            padding: '2px 6px',
+                            borderRadius: 'var(--radius-pill)',
+                            flexShrink: 0,
+                            minWidth: 20,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {unreadCount}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
 
             {/* Group forums section */}
-            {conversations.filter(
-              (c) =>
-                c.scope_type?.startsWith('group_') &&
-                c.scope_value.toLowerCase().includes(searchQuery.toLowerCase())
-            ).length > 0 && (
+            {groupConvs.length > 0 && (
               <div
                 style={{
                   borderTop: '1px solid hsl(var(--border))',
-                  padding: '12px 0',
+                  padding: '4px 0',
                 }}
               >
                 <div
                   style={{
-                    padding: '10px 16px',
-                    fontSize: 11,
+                    padding: '10px 16px 4px',
+                    fontSize: 10,
                     fontWeight: 'var(--font-weight-medium, 500)',
                     textTransform: 'uppercase',
                     color: 'hsl(var(--on-surface-muted))',
@@ -476,111 +533,223 @@ export default function DashboardMessages() {
                 >
                   📢 Community Forums
                 </div>
-                {conversations
-                  .filter((c) => c.scope_type?.startsWith('group_'))
-                  .map((conv) => {
-                    const isActive = conv.id === activeId
-                    const convMessages = messagesMap[conv.id] ?? []
-                    const unreadCount = convMessages.filter((m) => !m.read_at).length
+                {groupConvs.map((conv) => {
+                  const isActive = conv.id === activeId
+                  const convMessages = messagesMap[conv.id] ?? []
+                  const unreadCount = convMessages.filter((m) => !m.read_at).length
 
-                    return (
-                      <button
-                        key={conv.id}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.currentTarget.blur()
-                          setActiveId(conv.id)
-                          setSidebarOpen(false)
-                        }}
+                  return (
+                    <button
+                      key={conv.id}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.currentTarget.blur()
+                        setActiveId(conv.id)
+                        setSidebarOpen(false)
+                      }}
+                      style={{
+                        padding: '12px 16px',
+                        background: isActive ? 'hsl(var(--container-low))' : 'transparent',
+                        border: 'none',
+                        borderLeft: isActive
+                          ? '3px solid hsl(var(--primary))'
+                          : '3px solid transparent',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        color: 'hsl(var(--on-surface))',
+                        fontSize: 13,
+                        transition: 'background 0.2s',
+                        width: '100%',
+                        outline: 'none',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive)
+                          e.currentTarget.style.background = 'hsl(var(--container-low) / 0.5)'
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) e.currentTarget.style.background = 'transparent'
+                      }}
+                    >
+                      <span
+                        className="material-symbols-outlined"
                         style={{
-                          padding: '12px 16px',
-                          background: isActive ? 'hsl(var(--container-low))' : 'transparent',
-                          border: 'none',
-                          borderLeft: isActive
-                            ? '3px solid hsl(var(--primary))'
-                            : '3px solid transparent',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 10,
-                          color: 'hsl(var(--on-surface))',
-                          fontSize: 13,
-                          transition: 'background 0.2s',
-                          width: '100%',
-                          outline: 'none',
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!isActive)
-                            e.currentTarget.style.background = 'hsl(var(--container-low) / 0.5)'
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!isActive) e.currentTarget.style.background = 'transparent'
+                          fontSize: 18,
+                          flexShrink: 0,
+                          color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
                         }}
                       >
-                        <span
-                          className="material-symbols-outlined"
+                        forum
+                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
                           style={{
-                            fontSize: 18,
-                            flexShrink: 0,
-                            color: isActive
-                              ? 'hsl(var(--primary))'
-                              : 'hsl(var(--on-surface-muted))',
+                            fontSize: 12,
+                            fontWeight: isActive ? 'var(--font-weight-medium, 500)' : 'normal',
+                            color: 'hsl(var(--on-surface))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                           }}
                         >
-                          forum
-                        </span>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div
-                            style={{
-                              fontSize: 12,
-                              fontWeight: isActive ? 'var(--font-weight-medium, 500)' : 'normal',
-                              color: 'hsl(var(--on-surface))',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {conv.scope_value}
-                          </div>
-                          <div
-                            style={{
-                              fontSize: 11,
-                              color: 'hsl(var(--on-surface-muted))',
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                            }}
-                          >
-                            {convMessages.length}{' '}
-                            {convMessages.length === 1 ? 'message' : 'messages'}
-                          </div>
+                          {conv.scope_value} Forum
                         </div>
-                        {unreadCount > 0 && (
-                          <span
-                            style={{
-                              background: 'hsl(var(--primary))',
-                              color: '#fff',
-                              fontSize: 10,
-                              fontWeight: 'var(--font-weight-medium, 500)',
-                              padding: '2px 6px',
-                              borderRadius: 'var(--radius-pill)',
-                              flexShrink: 0,
-                              minWidth: 20,
-                              textAlign: 'center',
-                            }}
-                          >
-                            {unreadCount}
-                          </span>
-                        )}
-                      </button>
-                    )
-                  })}
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {convMessages.length} {convMessages.length === 1 ? 'message' : 'messages'}
+                        </div>
+                      </div>
+                      {unreadCount > 0 && (
+                        <span
+                          style={{
+                            background: 'hsl(var(--primary))',
+                            color: '#fff',
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            padding: '2px 6px',
+                            borderRadius: 'var(--radius-pill)',
+                            flexShrink: 0,
+                            minWidth: 20,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {unreadCount}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Department conversations section */}
+            {deptConvs.length > 0 && (
+              <div
+                style={{
+                  borderTop: '1px solid hsl(var(--border))',
+                  padding: '4px 0',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '10px 16px 4px',
+                    fontSize: 10,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    textTransform: 'uppercase',
+                    color: 'hsl(var(--on-surface-muted))',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  🏢 Department Channels
+                </div>
+                {deptConvs.map((conv) => {
+                  const isActive = conv.id === activeId
+                  const convMessages = messagesMap[conv.id] ?? []
+                  const unreadCount = convMessages.filter(
+                    (m) => !m.read_at && m.sender_type === 'leader'
+                  ).length
+
+                  return (
+                    <button
+                      key={conv.id}
+                      onClick={() => {
+                        setActiveId(conv.id)
+                        setSidebarOpen(false)
+                      }}
+                      style={{
+                        padding: '12px 16px',
+                        background: isActive ? 'hsl(var(--container-low))' : 'transparent',
+                        border: 'none',
+                        borderLeft: isActive
+                          ? '3px solid hsl(var(--primary))'
+                          : '3px solid transparent',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        color: 'hsl(var(--on-surface))',
+                        fontSize: 13,
+                        transition: 'background 0.2s',
+                        width: '100%',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive)
+                          e.currentTarget.style.background = 'hsl(var(--container-low) / 0.5)'
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) e.currentTarget.style.background = 'transparent'
+                      }}
+                    >
+                      <span
+                        className="material-symbols-outlined"
+                        style={{
+                          fontSize: 18,
+                          flexShrink: 0,
+                          color: isActive ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        help
+                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            fontWeight: isActive ? 'var(--font-weight-medium, 500)' : 'normal',
+                            color: 'hsl(var(--on-surface))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {conv.scope_value}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: 'hsl(var(--on-surface-muted))',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {convMessages.length} {convMessages.length === 1 ? 'message' : 'messages'}
+                        </div>
+                      </div>
+                      {unreadCount > 0 && (
+                        <span
+                          style={{
+                            background: 'hsl(var(--primary))',
+                            color: '#fff',
+                            fontSize: 10,
+                            fontWeight: 'var(--font-weight-medium, 500)',
+                            padding: '2px 6px',
+                            borderRadius: 'var(--radius-pill)',
+                            flexShrink: 0,
+                            minWidth: 20,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {unreadCount}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
 
-          {/* Departments section */}
+          {/* Departments selection drawer */}
           {departments.length > 0 && (
             <div
               style={{
@@ -622,11 +791,11 @@ export default function DashboardMessages() {
                 >
                   expand_more
                 </span>
-                Departments
+                + Message a Department
               </button>
 
               {expandDepartments && (
-                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
                   {departments.map((dept) => (
                     <button
                       key={dept.id}
@@ -685,7 +854,6 @@ export default function DashboardMessages() {
       ) : null}
 
       {/* Main chat area */}
-      {/* Chat panel - shown on desktop always, on mobile only when conversation selected */}
       {!isMobile || activeId ? (
         <div
           style={{
@@ -726,7 +894,7 @@ export default function DashboardMessages() {
             </div>
           )}
 
-          {/* Desktop header - hidden on mobile when chat is shown */}
+          {/* Desktop header */}
           {!isMobile && (
             <div
               style={{
@@ -822,7 +990,43 @@ export default function DashboardMessages() {
                 flexShrink: 0,
               }}
             >
-              {leaderInfo?.avatar_url ? (
+              {isGroupChat ? (
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: 'hsl(var(--primary))',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                    forum
+                  </span>
+                </div>
+              ) : isDeptChat ? (
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: 'hsl(var(--accent))',
+                    color: '#000',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                    help
+                  </span>
+                </div>
+              ) : leaderInfo?.avatar_url ? (
                 <img
                   src={leaderInfo.avatar_url}
                   alt={leaderInfo.full_name}
@@ -856,6 +1060,7 @@ export default function DashboardMessages() {
                   {leaderInitial}
                 </div>
               )}
+
               <div style={{ minWidth: 0, flex: 1 }}>
                 <p
                   style={{
@@ -868,7 +1073,11 @@ export default function DashboardMessages() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {leaderInfo?.full_name ?? 'Your Leader'}
+                  {isGroupChat
+                    ? `📢 ${activeConv?.scope_value} Community Forum`
+                    : isDeptChat
+                    ? `🏢 ${activeConv?.scope_value}`
+                    : leaderInfo?.full_name ?? 'Your Leader'}
                 </p>
                 <p
                   style={{
@@ -881,8 +1090,15 @@ export default function DashboardMessages() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {leaderInfo ? roleLabel(leaderInfo.role) : ''}
-                  {activeConv?.scope_value ? ` — ${activeConv.scope_value}` : ''}
+                  {isGroupChat
+                    ? `Open Discussion · ${
+                        activeConv?.scope_type === 'group_chapter' ? 'Diaspora' : 'Constituency'
+                      } Forum`
+                    : isDeptChat
+                    ? 'Official Helpdesk & Secretariat Support'
+                    : `${leaderInfo ? roleLabel(leaderInfo.role) : ''}${
+                        activeConv?.scope_value ? ` — ${activeConv.scope_value}` : ''
+                      }`}
                 </p>
               </div>
               {isClosed && (
@@ -912,20 +1128,31 @@ export default function DashboardMessages() {
                     marginTop: 32,
                   }}
                 >
-                  No messages yet. Send one to your leader!
+                  No messages yet. Send a message to get started!
                 </p>
               )}
-              {messages.map((msg) => (
-                <ChatBubble
-                  key={msg.id}
-                  content={msg.content}
-                  isSelf={msg.sender_type === 'member'}
-                  timestamp={msg.created_at}
-                  senderName={
-                    msg.sender_type === 'leader' ? (leaderInfo?.full_name ?? 'Leader') : undefined
+              {messages.map((msg) => {
+                const isSelf = msg.sender_id === user?.id
+                let senderName: string | undefined = undefined
+                if (!isSelf) {
+                  if (msg.sender_type === 'leader') {
+                    senderName =
+                      leaderInfo?.full_name ?? (isDeptChat ? activeConv?.scope_value : 'Leader')
+                  } else {
+                    senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Member'
                   }
-                />
-              ))}
+                }
+
+                return (
+                  <ChatBubble
+                    key={msg.id}
+                    content={msg.content}
+                    isSelf={isSelf}
+                    timestamp={msg.created_at}
+                    senderName={senderName}
+                  />
+                )
+              })}
               <div ref={bottomRef} />
             </div>
 
@@ -941,7 +1168,7 @@ export default function DashboardMessages() {
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
-                This conversation has been closed by your leader.
+                This conversation has been closed.
               </div>
             ) : (
               <ChatInput
@@ -949,7 +1176,13 @@ export default function DashboardMessages() {
                   void handleSend(content)
                 }}
                 disabled={sending}
-                placeholder="Message your leader…"
+                placeholder={
+                  isGroupChat
+                    ? `Message ${activeConv?.scope_value} Forum…`
+                    : isDeptChat
+                    ? `Message ${activeConv?.scope_value}…`
+                    : 'Message your leader…'
+                }
               />
             )}
           </div>

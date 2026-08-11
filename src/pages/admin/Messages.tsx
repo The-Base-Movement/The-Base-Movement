@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { messagingService } from '@/services/messagingService'
+import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
 import type { Conversation, ConversationSummary, Message } from '@/types/admin'
@@ -23,6 +24,9 @@ export default function AdminMessages() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
   const [activeConv, setActiveConv] = useState<ConversationSummary | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
+  const [memberProfilesMap, setMemberProfilesMap] = useState<
+    Record<string, { full_name: string | null; avatar_url: string | null }>
+  >({})
   const [loading, setLoading] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [sending, setSending] = useState(false)
@@ -57,7 +61,6 @@ export default function AdminMessages() {
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConv?.id])
 
   // Realtime on active conversation
@@ -73,8 +76,34 @@ export default function AdminMessages() {
       }
     })
     return unsub
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConv?.id])
+
+  // Resolve member profiles for senders in thread
+  useEffect(() => {
+    if (!messages || messages.length === 0) return
+    const missingSenderIds = messages
+      .map((m) => m.sender_id)
+      .filter((id) => id && id !== user?.id && !memberProfilesMap[id])
+
+    const uniqueMissing = Array.from(new Set(missingSenderIds))
+    if (uniqueMissing.length === 0) return
+
+    let isMounted = true
+    void (async () => {
+      const profiles = await getPublicDirectoryProfiles(uniqueMissing)
+      if (!isMounted) return
+      setMemberProfilesMap((prev) => {
+        const next = { ...prev }
+        for (const p of profiles) {
+          next[p.id] = { full_name: p.full_name, avatar_url: p.avatar_url }
+        }
+        return next
+      })
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [messages, user?.id, memberProfilesMap])
 
   // Auto-scroll
   useEffect(() => {
@@ -156,6 +185,11 @@ export default function AdminMessages() {
           <div style={{ overflowY: 'auto', flex: 1 }}>
             {conversations.map((conv) => {
               const isActive = activeConv?.id === conv.id
+              const isGroup = conv.scope_type?.startsWith('group_')
+              const displayName =
+                conv.member?.full_name ??
+                (isGroup ? `📢 ${conv.scope_value} Forum` : conv.scope_value)
+
               return (
                 <button
                   key={conv.id}
@@ -181,7 +215,7 @@ export default function AdminMessages() {
                   {conv.member?.avatar_url ? (
                     <img
                       src={conv.member.avatar_url}
-                      alt={conv.member.full_name}
+                      alt={displayName}
                       style={{
                         width: 36,
                         height: 36,
@@ -190,6 +224,24 @@ export default function AdminMessages() {
                         flexShrink: 0,
                       }}
                     />
+                  ) : isGroup ? (
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: '50%',
+                        background: 'hsl(var(--primary))',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                        forum
+                      </span>
+                    </div>
                   ) : (
                     <div
                       style={{
@@ -206,7 +258,7 @@ export default function AdminMessages() {
                         flexShrink: 0,
                       }}
                     >
-                      {memberInitial(conv.member?.full_name)}
+                      {memberInitial(displayName)}
                     </div>
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -228,7 +280,7 @@ export default function AdminMessages() {
                           textOverflow: 'ellipsis',
                         }}
                       >
-                        {conv.member?.full_name ?? 'Member'}
+                        {displayName}
                       </span>
                       <span
                         style={{
@@ -336,7 +388,10 @@ export default function AdminMessages() {
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
-                    {activeConv.member?.full_name ?? 'Member'}
+                    {activeConv.member?.full_name ??
+                      (activeConv.scope_type?.startsWith('group_')
+                        ? `📢 ${activeConv.scope_value} Community Forum`
+                        : activeConv.scope_value)}
                   </p>
                   <p
                     style={{
@@ -346,7 +401,10 @@ export default function AdminMessages() {
                       fontFamily: "'Public Sans', sans-serif",
                     }}
                   >
-                    {activeConv.member?.registration_number ?? ''} · {activeConv.scope_value}
+                    {activeConv.member?.registration_number
+                      ? `${activeConv.member.registration_number} · `
+                      : ''}
+                    {activeConv.scope_value}
                   </p>
                 </div>
                 {activeConv.status === 'open' && (
@@ -395,19 +453,29 @@ export default function AdminMessages() {
                     No messages yet.
                   </p>
                 ) : null}
-                {messages.map((msg) => (
-                  <ChatBubble
-                    key={msg.id}
-                    content={msg.content}
-                    isSelf={msg.sender_type === 'leader'}
-                    timestamp={msg.created_at}
-                    senderName={
-                      msg.sender_type === 'member'
-                        ? (activeConv.member?.full_name ?? 'Member')
-                        : undefined
+                {messages.map((msg) => {
+                  const isSelf = msg.sender_type === 'leader' && msg.sender_id === user?.id
+                  let senderName: string | undefined = undefined
+                  if (!isSelf) {
+                    if (msg.sender_type === 'member') {
+                      senderName =
+                        activeConv.member?.full_name ??
+                        (memberProfilesMap[msg.sender_id]?.full_name ?? 'Member')
+                    } else {
+                      senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Leader/Admin'
                     }
-                  />
-                ))}
+                  }
+
+                  return (
+                    <ChatBubble
+                      key={msg.id}
+                      content={msg.content}
+                      isSelf={isSelf}
+                      timestamp={msg.created_at}
+                      senderName={senderName}
+                    />
+                  )
+                })}
                 <div ref={bottomRef} />
               </div>
 
@@ -431,7 +499,9 @@ export default function AdminMessages() {
                     void handleSend(content)
                   }}
                   disabled={sending}
-                  placeholder={`Reply to ${activeConv.member?.full_name ?? 'member'}…`}
+                  placeholder={`Reply to ${
+                    activeConv.member?.full_name ?? activeConv.scope_value
+                  }…`}
                 />
               )}
             </>
