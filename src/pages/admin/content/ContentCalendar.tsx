@@ -404,7 +404,7 @@ export default function ContentCalendar() {
           {viewMode === 'grid' && (
         <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
           {/* Day of Week Headers */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--surface))' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', borderBottom: '1px solid hsl(var(--border))', background: 'hsl(var(--surface))' }}>
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
               <div
                 key={d}
@@ -416,6 +416,7 @@ export default function ContentCalendar() {
                   color: 'hsl(var(--on-surface-muted))',
                   textTransform: 'uppercase',
                   borderRight: '1px solid hsl(var(--border))',
+                  minWidth: 0,
                 }}
               >
                 {d}
@@ -424,7 +425,7 @@ export default function ContentCalendar() {
           </div>
 
           {/* Month Grid Cells */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gridAutoRows: 'minmax(110px, auto)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))', gridAutoRows: 'minmax(110px, auto)' }}>
             {calendarDays.map((day, idx) => {
               const dayItems = itemsByDate.get(day.dateStr) || []
               const isToday = day.dateStr === todayStr
@@ -446,6 +447,8 @@ export default function ContentCalendar() {
                     display: 'flex',
                     flexDirection: 'column',
                     minHeight: 110,
+                    minWidth: 0,
+                    overflow: 'hidden',
                     cursor: 'pointer',
                     transition: 'background 0.15s ease',
                   }}
@@ -499,10 +502,17 @@ export default function ContentCalendar() {
                             borderRadius: 'var(--radius-xs)',
                             fontSize: 11,
                             fontWeight: 500,
-                            whiteSpace: 'nowrap',
+                            whiteSpace: 'normal',
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                            lineHeight: 1.25,
+                            maxHeight: '3.6em',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
                             cursor: 'pointer',
+                            minWidth: 0,
                           }}
                         >
                           <span style={{ fontWeight: 700, marginRight: 4, textTransform: 'uppercase', fontSize: 9 }}>
