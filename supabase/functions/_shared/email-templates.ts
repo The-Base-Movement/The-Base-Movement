@@ -703,3 +703,47 @@ export function passwordResetEmail(d: PasswordResetEmailData): string {
   </div>
   ${SHELL_CLOSE}`
 }
+
+// ---------------------------------------------------------------------------
+// 08 · Unlogged member dashboard activation nudge
+// ---------------------------------------------------------------------------
+
+export interface UnloggedMemberNudgeEmailData {
+  name: string
+  regNo: string
+  chapter?: string
+  loginUrl: string
+}
+
+export function unloggedMemberNudgeEmail(d: UnloggedMemberNudgeEmailData): string {
+  const chapterInfo = d.chapter ? ` (Chapter: ${d.chapter})` : ''
+  return `${SHELL_OPEN}
+  <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
+    Access your dashboard to verify your membership and claim your digital card.
+  </div>
+  <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
+    ${TOP_BAR}
+    ${emailHeader('Member portal')}
+    ${heroBlock('Ghana First')}
+    <div class="email-body" style="padding:28px 28px 24px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Akwaaba, ${d.name} 🇬🇭</div>
+      <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Activate your member dashboard & verify your membership.</h1>
+      <p style="line-height:1.65;color:#444;margin-bottom:14px">You registered as an official member of The Base Movement (Registration No: <strong>${d.regNo}</strong>${chapterInfo}), but you haven't accessed your member portal yet.</p>
+      
+      <div style="background:#f6fbf4;border:1px solid #d4edda;border-radius:4px;padding:18px 20px;margin:20px 0">
+        <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 10px">What you can do in your member dashboard:</h2>
+        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>1. Verify your membership</strong> — Confirm your profile details and identity verification.</p>
+        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>2. Claim your digital ID card</strong> — Download your official membership card with QR code.</p>
+        <p style="line-height:1.6;color:#333;margin-bottom:0"><strong>3. Participate in regional polls</strong> — Vote on issues affecting your constituency & branch.</p>
+      </div>
+
+      ${ctaButton('Access My Dashboard →', d.loginUrl, '#006B3F')}
+
+      <hr style="border:0;border-top:1px solid #eee;margin:18px 0">
+      <p style="line-height:1.65;color:#888;font-size:12px;margin:0">Need help logging in? Click "Forgot Password" on the login page or contact support@thebasemovement.org.gh.</p>
+    </div>
+    ${emailFooter(`Ghana First, jobs for the youth! · The Base Movement · Accra, Ghana · www.thebasemovement.org.gh`)}
+  </div>
+${SHELL_CLOSE}`
+}
+
