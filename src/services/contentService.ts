@@ -1001,6 +1001,7 @@ class ContentService {
     if (error || !data || data.length === 0) {
       return [
         { id: 'blog-images', label: 'Blog Posts' },
+        { id: 'events-media', label: 'Field Events' },
         { id: 'editor-content', label: 'Editor Media' },
         { id: 'branding', label: 'Branding Assets' },
         { id: 'author-images', label: 'Authors' },
@@ -1018,6 +1019,9 @@ class ContentService {
       label: item.label,
     }))
 
+    if (!foldersList.some((f) => f.id === 'events-media' || f.id === 'events' || f.id === 'field-events')) {
+      foldersList.push({ id: 'events-media', label: 'Field Events' })
+    }
     if (!foldersList.some((f) => f.id === 'party-affiliations')) {
       foldersList.push({ id: 'party-affiliations', label: 'Party Affiliations / CSO' })
     }
