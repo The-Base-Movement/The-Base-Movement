@@ -34,7 +34,16 @@ const REGIONS = [
   'Western North',
 ]
 
-const EVENT_TYPES: FieldEvent['type'][] = ['Town Hall', 'Rally', 'Recruitment', 'Training']
+const DEFAULT_EVENT_TYPES = [
+  'Town Hall',
+  'Rally',
+  'Mobilization Walk',
+  'Job Workshop',
+  'Community Action',
+  'Diaspora Meetup',
+  'Recruitment',
+  'Training',
+]
 const EVENT_STATUSES: FieldEvent['status'][] = ['Planned', 'In Progress', 'Completed', 'Cancelled']
 
 type EventFormData = Omit<FieldEvent, 'id'>
@@ -69,8 +78,15 @@ export default function AdminEvents() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingEvent, setEditingEvent] = useState<FieldEvent | null>(null)
   const [formData, setFormData] = useState<EventFormData>(EMPTY_FORM)
+  const [isCustomCategory, setIsCustomCategory] = useState(false)
+  const [customCategoryInput, setCustomCategoryInput] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploadingBanner, setIsUploadingBanner] = useState(false)
+
+  const availableCategories = useMemo(() => {
+    const customTypes = events.map((e) => e.type).filter(Boolean)
+    return Array.from(new Set([...DEFAULT_EVENT_TYPES, ...customTypes]))
+  }, [events])
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
 
@@ -105,6 +121,8 @@ export default function AdminEvents() {
 
   // Open Create / Edit Modal
   const handleOpenModal = (event?: FieldEvent) => {
+    setIsCustomCategory(false)
+    setCustomCategoryInput('')
     if (event) {
       setEditingEvent(event)
       setFormData({
@@ -160,18 +178,25 @@ export default function AdminEvents() {
       return
     }
 
+    const payload = {
+      ...formData,
+      type: (isCustomCategory && customCategoryInput.trim()
+        ? customCategoryInput.trim()
+        : formData.type) as FieldEvent['type'],
+    }
+
     setIsSubmitting(true)
     try {
       let success = false
       if (editingEvent) {
-        success = await adminService.updateFieldEvent(editingEvent.id, formData)
+        success = await adminService.updateFieldEvent(editingEvent.id, payload)
       } else {
-        success = await adminService.createFieldEvent(formData)
+        success = await adminService.createFieldEvent(payload)
       }
 
       if (success) {
         toast.success(editingEvent ? 'Event updated successfully' : 'Field event created & scheduled', {
-          description: `"${formData.title}" has been synced to the field database.`,
+          description: `"${payload.title}" has been synced to the field database.`,
         })
         setIsModalOpen(false)
         fetchEvents()
@@ -396,7 +421,7 @@ export default function AdminEvents() {
               }}
             >
               <option value="all">All Categories</option>
-              {EVENT_TYPES.map((t) => (
+              {availableCategories.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -795,8 +820,15 @@ export default function AdminEvents() {
                     Category Type *
                   </label>
                   <select
-                    value={formData.type}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value as FieldEvent['type'] }))}
+                    value={isCustomCategory ? '__CUSTOM__' : formData.type}
+                    onChange={(e) => {
+                      if (e.target.value === '__CUSTOM__') {
+                        setIsCustomCategory(true)
+                      } else {
+                        setIsCustomCategory(false)
+                        setFormData((prev) => ({ ...prev, type: e.target.value as FieldEvent['type'] }))
+                      }
+                    }}
                     style={{
                       width: '100%',
                       height: 38,
@@ -808,12 +840,36 @@ export default function AdminEvents() {
                       fontSize: 13,
                     }}
                   >
-                    {EVENT_TYPES.map((t) => (
+                    {availableCategories.map((t) => (
                       <option key={t} value={t}>
                         {t}
                       </option>
                     ))}
+                    <option value="__CUSTOM__">+ Add Custom Category...</option>
                   </select>
+
+                  {isCustomCategory && (
+                    <input
+                      type="text"
+                      placeholder="Type custom category name..."
+                      value={customCategoryInput}
+                      onChange={(e) => {
+                        setCustomCategoryInput(e.target.value)
+                        setFormData((prev) => ({ ...prev, type: e.target.value as FieldEvent['type'] }))
+                      }}
+                      style={{
+                        marginTop: 6,
+                        width: '100%',
+                        height: 36,
+                        padding: '0 12px',
+                        borderRadius: 'var(--radius-sm)',
+                        border: '1px solid hsl(var(--primary))',
+                        background: 'hsl(var(--surface))',
+                        color: 'hsl(var(--on-surface))',
+                        fontSize: 13,
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div>

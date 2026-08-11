@@ -120,7 +120,7 @@ export default function Events() {
     description: '',
   })
 
-  // Permission check: Only Super Admin, Editors, Chapter Leads, Constituency Leads, and Secretaries can create events
+  // Permission check: National admins can create events on public & dashboard surfaces; local leads only inside dashboard wall
   useEffect(() => {
     let cancelled = false
     async function checkPermission() {
@@ -130,13 +130,38 @@ export default function Events() {
       }
       try {
         const currentAdmin = adminService.getCurrentUser()
-        const isChapterLead = await adminService.isChapterLeader(user.id)
-        if (cancelled) return
         const roleUpper = (currentAdmin?.role || '').toUpperCase()
-        const isAuthorized =
-          ['SUPER_ADMIN', 'FOUNDER', 'ADMIN', 'ADMIN_L2', 'WEB_APP_MANAGER', 'COMMUNICATIONS_OFFICER', 'EDITOR', 'CHAPTER_LEADER', 'CHAPTER_SECRETARY', 'CONSTITUENCY_LEADER', 'CONSTITUENCY_SECRETARY'].includes(roleUpper) ||
-          isChapterLead
-        setCanCreate(isAuthorized)
+
+        const isNationalAdmin = [
+          'SUPER_ADMIN',
+          'FOUNDER',
+          'ADMIN',
+          'ADMIN_L2',
+          'WEB_APP_MANAGER',
+          'COMMUNICATIONS_OFFICER',
+          'EDITOR',
+        ].includes(roleUpper)
+
+        if (isNationalAdmin) {
+          if (!cancelled) setCanCreate(true)
+          return
+        }
+
+        // Constituency & Chapter leads can ONLY create events when inside the authenticated dashboard (/dashboard/events)
+        if (isDashboard) {
+          const isChapterLead = await adminService.isChapterLeader(user.id)
+          if (cancelled) return
+          const isLocalLead =
+            [
+              'CHAPTER_LEADER',
+              'CHAPTER_SECRETARY',
+              'CONSTITUENCY_LEADER',
+              'CONSTITUENCY_SECRETARY',
+            ].includes(roleUpper) || isChapterLead
+          setCanCreate(isLocalLead)
+        } else {
+          if (!cancelled) setCanCreate(false)
+        }
       } catch {
         if (!cancelled) setCanCreate(false)
       }
@@ -145,7 +170,7 @@ export default function Events() {
     return () => {
       cancelled = true
     }
-  }, [user])
+  }, [user, isDashboard])
 
   const filteredEvents = useMemo(() => {
     return eventsList.filter((evt) => {
