@@ -16,7 +16,7 @@ import type { Area } from 'react-easy-crop'
 import SEO from '@/components/SEO'
 import { OfflineBanner } from '@/components/OfflineBanner'
 import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
-import { saveDraftRegistration } from '@/utils/offlineDb'
+import { saveDraftRegistration, type DraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
 import { validatePhone, cleanPhoneInput, capToCountryDigits } from '@/lib/phoneValidation'
 
@@ -59,6 +59,7 @@ export default function Register() {
   const [isScanningForm, setIsScanningForm] = useState(false)
   const [scanStatus, setScanStatus] = useState('Scanning form…')
   const [offlineSubmitted, setOfflineSubmitted] = useState(false)
+  const [latestOfflineDraft, setLatestOfflineDraft] = useState<DraftRegistration | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
   const platformRailRef = useRef<HTMLDivElement | null>(null)
@@ -306,7 +307,7 @@ export default function Register() {
       }
       if (!isOnline) {
         try {
-          await saveDraftRegistration({
+          const savedDraft = await saveDraftRegistration({
             platform,
             formData,
             photoUrl,
@@ -314,6 +315,7 @@ export default function Register() {
             usedScan,
             refParam,
           })
+          setLatestOfflineDraft(savedDraft)
           setOfflineSubmitted(true)
           toast.success('Registration saved locally. It will auto-sync once signal is restored!')
           window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -335,12 +337,13 @@ export default function Register() {
           if (!navigator.onLine) {
             // Sudden signal loss fallback
             try {
-              await saveDraftRegistration({
+              const savedDraft = await saveDraftRegistration({
                 platform,
                 formData,
                 usedScan,
                 refParam,
               })
+              setLatestOfflineDraft(savedDraft)
               setOfflineSubmitted(true)
               toast.success('Connection lost during submission. Saved securely as offline draft!')
               window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -386,6 +389,7 @@ export default function Register() {
     setFormStep(1)
     setPhotoUrl(null)
     setCroppedAreaPixels(null)
+    setLatestOfflineDraft(null)
     setOfflineSubmitted(false)
     setSubmitted(false)
   }
@@ -411,7 +415,12 @@ export default function Register() {
   if (offlineSubmitted) {
     return (
       <main className="bg-container-low min-h-screen py-12 px-4 flex items-center justify-center">
-        <OfflineSuccessStep formData={formData} onRegisterAnother={handleRegisterAnother} />
+        <OfflineSuccessStep
+          draft={latestOfflineDraft}
+          formData={formData}
+          photoUrl={photoUrl}
+          onRegisterAnother={handleRegisterAnother}
+        />
       </main>
     )
   }

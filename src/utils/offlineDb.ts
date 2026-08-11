@@ -12,7 +12,15 @@ export interface DraftRegistration {
   refParam: string | null
   createdAt: number
   status: 'pending' | 'syncing' | 'failed'
+  provisionalRegNo?: string
   errorMessage?: string
+}
+
+export function generateProvisionalRegNo(platform: string): string {
+  const code = platform.toUpperCase() === 'DIASPORA' ? 'DI' : 'GH'
+  const year = new Date().getFullYear().toString().slice(-2)
+  const rand = Math.random().toString(36).substring(2, 6).toUpperCase()
+  return `TBM-${code}-${year}OFF-${rand}`
 }
 
 const DB_NAME = 'tbm_offline_db'
@@ -42,6 +50,7 @@ export async function saveDraftRegistration(
   const fullDraft: DraftRegistration = {
     ...draft,
     id: `draft_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    provisionalRegNo: draft.provisionalRegNo || generateProvisionalRegNo(draft.platform),
     createdAt: Date.now(),
     status: 'pending',
   }

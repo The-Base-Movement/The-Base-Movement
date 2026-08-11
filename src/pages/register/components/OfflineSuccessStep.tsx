@@ -1,11 +1,13 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import type { RegistrationFormData } from '@/types/registration'
+import type { DraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
 
 interface OfflineSuccessStepProps {
   formData: RegistrationFormData
   photoUrl?: string | null
   selfieUrl?: string | null
+  draft?: DraftRegistration | null
   onRegisterAnother: () => void
 }
 
@@ -13,12 +15,16 @@ export function OfflineSuccessStep({
   formData,
   photoUrl,
   selfieUrl,
+  draft,
   onRegisterAnother,
 }: OfflineSuccessStepProps) {
   const { isOnline, isSyncing, triggerSync } = useOfflineSync()
   const [syncInitiated, setSyncInitiated] = useState(false)
 
   const firstName = formData.fullName.split(' ')[0]
+  const provisionalId =
+    draft?.provisionalRegNo ||
+    `TBM-${formData.country === 'Ghana' ? 'GH' : 'DI'}-${new Date().getFullYear().toString().slice(-2)}OFF-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
 
   const handleManualSync = async () => {
     if (!isOnline || isSyncing) return
@@ -29,9 +35,9 @@ export function OfflineSuccessStep({
   return (
     <div className="max-w-2xl mx-auto w-full animate-in fade-in slide-in-from-bottom-4">
       {/* Success Title Header */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-8">
         <div
-          className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6"
+          className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
           style={{
             background: 'rgba(234, 179, 8, 0.12)', // gold transparency
             color: '#eab308',
@@ -50,7 +56,67 @@ export function OfflineSuccessStep({
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
+        {/* Provisional Reference ID Card — Collision Prevention Tag */}
+        <div
+          className="panel"
+          style={{
+            padding: '20px 24px',
+            position: 'relative',
+            overflow: 'hidden',
+            background: 'hsl(var(--surface))',
+            borderLeft: '4px solid hsl(var(--accent))',
+          }}
+        >
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: 'hsl(var(--on-surface-muted))',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Provisional Reference Tracking Code
+            </span>
+            <span
+              className="pill font-medium text-[10px]"
+              style={{
+                background: 'hsl(var(--accent) / 0.15)',
+                color: 'hsl(var(--accent))',
+                border: '1px solid hsl(var(--accent) / 0.3)',
+                padding: '2px 8px',
+              }}
+            >
+              PENDING UPLINK SYNC
+            </span>
+          </div>
+
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 800,
+              fontFamily: 'monospace',
+              color: 'hsl(var(--on-surface))',
+              letterSpacing: '0.05em',
+              marginBottom: 6,
+            }}
+          >
+            {provisionalId}
+          </div>
+
+          <p
+            style={{
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+              lineHeight: 1.5,
+              margin: 0,
+            }}
+          >
+            <strong>Conflict Prevention:</strong> Unique provisional tracking code prevents duplicate ID conflicts across field canvassers. Your permanent official ID (e.g. <code>TBM-GH-2600000028</code>) will be assigned by central HQ sequence counter as soon as signal is restored.
+          </p>
+        </div>
         {/* Offline Status Vault Panel */}
         <div
           className="panel"
