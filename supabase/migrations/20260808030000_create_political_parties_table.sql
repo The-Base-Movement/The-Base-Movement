@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.political_parties (
 ALTER TABLE public.political_parties ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to political parties
+DROP POLICY IF EXISTS "Allow public read access on political_parties" ON public.political_parties;
 CREATE POLICY "Allow public read access on political_parties"
   ON public.political_parties
   FOR SELECT
