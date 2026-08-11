@@ -250,6 +250,8 @@ export interface FieldEvent {
   budget_allocated: number
   budget_spent: number
   type: 'Rally' | 'Town Hall' | 'Recruitment' | 'Training'
+  image_url?: string
+  description?: string
 }
 
 export interface MobilizationLedger {
