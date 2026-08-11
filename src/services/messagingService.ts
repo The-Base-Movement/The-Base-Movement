@@ -150,35 +150,34 @@ class MessagingService {
   }
 
   private async resolveDepartmentLeader(departmentId: string): Promise<string | null> {
-    const { data: dept, error } = await supabase
+    const { data: dept } = await supabase
       .from('helpdesk_departments')
       .select('id, lead_id, handler_roles')
       .eq('id', departmentId)
       .maybeSingle()
 
-    if (!dept) {
-      console.warn(
-        '[MessagingService] resolveDepartmentLeader failed: department missing',
-        departmentId,
-        error
-      )
-      return null
+    if (dept?.lead_id) return dept.lead_id as string
+
+    let handlerRoles = (
+      (dept as unknown as { handler_roles?: string[] })?.handler_roles ?? []
+    ).filter(Boolean)
+
+    if (handlerRoles.length === 0) {
+      const catalog = getDepartmentCatalogRow(departmentId)
+      if (catalog) handlerRoles = catalog.handler_roles ?? []
     }
 
-    if (dept.lead_id) return dept.lead_id as string
+    if (handlerRoles.length > 0) {
+      const { data: admin } = await supabase
+        .from('admins')
+        .select('id')
+        .in('role', handlerRoles)
+        .limit(1)
+        .maybeSingle()
+      if (admin?.id) return admin.id as string
+    }
 
-    const handlerRoles = (
-      (dept as unknown as { handler_roles?: string[] }).handler_roles ?? []
-    ).filter(Boolean)
-    if (handlerRoles.length === 0) return null
-
-    const { data: admin } = await supabase
-      .from('admins')
-      .select('id')
-      .in('role', handlerRoles)
-      .limit(1)
-      .maybeSingle()
-    return admin ? (admin as { id: string }).id : null
+    return this.resolveHQLeader()
   }
 
   private async resolveHQLeader(): Promise<string | null> {
@@ -541,20 +540,29 @@ class MessagingService {
 
     if (error) {
       console.warn('[MessagingService] getDepartments failed:', error)
-      return []
     }
+
+    const dbDepts = (data as unknown as DepartmentRow[] | null) ?? []
+    const catalogRows = getDepartmentCatalogRows()
+    const finalDepts =
+      dbDepts.length > 0
+        ? dbDepts
+        : catalogRows.map((c) => ({
+            id: c.id,
+            name: c.name,
+            icon: c.icon,
+            lead_id: c.lead_id,
+          }))
 
     const leadMap = new Map(
       (
         await getPublicDirectoryProfiles(
-          ((data as DepartmentRow[] | null) ?? [])
-            .map((dept) => dept.lead_id)
-            .filter(Boolean) as string[]
+          finalDepts.map((dept) => dept.lead_id).filter(Boolean) as string[]
         )
       ).map((profile) => [profile.id, profile])
     )
 
-    return ((data as unknown as DepartmentRow[] | null) ?? []).map((dept) => ({
+    return finalDepts.map((dept) => ({
       id: dept.id,
       name: dept.name,
       icon: dept.icon,
@@ -590,12 +598,10 @@ class MessagingService {
       .eq('id', departmentId)
       .maybeSingle()
 
-    if (!dept) {
-      console.warn('[MessagingService] Department not found:', departmentId)
-      return null
-    }
+    const catalogEntry = getDepartmentCatalogRow(departmentId)
+    const deptName = dept?.name || catalogEntry?.name || 'Secretariat'
 
-    const leaderId = dept.lead_id ?? (await this.resolveDepartmentLeader(departmentId))
+    const leaderId = dept?.lead_id ?? (await this.resolveDepartmentLeader(departmentId))
     if (!leaderId) {
       console.warn('[MessagingService] Department has no lead or matching handler:', departmentId)
       return null
@@ -608,7 +614,7 @@ class MessagingService {
         member_id: memberUserId,
         leader_id: leaderId,
         scope_type: 'department',
-        scope_value: dept.name,
+        scope_value: deptName,
         department_id: departmentId,
       })
       .select()
@@ -639,15 +645,14 @@ class MessagingService {
       .eq('id', departmentId)
       .maybeSingle()
 
-    if (!dept) return null
+    const catalog = getDepartmentCatalogRow(departmentId)
+    const name = dept?.name || catalog?.name || 'Department'
+    const leadId = (dept as unknown as DeptRow | null)?.lead_id
 
-    const deptData = dept as unknown as DeptRow
-    const [leadProfile] = deptData.lead_id
-      ? await getPublicDirectoryProfiles([deptData.lead_id])
-      : []
+    const [leadProfile] = leadId ? await getPublicDirectoryProfiles([leadId]) : []
     return {
-      id: deptData.id,
-      full_name: deptData.name,
+      id: departmentId,
+      full_name: name,
       role: 'DEPARTMENT',
       avatar_url: leadProfile?.avatar_url ?? null,
     }
