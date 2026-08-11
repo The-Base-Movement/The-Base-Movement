@@ -44,9 +44,9 @@ export const emptyJobSelection: JobSelection = {
 
 /** True once the user has made a valid, complete job selection. */
 export function isJobSelectionComplete(s: JobSelection): boolean {
-  if (!s.industryId || !s.subCategoryId) return false
+  if (!s.industryId) return false
   if (s.isOther) return s.customTitle.trim().length > 0
-  return !!s.roleId
+  return true
 }
 
 /** One row per member with a saved job (from the role-gated analytics RPC). */

@@ -1,25 +1,28 @@
-import { type CSSProperties, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useState, startTransition } from 'react'
 import {
   jobTaxonomyService,
+  type JobIndustry,
   type JobSelection,
-  type JobTaxonomy,
 } from '@/services/jobTaxonomyService'
 
+export interface JobSelectorOutput {
+  job_industry_id: number | null
+  job_sub_category_id: number | null
+  job_role_id: number | null
+  profession: string
+  job_custom_title: string | null
+}
+
 interface JobSelectorProps {
-  value: JobSelection
-  onChange: (next: JobSelection) => void
-  /** Show a required asterisk + treat empty as invalid when `error` is supplied. */
+  value?: JobSelection
+  onChange?: (next: JobSelection) => void
+  onSelectionChange?: (data: JobSelectorOutput) => void
   required?: boolean
-  /** External validation message to show under the control. */
   error?: string
   idPrefix?: string
   disabled?: boolean
-  /** Fires with the human-readable selection (role name or custom title) so the
-   *  caller can keep a denormalised `profession` field in sync for display. */
   onLabelChange?: (label: string) => void
 }
-
-const OTHER = 'other'
 
 const labelStyle: CSSProperties = {
   display: 'block',
@@ -47,103 +50,132 @@ const fieldStyle: CSSProperties = {
 }
 
 /**
- * Dependent Industry → Sub-Category → Job Role selector driven by the approved
- * job taxonomy. Reveals a free-text field when "Other" is chosen. Reusable on
- * the registration form and the profile/settings page.
+ * Streamlined single-tier top-level Industry / Sector selector.
+ * Reduces registration friction while maintaining 100% analytics compatibility.
  */
 export function JobSelector({
   value,
   onChange,
+  onSelectionChange,
   required,
   error,
   idPrefix = 'job',
   disabled,
   onLabelChange,
 }: JobSelectorProps) {
-  const [tax, setTax] = useState<JobTaxonomy | null>(null)
+  const [industries, setIndustries] = useState<JobIndustry[]>([])
+  const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
 
   useEffect(() => {
     let alive = true
     jobTaxonomyService
       .getTaxonomy()
-      .then((t) => alive && setTax(t))
-      .catch(() => alive && setLoadError(true))
+      .then((t) => {
+        if (alive) {
+          setIndustries(t.industries || [])
+          setLoading(false)
+        }
+      })
+      .catch(() => {
+        if (alive) {
+          setLoadError(true)
+          setLoading(false)
+        }
+      })
     return () => {
       alive = false
     }
   }, [])
 
-  // Keep the caller's denormalised profession label in sync with the selection.
-  useEffect(() => {
-    if (!onLabelChange) return
-    if (value.isOther) {
-      onLabelChange(value.customTitle.trim())
-    } else if (value.roleId && tax) {
-      onLabelChange(tax.roles.find((r) => r.id === value.roleId)?.name ?? '')
-    } else {
-      onLabelChange('')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value.roleId, value.isOther, value.customTitle, tax])
+  const selectedIndustryId = value?.industryId ?? null
+  const customTitle = value?.customTitle ?? ''
+  const isOther = value?.isOther ?? false
 
-  const subCategories = useMemo(
-    () =>
-      tax && value.industryId
-        ? tax.subCategories.filter((s) => s.industry_id === value.industryId)
-        : [],
-    [tax, value.industryId]
-  )
-  const roles = useMemo(
-    () =>
-      tax && value.subCategoryId
-        ? tax.roles.filter((r) => r.sub_category_id === value.subCategoryId)
-        : [],
-    [tax, value.subCategoryId]
-  )
+  const handleSectorChange = (industryIdStr: string) => {
+    const indId = industryIdStr ? Number(industryIdStr) : null
+    const sector = industries.find((i) => i.id === indId)
+    const checkIsOther = sector ? sector.name.toLowerCase().includes('other') : false
+
+    const nextSelection: JobSelection = {
+      industryId: indId,
+      subCategoryId: null,
+      roleId: null,
+      isOther: checkIsOther,
+      customTitle: checkIsOther ? customTitle : '',
+    }
+
+    const label = checkIsOther ? (customTitle.trim() || 'Other') : (sector?.name || '')
+
+    startTransition(() => {
+      onChange?.(nextSelection)
+      onLabelChange?.(label)
+      onSelectionChange?.({
+        job_industry_id: indId,
+        job_sub_category_id: null,
+        job_role_id: null,
+        profession: label,
+        job_custom_title: checkIsOther ? (customTitle.trim() || null) : null,
+      })
+    })
+  }
+
+  const handleCustomTitleChange = (newTitle: string) => {
+    const nextSelection: JobSelection = {
+      industryId: selectedIndustryId,
+      subCategoryId: null,
+      roleId: null,
+      isOther: true,
+      customTitle: newTitle,
+    }
+
+    const label = newTitle.trim() || 'Other'
+
+    startTransition(() => {
+      onChange?.(nextSelection)
+      onLabelChange?.(label)
+      onSelectionChange?.({
+        job_industry_id: selectedIndustryId,
+        job_sub_category_id: null,
+        job_role_id: null,
+        profession: label,
+        job_custom_title: newTitle.trim() || null,
+      })
+    })
+  }
 
   const star = required ? <span style={{ color: 'hsl(var(--destructive))' }}> *</span> : null
 
   if (loadError) {
     return (
       <p style={{ fontSize: 13, color: 'hsl(var(--destructive))', margin: 0 }}>
-        Couldn’t load the job list. Please refresh and try again.
+        Couldn’t load the industry list. Please refresh and try again.
       </p>
     )
   }
 
-  const loading = !tax
-  const selectStyle = (enabled: boolean): CSSProperties => ({
+  const selectStyle: CSSProperties = {
     ...fieldStyle,
-    cursor: enabled ? 'pointer' : 'not-allowed',
-    opacity: enabled ? 1 : 0.55,
-  })
+    cursor: !disabled && !loading ? 'pointer' : 'not-allowed',
+    opacity: !disabled && !loading ? 1 : 0.55,
+  }
 
   return (
     <div style={{ display: 'grid', gap: 14 }}>
-      {/* Industry */}
+      {/* Industry / Sector Dropdown */}
       <div>
         <label htmlFor={`${idPrefix}-industry`} style={labelStyle}>
-          Industry{star}
+          Occupation / Primary Industry{star}
         </label>
         <select
           id={`${idPrefix}-industry`}
-          value={value.industryId ?? ''}
+          value={selectedIndustryId ?? ''}
           disabled={disabled || loading}
-          style={selectStyle(!disabled && !loading)}
-          onChange={(e) => {
-            const industryId = e.target.value ? Number(e.target.value) : null
-            onChange({
-              industryId,
-              subCategoryId: null,
-              roleId: null,
-              isOther: false,
-              customTitle: '',
-            })
-          }}
+          style={selectStyle}
+          onChange={(e) => handleSectorChange(e.target.value)}
         >
-          <option value="">{loading ? 'Loading…' : 'Select industry'}</option>
-          {tax?.industries.map((i) => (
+          <option value="">{loading ? 'Loading industries…' : '-- Select Industry / Sector --'}</option>
+          {industries.map((i) => (
             <option key={i.id} value={i.id}>
               {i.name}
             </option>
@@ -151,77 +183,20 @@ export function JobSelector({
         </select>
       </div>
 
-      {/* Sub-Category */}
-      <div>
-        <label htmlFor={`${idPrefix}-subcategory`} style={labelStyle}>
-          Sub-Category{star}
-        </label>
-        <select
-          id={`${idPrefix}-subcategory`}
-          value={value.subCategoryId ?? ''}
-          disabled={disabled || loading || !value.industryId}
-          style={selectStyle(!disabled && !loading && !!value.industryId)}
-          onChange={(e) => {
-            const subCategoryId = e.target.value ? Number(e.target.value) : null
-            onChange({ ...value, subCategoryId, roleId: null, isOther: false, customTitle: '' })
-          }}
-        >
-          <option value="">
-            {value.industryId ? 'Select sub-category' : 'Choose an industry first'}
-          </option>
-          {subCategories.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Job Role */}
-      <div>
-        <label htmlFor={`${idPrefix}-role`} style={labelStyle}>
-          Job Role{star}
-        </label>
-        <select
-          id={`${idPrefix}-role`}
-          value={value.isOther ? OTHER : (value.roleId ?? '')}
-          disabled={disabled || loading || !value.subCategoryId}
-          style={selectStyle(!disabled && !loading && !!value.subCategoryId)}
-          onChange={(e) => {
-            const v = e.target.value
-            if (v === OTHER) {
-              onChange({ ...value, roleId: null, isOther: true })
-            } else {
-              onChange({ ...value, roleId: v ? Number(v) : null, isOther: false, customTitle: '' })
-            }
-          }}
-        >
-          <option value="">
-            {value.subCategoryId ? 'Select job role' : 'Choose a sub-category first'}
-          </option>
-          {roles.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-          {value.subCategoryId ? <option value={OTHER}>Other (not listed)…</option> : null}
-        </select>
-      </div>
-
-      {/* Custom title — only when "Other" is selected */}
-      {value.isOther && (
+      {/* Custom Title Input — rendered when "Other" is selected */}
+      {isOther && (
         <div>
           <label htmlFor={`${idPrefix}-custom`} style={labelStyle}>
-            Your job title{star}
+            Please specify your job title{star}
           </label>
           <input
             id={`${idPrefix}-custom`}
             type="text"
-            value={value.customTitle}
+            value={customTitle}
             disabled={disabled}
-            placeholder="Type your actual job title"
+            placeholder="e.g., Kente Weaver, Graphic Designer..."
             style={fieldStyle}
-            onChange={(e) => onChange({ ...value, customTitle: e.target.value })}
+            onChange={(e) => handleCustomTitleChange(e.target.value)}
             maxLength={120}
           />
         </div>
