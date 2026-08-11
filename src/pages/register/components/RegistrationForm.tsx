@@ -95,14 +95,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
   const [psCode, setPsCode] = useState(() => formData.pollingStationCode || '')
   const [codeStation, setCodeStation] = useState<string | null>(null)
   const [codeError, setCodeError] = useState(false)
-  const [isNextLoading, setIsNextLoading] = useState(false)
 
   const derivedBucket = formData.birthYear ? ageBucket(formData.birthYear) : ''
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsNextLoading(false)
-  }, [formStep, formData])
 
   useEffect(() => {
     if (!formData.pollingStationCode) {
@@ -1153,11 +1147,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               )}
               <button
                 type="submit"
-                onClick={() => {
-                  if (formStep < 4) setIsNextLoading(true)
-                }}
                 disabled={
-                  isNextLoading ||
                   (formStep === 4 && !agreed) ||
                   (formStep === 3 && !photoUrl) ||
                   isLoading ||
@@ -1175,7 +1165,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     </span>{' '}
                     Wait {cooldown}s
                   </>
-                ) : isLoading || isNextLoading ? (
+                ) : isLoading ? (
                   <>
                     <span
                       className="material-symbols-outlined"
@@ -1183,7 +1173,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     >
                       progress_activity
                     </span>{' '}
-                    {formStep === 4 ? 'Submitting registration…' : 'Loading Next Step…'}
+                    Submitting registration…
                   </>
                 ) : formStep === 4 ? (
                   'Submit registration →'
