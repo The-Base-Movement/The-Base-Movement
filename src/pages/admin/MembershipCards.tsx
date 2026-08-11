@@ -503,11 +503,11 @@ export default function MembershipCards() {
 
       {/* Tactical KPIs Strip — Grid layout responsive 4-column brand sequence (Red, Yellow, Black, Green) */}
       <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--primary))', position: 'relative', overflow: 'hidden' }}>
+        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--destructive))', position: 'relative', overflow: 'hidden' }}>
           <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Total Filtered Cards
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--primary))' }}>
+          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--destructive))' }}>
             {totalCount.toLocaleString()}
           </p>
         </div>
@@ -530,11 +530,11 @@ export default function MembershipCards() {
           </p>
         </div>
 
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(142, 71%, 45%)', position: 'relative', overflow: 'hidden' }}>
+        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--primary))', position: 'relative', overflow: 'hidden' }}>
           <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Photo Verified Rate
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(142, 71%, 38%)' }}>
+          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--primary))' }}>
             {members.length > 0 ? `${Math.round((verifiedPhotoCount / members.length) * 100)}%` : '0%'}
           </p>
         </div>
