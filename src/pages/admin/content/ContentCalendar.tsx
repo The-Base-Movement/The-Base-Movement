@@ -321,11 +321,11 @@ export default function ContentCalendar() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(38, 92%, 50%)', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Drafts & Pending
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(38, 92%, 50%)', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--accent))', marginTop: 4 }}>
             {stats.draftCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -333,11 +333,11 @@ export default function ContentCalendar() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(271, 91%, 60%)', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(142 71% 45%)', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Mobilization Events
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(271, 91%, 60%)', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(142 71% 45%)', marginTop: 4 }}>
             {stats.eventsCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -345,7 +345,7 @@ export default function ContentCalendar() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Total Pipeline Entries
           </div>

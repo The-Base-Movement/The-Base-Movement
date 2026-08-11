@@ -296,11 +296,11 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(217, 91%, 60%)', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em', marginBottom: 4 }}>
             Expected Attendance
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(217, 91%, 45%)', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
             {stats.totalExpected.toLocaleString()}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
