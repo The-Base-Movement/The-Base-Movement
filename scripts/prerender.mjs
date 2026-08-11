@@ -149,6 +149,20 @@ async function prerenderDynamic(template, distDir) {
         ogType: 'website',
       })
 
+  const { data: events } = await supabase
+    .from('field_events')
+    .select('id, title, description, image_url')
+    .in('status', ['Planned', 'In Progress', 'Completed'])
+  for (const e of events ?? [])
+    if (e.id)
+      pages.push({
+        path: `/events/${e.id}`,
+        title: e.title || 'Mobilization Event',
+        description: e.description,
+        image: absImg(e.image_url),
+        ogType: 'website',
+      })
+
   let written = 0
   for (const page of pages) {
     const html = template.replace('<!--app-head-->', seoHead(page))
@@ -157,7 +171,7 @@ async function prerenderDynamic(template, distDir) {
     fs.writeFileSync(filePath, html)
     written++
   }
-  console.log(`[PRERENDER] Wrote ${written} dynamic SEO pages (blog/officers/jobs).`)
+  console.log(`[PRERENDER] Wrote ${written} dynamic SEO pages (blog/officers/jobs/events).`)
 }
 
 // Main function to run the production SSG build for specified static routes

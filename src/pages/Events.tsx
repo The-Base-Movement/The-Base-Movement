@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, startTransition } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
@@ -60,6 +60,25 @@ export default function Events() {
   const [canCreate, setCanCreate] = useState(false)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [eventsList, setEventsList] = useState<MovementEvent[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const handleCategoryChange = (cat: string) => {
+    startTransition(() => {
+      setSelectedCategory(cat)
+    })
+  }
+
+  const handleRegionChange = (region: string) => {
+    startTransition(() => {
+      setSelectedRegion(region)
+    })
+  }
+
+  const handleSearchChange = (term: string) => {
+    startTransition(() => {
+      setSearchTerm(term)
+    })
+  }
 
   // Fetch live published events from Supabase
   useEffect(() => {
@@ -72,7 +91,10 @@ export default function Events() {
           .in('status', ['Planned', 'In Progress'])
           .order('date', { ascending: false })
 
-        if (error || !data || cancelled) return
+        if (error || !data || cancelled) {
+          if (!cancelled) setIsLoading(false)
+          return
+        }
 
         const liveEvts: MovementEvent[] = (data || []).map((evt: Record<string, any>) => ({
           id: evt.id as string,
@@ -88,9 +110,13 @@ export default function Events() {
           status: evt.status === 'Completed' ? 'Completed' : evt.status === 'In Progress' ? 'In Progress' : 'Planned',
         }))
 
-        if (!cancelled) setEventsList(liveEvts)
+        if (!cancelled) {
+          setEventsList(liveEvts)
+          setIsLoading(false)
+        }
       } catch (err) {
         console.error('[EVENTS] Failed to fetch live events:', err)
+        if (!cancelled) setIsLoading(false)
       }
     }
     loadLiveEvents()
@@ -345,7 +371,7 @@ export default function Events() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className={`btn btn-sm ${selectedCategory === cat ? 'btn-active-tab' : 'btn-inactive-tab'}`}
               style={{ whiteSpace: 'nowrap' }}
             >
@@ -376,7 +402,7 @@ export default function Events() {
               name="events-search"
               placeholder="Search event title, venue, or keywords..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               style={{
                 width: '100%',
                 height: 38,
@@ -397,7 +423,7 @@ export default function Events() {
             id="events-region"
             name="events-region"
             value={selectedRegion}
-            onChange={(e) => setSelectedRegion(e.target.value)}
+            onChange={(e) => handleRegionChange(e.target.value)}
             style={{
               height: 38,
               padding: '0 12px',
@@ -420,7 +446,44 @@ export default function Events() {
       </div>
 
       {/* Events Grid */}
-      {filteredEvents.length === 0 ? (
+      {isLoading ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))',
+            gap: 20,
+          }}
+        >
+          {[1, 2, 3].map((n) => (
+            <div
+              key={n}
+              className="panel"
+              style={{
+                padding: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                height: 280,
+                background: 'hsl(var(--surface))',
+                opacity: 0.7,
+              }}
+            >
+              <div
+                style={{
+                  height: 140,
+                  background: 'hsl(var(--surface-muted) / 0.5)',
+                  animation: 'pulse 1.5s infinite ease-in-out',
+                }}
+              />
+              <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ height: 16, width: '40%', background: 'hsl(var(--border))', borderRadius: 4 }} />
+                <div style={{ height: 20, width: '80%', background: 'hsl(var(--border))', borderRadius: 4 }} />
+                <div style={{ height: 14, width: '90%', background: 'hsl(var(--border))', borderRadius: 4 }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredEvents.length === 0 ? (
         <div
           className="panel"
           style={{
@@ -485,6 +548,8 @@ export default function Events() {
                   <img
                     src={cardBanner}
                     alt={evt.title}
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   <div
