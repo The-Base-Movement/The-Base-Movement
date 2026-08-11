@@ -207,12 +207,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
         )}
         {formStep === 3 && (
           <>
-            03 · Photo <span>Step 3 of {totalSteps}</span>
+            03 · Finalize <span>Step 3 of {totalSteps}</span>
           </>
         )}
         {formStep === 4 && (
           <>
-            04 · Finalize{' '}
+            04 · Photo{' '}
             <span>
               Step {displayStep} of {totalSteps}
             </span>
@@ -226,8 +226,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
           <h2 className="auth-heading">
             {formStep === 1 && 'Create your account'}
             {formStep === 2 && 'Tell us about you'}
-            {formStep === 3 && 'Your membership photo'}
-            {formStep === 4 && 'Final declaration'}
+            {formStep === 3 && 'Final declaration'}
+            {formStep === 4 && 'Your membership photo'}
           </h2>
           <p className="text-[12px] text-on-surface-muted">
             {formStep === 1 && (
@@ -239,8 +239,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
               </>
             )}
             {formStep === 2 && 'Used to assign you to your local branch.'}
-            {formStep === 3 && 'This photo appears on your official membership card.'}
-            {formStep === 4 && 'Almost there, compatriot. Confirm your details.'}
+            {formStep === 3 && 'Almost there, compatriot. Confirm your details.'}
+            {formStep === 4 && 'This photo appears on your official membership card.'}
           </p>
         </div>
 
@@ -1191,7 +1191,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
               </div>
             )}
 
-            {formStep === 3 && (
+            {formStep === 4 && (
               <PhotoCropStep
                 photoUrl={photoUrl}
                 onPhotoChange={onPhotoChange}
@@ -1199,14 +1199,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
               />
             )}
 
-            {formStep === 4 && (
+            {formStep === 3 && (
               <div className="space-y-4 animate-in fade-in duration-500">
                 <div className="space-y-4 animate-in fade-in duration-0">
-                  {/* Job selection — dependent Industry → Sub-Category → Job Role */}
+                  {/* Job selection — scrollable list with inline Profession/Industry labels */}
                   <div className="space-y-1.5">
-                    <span className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block">
-                      Profession
-                    </span>
                     <JobSelector
                       value={formData.job ?? emptyJobSelection}
                       onChange={(j) => onInputChange('job', j)}
@@ -1394,8 +1391,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
               <button
                 type="submit"
                 disabled={
-                  (formStep === 4 && !agreed) ||
-                  (formStep === 3 && !photoUrl) ||
+                  (formStep === 3 && !agreed) ||
+                  (formStep === 4 && !photoUrl) ||
                   isLoading ||
                   cooldown > 0
                 }
@@ -1424,7 +1421,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 ) : formStep === 4 ? (
                   'Submit registration →'
                 ) : formStep === 3 ? (
-                  'Continue to final step →'
+                  'Continue to add your photo →'
                 ) : (
                   'Continue to next step →'
                 )}
