@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { adminService } from '@/services/adminService'
+import { contentService } from '@/services/contentService'
 import type { FieldEvent } from '@/types/admin'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { toast } from 'sonner'
@@ -49,6 +50,8 @@ const EMPTY_FORM: EventFormData = {
   budget_allocated: 1000,
   budget_spent: 0,
   type: 'Town Hall',
+  image_url: '',
+  description: '',
 }
 
 export default function AdminEvents() {
@@ -67,6 +70,7 @@ export default function AdminEvents() {
   const [editingEvent, setEditingEvent] = useState<FieldEvent | null>(null)
   const [formData, setFormData] = useState<EventFormData>(EMPTY_FORM)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false)
 
   const { openDelete, modal: deleteModal } = useDeleteModal()
 
@@ -114,6 +118,8 @@ export default function AdminEvents() {
         budget_allocated: event.budget_allocated || 0,
         budget_spent: event.budget_spent || 0,
         type: event.type || 'Town Hall',
+        image_url: event.image_url || '',
+        description: event.description || '',
       })
     } else {
       setEditingEvent(null)
@@ -123,6 +129,27 @@ export default function AdminEvents() {
       })
     }
     setIsModalOpen(true)
+  }
+
+  const handleBannerUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast.error('Invalid file type', { description: 'Please select an image file (PNG, JPG, WEBP).' })
+      return
+    }
+    setIsUploadingBanner(true)
+    try {
+      const url = await contentService.uploadImage(file, 'public-assets')
+      if (url) {
+        setFormData((prev) => ({ ...prev, image_url: url }))
+        toast.success('Event banner uploaded successfully')
+      } else {
+        toast.error('Failed to upload event banner')
+      }
+    } catch {
+      toast.error('Operational error while uploading banner')
+    } finally {
+      setIsUploadingBanner(false)
+    }
   }
 
   // Handle Form Submit
@@ -450,10 +477,36 @@ export default function AdminEvents() {
                   return (
                     <tr key={evt.id} style={{ borderBottom: '1px solid hsl(var(--border))', transition: 'background 0.15s ease' }}>
                       <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontWeight: 600, color: 'hsl(var(--on-surface))' }}>{evt.title}</div>
-                        <div style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>location_on</span>
-                          {evt.location || 'Venue TBA'}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          {evt.image_url ? (
+                            <img
+                              src={evt.image_url}
+                              alt={evt.title}
+                              style={{ width: 48, height: 36, objectFit: 'cover', borderRadius: 'var(--radius-xs)', border: '1px solid hsl(var(--border))' }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: 48,
+                                height: 36,
+                                borderRadius: 'var(--radius-xs)',
+                                background: 'hsl(var(--primary) / 0.1)',
+                                color: 'hsl(var(--primary))',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>event</span>
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 600, color: 'hsl(var(--on-surface))' }}>{evt.title}</div>
+                            <div style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>location_on</span>
+                              {evt.location || 'Venue TBA'}
+                            </div>
+                          </div>
                         </div>
                       </td>
 
@@ -596,6 +649,141 @@ export default function AdminEvents() {
                     color: 'hsl(var(--on-surface))',
                     fontSize: 13,
                     outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Event Banner Image Upload & URL */}
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  Event Banner Image
+                </label>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8 }}>
+                  <input
+                    type="url"
+                    placeholder="https://... (or upload image file below)"
+                    value={formData.image_url || ''}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, image_url: e.target.value }))}
+                    style={{
+                      flex: 1,
+                      height: 38,
+                      padding: '0 12px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid hsl(var(--border))',
+                      background: 'hsl(var(--surface))',
+                      color: 'hsl(var(--on-surface))',
+                      fontSize: 13,
+                      outline: 'none',
+                    }}
+                  />
+                  <label
+                    className="btn btn-outline btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer', height: 38, margin: 0 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      {isUploadingBanner ? 'progress_activity' : 'upload'}
+                    </span>
+                    {isUploadingBanner ? 'Uploading...' : 'Upload Banner'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      disabled={isUploadingBanner}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleBannerUpload(file)
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {/* Banner Preview Box */}
+                {formData.image_url ? (
+                  <div
+                    style={{
+                      position: 'relative',
+                      height: 120,
+                      width: '100%',
+                      borderRadius: 'var(--radius-sm)',
+                      overflow: 'hidden',
+                      border: '1px solid hsl(var(--border))',
+                      background: 'hsl(var(--background))',
+                    }}
+                  >
+                    <img
+                      src={formData.image_url}
+                      alt="Banner Preview"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        ;(e.target as HTMLImageElement).style.display = 'none'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, image_url: '' }))}
+                      style={{
+                        position: 'absolute',
+                        top: 6,
+                        right: 6,
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: 24,
+                        height: 24,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                      }}
+                      title="Remove banner"
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      height: 70,
+                      width: '100%',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px dashed hsl(var(--border))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontSize: 12,
+                      background: 'hsl(var(--surface))',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>image</span>
+                    No banner image selected. Upload a file or paste image URL.
+                  </div>
+                )}
+              </div>
+
+              {/* Event Description */}
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  Event Description & Agenda
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Provide detailed description, key speakers, agenda items, and participant guidance..."
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid hsl(var(--border))',
+                    background: 'hsl(var(--surface))',
+                    color: 'hsl(var(--on-surface))',
+                    fontSize: 13,
+                    outline: 'none',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
                   }}
                 />
               </div>
