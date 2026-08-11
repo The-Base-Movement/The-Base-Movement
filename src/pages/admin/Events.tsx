@@ -272,11 +272,11 @@ export default function AdminEvents() {
 
       {/* Tactical KPIs Strip */}
       <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 20 }}>
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--destructive))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Active & Planned Events
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--primary))', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--destructive))', marginTop: 4 }}>
             {stats.plannedCount + stats.inProgressCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -308,11 +308,11 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(142, 71%, 45%)', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Completed Mobilizations
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(142, 71%, 38%)', marginTop: 4 }}>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--primary))', marginTop: 4 }}>
             {stats.completedCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
