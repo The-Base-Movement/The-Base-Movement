@@ -228,7 +228,7 @@ export async function sendSms(
   // @ts-ignore: Deno global
   const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
   // @ts-ignore: Deno global
-  const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'THEBASE'
+  const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'The Base'
 
   // 1. If Infobip API key is configured, use Infobip for International SMS dispatches
   if (infobipKey && !options?.mnotifyOnly) {
