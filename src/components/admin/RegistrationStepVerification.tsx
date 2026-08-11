@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react'
+import { useState, type Dispatch, type SetStateAction } from 'react'
 import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 
@@ -29,6 +29,11 @@ export function RegistrationStepVerification(props: RegistrationStepVerification
     setAgreed,
     setPhotoUrl,
   } = props
+
+  const [rotation, setRotation] = useState(0)
+
+  const rotateLeft = () => setRotation((r) => (r - 90 + 360) % 360)
+  const rotateRight = () => setRotation((r) => (r + 90) % 360)
 
   return (
     <div className="space-y-8">
@@ -88,7 +93,10 @@ export function RegistrationStepVerification(props: RegistrationStepVerification
               type="file"
               accept="image/*"
               aria-label="Upload profile photo"
-              onChange={handlePhotoUpload}
+              onChange={(e) => {
+                setRotation(0)
+                handlePhotoUpload(e)
+              }}
               style={{
                 position: 'absolute',
                 inset: 0,
@@ -147,17 +155,19 @@ export function RegistrationStepVerification(props: RegistrationStepVerification
                 image={photoUrl}
                 crop={crop}
                 zoom={zoom}
+                rotation={rotation}
                 aspect={3 / 4}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}
+                onRotationChange={setRotation}
               />
             </div>
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '24px',
+                gap: '16px',
                 marginTop: '24px',
               }}
             >
@@ -173,9 +183,36 @@ export function RegistrationStepVerification(props: RegistrationStepVerification
                 onChange={(e) => setZoom(Number(e.target.value))}
                 style={{ flex: 1, accentColor: 'hsl(var(--primary))' }}
               />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button
+                  type="button"
+                  onClick={rotateLeft}
+                  title="Rotate 90° Left"
+                  className="btn btn-outline btn-sm"
+                  style={{ padding: '6px 10px', height: '40px' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    rotate_left
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={rotateRight}
+                  title="Rotate 90° Right"
+                  className="btn btn-outline btn-sm"
+                  style={{ padding: '6px 10px', height: '40px' }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                    rotate_right
+                  </span>
+                </button>
+              </div>
               <button
                 type="button"
-                onClick={() => setPhotoUrl(null)}
+                onClick={() => {
+                  setPhotoUrl(null)
+                  setRotation(0)
+                }}
                 className="ico no"
                 style={{ width: '40px', height: '40px' }}
                 title="Remove photo"

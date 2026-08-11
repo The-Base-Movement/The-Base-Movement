@@ -184,6 +184,7 @@ export default function ProfileSettings() {
   const [avatarDraftUrl, setAvatarDraftUrl] = useState<string | null>(null)
   const [avatarCrop, setAvatarCrop] = useState({ x: 0, y: 0 })
   const [avatarZoom, setAvatarZoom] = useState(1)
+  const [avatarRotation, setAvatarRotation] = useState(0)
   const [avatarCropPixels, setAvatarCropPixels] = useState<Area | null>(null)
   const [avatarSaving, setAvatarSaving] = useState(false)
 
@@ -293,6 +294,7 @@ export default function ProfileSettings() {
         setAvatarDraftUrl(result)
         setAvatarCrop({ x: 0, y: 0 })
         setAvatarZoom(1)
+        setAvatarRotation(0)
         setAvatarCropPixels(null)
       })
       reader.readAsDataURL(e.target.files[0])
@@ -305,7 +307,7 @@ export default function ProfileSettings() {
     setAvatarSaving(true)
     try {
       const blob = avatarCropPixels
-        ? await getCroppedImg(avatarDraftUrl, avatarCropPixels)
+        ? await getCroppedImg(avatarDraftUrl, avatarCropPixels, avatarRotation)
         : await (await fetch(avatarDraftUrl)).blob()
       if (!blob) throw new Error('Unable to crop selected image')
 
@@ -630,18 +632,48 @@ export default function ProfileSettings() {
                 image={avatarDraftUrl}
                 crop={avatarCrop}
                 zoom={avatarZoom}
+                rotation={avatarRotation}
                 aspect={1}
                 cropShape="round"
                 showGrid={false}
                 onCropChange={setAvatarCrop}
                 onCropComplete={(_area, areaPixels) => setAvatarCropPixels(areaPixels)}
                 onZoomChange={setAvatarZoom}
+                onRotationChange={setAvatarRotation}
               />
             </div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <label htmlFor="avatar-zoom" style={{ ...modalLabelStyle, margin: 0 }}>
-                Zoom
-              </label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                <label htmlFor="avatar-zoom" style={{ ...modalLabelStyle, margin: 0 }}>
+                  Zoom
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setAvatarRotation((r) => (r - 90 + 360) % 360)}
+                    title="Rotate 90° Left"
+                    style={{ padding: '4px 8px', fontSize: 11 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      rotate_left
+                    </span>
+                    Left
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => setAvatarRotation((r) => (r + 90) % 360)}
+                    title="Rotate 90° Right"
+                    style={{ padding: '4px 8px', fontSize: 11 }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      rotate_right
+                    </span>
+                    Right
+                  </button>
+                </div>
+              </div>
               <input
                 id="avatar-zoom"
                 type="range"
