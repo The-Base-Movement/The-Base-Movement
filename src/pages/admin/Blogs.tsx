@@ -377,9 +377,26 @@ export default function AdminBlogs() {
     }
   }
 
-  // Uploads a new image file to the current media folder
+  // Uploads a new image file to the current media folder.
+  // When a blog title is set, the file is automatically renamed to a
+  // title-derived slug so stored images are labelled meaningfully.
   const handleUpload = async (file: File) => {
-    const url = await contentService.uploadImage(file, activeMediaFolder)
+    let uploadFile = file
+
+    if (formData.title.trim()) {
+      const titleSlug = formData.title
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .substring(0, 60)
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const renamedName = `${titleSlug}-${Date.now()}.${ext}`
+      uploadFile = new File([file], renamedName, { type: file.type })
+    }
+
+    const url = await contentService.uploadImage(uploadFile, activeMediaFolder)
     if (url) {
       toast.success(`Uploaded to ${activeMediaFolder}`)
       fetchMedia()

@@ -90,6 +90,8 @@ export default function Register() {
     return () => ctx.revert()
   }, [step])
 
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+
   const [formData, setFormData] = useState<RegistrationFormData>(() => {
     const defaults: RegistrationFormData = {
       idNumber: '',
@@ -162,6 +164,13 @@ export default function Register() {
     field: K,
     value: RegistrationFormData[K]
   ) => {
+    if (formErrors[field as string]) {
+      setFormErrors((prev) => {
+        const next = { ...prev }
+        delete next[field as string]
+        return next
+      })
+    }
     setFormData((prev) => {
       let val = value
       if (field === 'contactNumber' && typeof val === 'string') {
@@ -250,61 +259,67 @@ export default function Register() {
     }
   }
 
-  function validateStep(step: number): string | null {
+  function validateStepErrors(step: number): Record<string, string> {
+    const errs: Record<string, string> = {}
     if (step === 1) {
-      if (!formData.fullName.trim()) return 'Full name is required.'
-      if (!/^[\p{L}\s.'’-]+$/u.test(formData.fullName.trim()))
-        return 'Name can only contain letters, spaces, periods, hyphens, and apostrophes.'
-      if (formData.fullName.trim().split(/\s+/).length < 2)
-        return 'Please enter your full name (first and last).'
-      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-        return 'Please enter a valid email address.'
+      if (!formData.fullName.trim()) {
+        errs.fullName = 'Full name is required.'
+      } else if (!/^[\p{L}\s.'’-]+$/u.test(formData.fullName.trim())) {
+        errs.fullName = 'Name can only contain letters, spaces, periods, hyphens, and apostrophes.'
+      } else if (formData.fullName.trim().split(/\s+/).length < 2) {
+        errs.fullName = 'Please enter your full name (first and last).'
+      }
+
+      if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        errs.email = 'Please enter a valid email address.'
+      }
     }
     if (step === 2) {
       if (platform === 'GHANA') {
-        if (!formData.region) return 'Please select your region.'
+        if (!formData.region) errs.region = 'Please select your region.'
+        if (!formData.constituency) errs.constituency = 'Please select your constituency.'
       } else {
-        if (!formData.country) return 'Please select your country.'
+        if (!formData.country) errs.country = 'Please select your country.'
+        if (!formData.city?.trim()) errs.city = 'Please enter your city.'
       }
       const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
-      if (phoneErr) return phoneErr
-      if (!formData.partyAffiliation) return 'Please select your party affiliation / CSO.'
-      if (!formData.gender) return 'Please select your gender.'
-      // Birth year drives the age range (DB-derived); require age range only as fallback.
+      if (phoneErr) errs.contactNumber = phoneErr
+
+      if (!formData.partyAffiliation) errs.partyAffiliation = 'Please select your party affiliation / CSO.'
+      if (!formData.gender) errs.gender = 'Please select your gender.'
       if (!formData.ageRange && !formData.birthYear)
-        return 'Please select your age range or enter your birth year.'
+        errs.ageRange = 'Please select your age range or enter your birth year.'
       if (!formData.password || formData.password.length < 8)
-        return 'Password must be at least 8 characters.'
+        errs.password = 'Password must be at least 8 characters.'
     }
     if (step === 4) {
       if (
         formData.emergencyContactName.trim() &&
         !/^[\p{L}\s.'’-]+$/u.test(formData.emergencyContactName.trim())
       ) {
-        return 'Emergency contact name can only contain letters, spaces, periods, hyphens, and apostrophes.'
+        errs.emergencyContactName =
+          'Emergency contact name can only contain letters, spaces, periods, hyphens, and apostrophes.'
       }
     }
-    return null
+    return errs
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const errs = validateStepErrors(formStep)
+    if (Object.keys(errs).length > 0) {
+      setFormErrors(errs)
+      const firstMsg = Object.values(errs)[0]
+      toast.error(firstMsg)
+      return
+    }
+    setFormErrors({})
     if (formStep < 4) {
-      const error = validateStep(formStep)
-      if (error) {
-        toast.error(error)
-        return
-      }
       startTransition(() => {
         setFormStep((prev) => prev + 1)
       })
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
-      const finalError = validateStep(4)
-      if (finalError) {
-        toast.error(finalError)
-        return
-      }
       if (!isOnline) {
         try {
           const savedDraft = await saveDraftRegistration({
@@ -539,6 +554,7 @@ export default function Register() {
               platform={platform}
               formStep={formStep}
               formData={formData}
+              formErrors={formErrors}
               isLoading={isLoading}
               cooldown={cooldown}
               showPassword={showPassword}
