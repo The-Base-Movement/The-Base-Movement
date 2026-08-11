@@ -270,7 +270,7 @@ export default function AdminEvents() {
         }
       />
 
-      {/* KPI Stats Strip */}
+      {/* Tactical KPIs Strip */}
       <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 20 }}>
         <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
@@ -284,15 +284,15 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(142, 71%, 45%)', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
-            Completed Mobilizations
+            Total Budget Allocated
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(142, 71%, 38%)', marginTop: 4 }}>
-            {stats.completedCount}
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--accent))', marginTop: 4 }}>
+            GHS {stats.totalBudgetAllocated.toLocaleString()}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
-            Concluded regional sessions
+            Logistics & mobilization funding
           </div>
         </div>
 
@@ -308,15 +308,15 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
+        <div className="panel" style={{ borderLeft: '3px solid hsl(142, 71%, 45%)', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
-            Total Budget Allocated
+            Completed Mobilizations
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
-            GHS {stats.totalBudgetAllocated.toLocaleString()}
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(142, 71%, 38%)', marginTop: 4 }}>
+            {stats.completedCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
-            Logistics & mobilization funding
+            Concluded regional sessions
           </div>
         </div>
       </div>

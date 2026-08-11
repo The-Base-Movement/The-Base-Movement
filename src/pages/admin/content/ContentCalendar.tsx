@@ -333,6 +333,18 @@ export default function ContentCalendar() {
           </div>
         </div>
 
+        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}>
+          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+            Total Pipeline Entries
+          </div>
+          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
+            {items.length}
+          </div>
+          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
+            Combined content items
+          </div>
+        </div>
+
         <div className="panel" style={{ borderLeft: '3px solid hsl(142 71% 45%)', padding: '16px 20px' }}>
           <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
             Mobilization Events
@@ -342,18 +354,6 @@ export default function ContentCalendar() {
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
             Town halls & regional walks
-          </div>
-        </div>
-
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
-            Total Pipeline Entries
-          </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
-            {items.length}
-          </div>
-          <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
-            All scheduled dispatches
           </div>
         </div>
       </div>
