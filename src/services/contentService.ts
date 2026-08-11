@@ -1098,65 +1098,65 @@ class ContentService {
   }
 
   async getLikedPosts(): Promise<BlogPost[]> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return []
-    const { data, error } = await supabase
-      .from('blog_post_likes')
-      .select('post_id, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) return []
+      const { data, error } = await supabase
+        .from('blog_post_likes')
+        .select('post_id, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
-    if (error || !data || data.length === 0) return []
+      if (error || !data || data.length === 0) return []
 
-    const postIds = data.map((r: { post_id: string }) => r.post_id)
+      const postIds = data.map((r: { post_id: string }) => r.post_id)
 
-    const { data: posts, error: postsError } = await supabase
-      .from('blog_posts')
-      .select('*, authors(name, role, image_url, bio)')
-      .in('id', postIds)
-      .is('deleted_at', null)
+      const { data: posts, error: postsError } = await supabase
+        .from('blog_posts')
+        .select('*, authors(name, role, image_url, bio)')
+        .in('id', postIds)
+        .is('deleted_at', null)
 
-    if (postsError || !posts) return []
+      if (postsError || !posts) return []
 
-    const orderedIds = postIds
-    return orderedIds
-      .map((id: string) => {
-        const p = posts.find((post: Record<string, unknown>) => post.id === id)
-        if (!p) return null
-        const a = (p as Record<string, unknown>).authors as {
-          name?: string
-          role?: string
-          image_url?: string
-          bio?: string
-        } | null
-        return {
-          id: p.id as string,
-          title: p.title as string,
-          slug: p.slug as string,
-          excerpt: p.excerpt as string,
-          content: p.content as string,
-          authorId: p.author_id as string,
-          authorName: a?.name || (p.author_name as string) || 'Admin',
-          authorRole: a?.role || (p.author_role as string | undefined),
-          authorImage: a?.image_url || (p.author_image as string | undefined),
-          authorBio: a?.bio || (p.author_bio as string | undefined),
-          category: p.category as string,
-          imageUrl: p.image_url as string | undefined,
-          readTime: p.read_time as string,
-          isFeatured: p.is_featured as boolean,
-          publishedAt: p.published_at as string,
-          status: ((p.status as string) || 'Published') as
-            | 'Draft'
-            | 'Pending Verification'
-            | 'Published',
-          tags: (p.tags as string[]) || [],
-          seoTitle: p.seo_title as string | undefined,
-          metaDescription: p.meta_description as string | undefined,
-        }
-      })
-      .filter(Boolean) as BlogPost[]
+      return postIds
+        .map((id: string) => {
+          const p = posts.find((post: Record<string, unknown>) => post.id === id)
+          if (!p) return null
+          const a = (p as Record<string, unknown>).authors as {
+            name?: string
+            role?: string
+            image_url?: string
+            bio?: string
+          } | null
+          return {
+            id: p.id as string,
+            title: p.title as string,
+            slug: p.slug as string,
+            excerpt: p.excerpt as string,
+            content: p.content as string,
+            authorId: p.author_id as string,
+            authorName: a?.name || (p.author_name as string) || 'Admin',
+            authorRole: a?.role || (p.author_role as string | undefined),
+            authorImage: a?.image_url || (p.author_image as string | undefined),
+            authorBio: a?.bio || (p.author_bio as string | undefined),
+            category: p.category as string,
+            imageUrl: p.image_url as string | undefined,
+            readTime: p.read_time as string,
+            isFeatured: p.is_featured as boolean,
+            publishedAt: p.published_at as string,
+            status: (p.status as 'Draft' | 'Pending Verification' | 'Published') || 'Draft',
+            tags: (p.tags as string[]) || [],
+            seoTitle: p.seo_title as string | undefined,
+            metaDescription: p.meta_description as string | undefined,
+          }
+        })
+        .filter(Boolean) as BlogPost[]
+    } catch {
+      return []
+    }
   }
 
   // --- Media Kit Operations ---
