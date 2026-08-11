@@ -1052,6 +1052,7 @@ export interface Conversation {
   status: 'open' | 'closed'
   group_type?: 'constituency' | 'chapter' | null
   group_id?: string | null
+  department_id?: string | null
   created_at: string
   last_message_at: string | null
 }
