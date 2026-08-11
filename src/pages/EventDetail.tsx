@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
+import { supabase } from '@/lib/supabase'
 import { PUBLIC_EVENTS } from './Events'
 import type { MovementEvent } from './Events'
 
@@ -15,11 +16,80 @@ export default function EventDetail() {
   const font = isDashboard ? "'Public Sans', sans-serif" : "'Work Sans', sans-serif"
   const basePath = isDashboard ? '/dashboard/events' : '/events'
 
-  // Match event by id
-  const event: MovementEvent | undefined = PUBLIC_EVENTS.find((e) => e.id === id)
-
+  const [event, setEvent] = useState<MovementEvent | null>(() => {
+    return PUBLIC_EVENTS.find((e) => e.id === id) || null
+  })
+  const [isLoading, setIsLoading] = useState(!event)
   const [hasRsvped, setHasRsvped] = useState(false)
   const [isShareOpen, setIsShareOpen] = useState(false)
+
+  useEffect(() => {
+    if (event || !id) return
+    let cancelled = false
+    async function fetchEventFromDb() {
+      setIsLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from('field_events')
+          .select('*')
+          .eq('id', id)
+          .single()
+
+        if (error || !data || cancelled) {
+          setIsLoading(false)
+          return
+        }
+
+        const loadedEvt: MovementEvent = {
+          id: data.id,
+          title: data.title,
+          category: data.type === 'Rally' ? 'Mobilization Walk' : data.type === 'Training' ? 'Job Workshop' : (data.type as MovementEvent['category']) || 'Town Hall',
+          date: data.date,
+          locationName: data.location || 'Location TBA',
+          gpsAddress: data.location || '',
+          region: data.chapter || 'Greater Accra',
+          description: data.description || '',
+          attendingCount: data.attendees_actual || data.attendees_expected || 0,
+          organizer: `The Base Movement LBG - ${data.chapter || 'Secretariat'}`,
+          status: data.status === 'Completed' ? 'Completed' : data.status === 'In Progress' ? 'In Progress' : 'Planned',
+        }
+
+        if (!cancelled) setEvent(loadedEvt)
+      } catch {
+        // Fallback
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+    fetchEventFromDb()
+    return () => {
+      cancelled = true
+    }
+  }, [id, event])
+
+  if (isLoading) {
+    return (
+      <div
+        className={isDashboard ? 'main' : undefined}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '50vh',
+          fontFamily: font,
+          textAlign: 'center',
+          padding: 24,
+          color: 'hsl(var(--on-surface-muted))',
+        }}
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 36, marginBottom: 8 }}>
+          progress_activity
+        </span>
+        <div>Loading event details...</div>
+      </div>
+    )
+  }
 
   if (!event) {
     return (

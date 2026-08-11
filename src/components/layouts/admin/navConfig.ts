@@ -344,6 +344,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
+        to: '/admin/events',
+        icon: 'event',
+        label: 'Field events',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+      {
         to: '/admin/authors',
         icon: 'edit',
         label: 'Authors',

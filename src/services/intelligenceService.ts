@@ -57,6 +57,28 @@ class IntelligenceService {
     }
   }
 
+  async createFieldEvent(event: Omit<FieldEvent, 'id'>): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('field_events').insert([event])
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to create field event:', error)
+      return false
+    }
+  }
+
+  async deleteFieldEvent(eventId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase.from('field_events').delete().eq('id', eventId)
+      if (error) throw error
+      return true
+    } catch (error) {
+      console.error('[DATABASE] Failed to delete field event:', error)
+      return false
+    }
+  }
+
   async getFieldDirectives(): Promise<FieldDirective[]> {
     try {
       const { data, error } = await supabase
