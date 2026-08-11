@@ -5,8 +5,8 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { toast } from 'sonner'
 import { ShareModal } from '@/components/ShareModal'
 import { supabase } from '@/lib/supabase'
-import { PUBLIC_EVENTS } from './Events'
-import type { MovementEvent } from './Events'
+import { PUBLIC_EVENTS } from '@/types/events'
+import type { MovementEvent } from '@/types/events'
 
 export default function EventDetail() {
   const { id } = useParams<{ id: string }>()
