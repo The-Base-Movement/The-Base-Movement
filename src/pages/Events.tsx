@@ -39,6 +39,7 @@ export default function Events() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [selectedRegion, setSelectedRegion] = useState<string>('All Regions')
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [visibleCount, setVisibleCount] = useState<number>(12)
   const [rsvpedEventIds, setRsvpedEventIds] = useState<Set<string>>(new Set())
   const [shareEvent, setShareEvent] = useState<{ title: string; url: string } | null>(null)
   const [canCreate, setCanCreate] = useState(false)
@@ -49,18 +50,21 @@ export default function Events() {
   const handleCategoryChange = (cat: string) => {
     startTransition(() => {
       setSelectedCategory(cat)
+      setVisibleCount(12)
     })
   }
 
   const handleRegionChange = (region: string) => {
     startTransition(() => {
       setSelectedRegion(region)
+      setVisibleCount(12)
     })
   }
 
   const handleSearchChange = (term: string) => {
     startTransition(() => {
       setSearchTerm(term)
+      setVisibleCount(12)
     })
   }
 
@@ -514,7 +518,7 @@ export default function Events() {
             gap: 20,
           }}
         >
-          {filteredEvents.map((evt) => {
+          {filteredEvents.slice(0, visibleCount).map((evt) => {
             const dateObj = new Date(evt.date)
             const dayNum = dateObj.getDate()
             const monthStr = dateObj.toLocaleString('default', { month: 'short' }).toUpperCase()
@@ -755,6 +759,25 @@ export default function Events() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {filteredEvents.length > visibleCount && (
+        <div style={{ textAlign: 'center', marginTop: 28 }}>
+          <button
+            onClick={() => {
+              startTransition(() => {
+                setVisibleCount((prev) => prev + 12)
+              })
+            }}
+            className="btn btn-outline"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+              expand_more
+            </span>
+            Load More Events ({filteredEvents.length - visibleCount} remaining)
+          </button>
         </div>
       )}
 
