@@ -7,23 +7,7 @@ import { ShareModal } from '@/components/ShareModal'
 import { useAuth } from '@/context/AuthContext'
 import { adminService } from '@/services/adminService'
 import { supabase } from '@/lib/supabase'
-
-export interface MovementEvent {
-  id: string
-  title: string
-  category: 'Town Hall' | 'Mobilization Walk' | 'Job Workshop' | 'Community Action' | 'Diaspora Meetup'
-  date: string // ISO date e.g. 2026-10-15T09:00:00+00:00
-  locationName: string
-  gpsAddress: string
-  region: string
-  description: string
-  attendingCount: number
-  organizer: string
-  status: 'Planned' | 'In Progress' | 'Completed'
-  imageUrl?: string
-}
-
-export const PUBLIC_EVENTS: MovementEvent[] = []
+import type { MovementEvent } from '@/types/events'
 
 const CATEGORIES = [
   'All',
@@ -96,7 +80,7 @@ export default function Events() {
           return
         }
 
-        const liveEvts: MovementEvent[] = (data || []).map((evt: Record<string, any>) => ({
+        const liveEvts: MovementEvent[] = (data || []).map((evt: Record<string, unknown>) => ({
           id: evt.id as string,
           title: evt.title as string,
           category: evt.type === 'Rally' ? 'Mobilization Walk' : evt.type === 'Training' ? 'Job Workshop' : (evt.type as MovementEvent['category']) || 'Town Hall',
@@ -138,15 +122,15 @@ export default function Events() {
 
   // Permission check: Only Super Admin, Editors, Chapter Leads, Constituency Leads, and Secretaries can create events
   useEffect(() => {
-    if (!user) {
-      setCanCreate(false)
-      return
-    }
     let cancelled = false
     async function checkPermission() {
+      if (!user) {
+        if (!cancelled) setCanCreate(false)
+        return
+      }
       try {
         const currentAdmin = adminService.getCurrentUser()
-        const isChapterLead = await adminService.isChapterLeader(user!.id)
+        const isChapterLead = await adminService.isChapterLeader(user.id)
         if (cancelled) return
         const roleUpper = (currentAdmin?.role || '').toUpperCase()
         const isAuthorized =
@@ -157,7 +141,7 @@ export default function Events() {
         if (!cancelled) setCanCreate(false)
       }
     }
-    checkPermission()
+    void checkPermission()
     return () => {
       cancelled = true
     }
