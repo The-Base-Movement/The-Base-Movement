@@ -1,7 +1,8 @@
-import { type CSSProperties, useEffect, useState, startTransition } from 'react'
+import { type CSSProperties, useEffect, useState, startTransition, useRef } from 'react'
 import {
   jobTaxonomyService,
-  type JobIndustry,
+  type JobRole,
+  type JobSubCategory,
   type JobSelection,
 } from '@/services/jobTaxonomyService'
 
@@ -22,6 +23,11 @@ interface JobSelectorProps {
   idPrefix?: string
   disabled?: boolean
   onLabelChange?: (label: string) => void
+}
+
+/** A flat role entry enriched with its parent ids for analytics. */
+interface FlatRole extends JobRole {
+  industry_id: number
 }
 
 const fieldStyle: CSSProperties = {
@@ -48,9 +54,10 @@ const labelStyle: CSSProperties = {
 }
 
 /**
- * Streamlined single-tier top-level Industry / Sector selector.
- * Renders a search-filtered scrollable clickable list instead of a native
- * <select> dropdown to reduce mobile friction.
+ * Occupation selector — searches actual job roles (Farmer, Hairdresser, etc.)
+ * across the full taxonomy. Shows nothing until the user types; results appear
+ * as a clickable scrollable list. Selecting a role wires all three FK ids for
+ * analytics compatibility.
  */
 export function JobSelector({
   value,
@@ -62,20 +69,31 @@ export function JobSelector({
   disabled,
   onLabelChange,
 }: JobSelectorProps) {
-  const [industries, setIndustries] = useState<JobIndustry[]>([])
+  const [flatRoles, setFlatRoles] = useState<FlatRole[]>([])
+  const [subCategories, setSubCategories] = useState<JobSubCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [search, setSearch] = useState('')
+  const [showResults, setShowResults] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let alive = true
     jobTaxonomyService
       .getTaxonomy()
       .then((t) => {
-        if (alive) {
-          setIndustries(t.industries || [])
-          setLoading(false)
-        }
+        if (!alive) return
+        // Build a flat list of roles enriched with their industry_id via sub_category
+        const subMap = new Map<number, JobSubCategory>()
+        for (const s of t.subCategories) subMap.set(s.id, s)
+
+        const flat: FlatRole[] = t.roles.map((r) => ({
+          ...r,
+          industry_id: subMap.get(r.sub_category_id)?.industry_id ?? 0,
+        }))
+        setFlatRoles(flat)
+        setSubCategories(t.subCategories)
+        setLoading(false)
       })
       .catch(() => {
         if (alive) {
@@ -88,43 +106,78 @@ export function JobSelector({
     }
   }, [])
 
-  const selectedIndustryId = value?.industryId ?? null
+  // Close results when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowResults(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const selectedRoleId = value?.roleId ?? null
   const customTitle = value?.customTitle ?? ''
   const isOther = value?.isOther ?? false
 
-  const filtered = industries.filter((i) =>
-    i.name.toLowerCase().includes(search.toLowerCase())
-  )
+  // Find the currently selected role for the badge
+  const selectedRole = flatRoles.find((r) => r.id === selectedRoleId)
 
-  const handleSectorSelect = (industry: JobIndustry) => {
+  // Only show results when there's a search query
+  const filtered =
+    search.trim().length > 0
+      ? flatRoles.filter((r) => r.name.toLowerCase().includes(search.toLowerCase())).slice(0, 30)
+      : []
+
+  const handleRoleSelect = (role: FlatRole) => {
     if (disabled) return
-    const checkIsOther = industry.name.toLowerCase().includes('other')
+    setSearch('')
+    setShowResults(false)
+
     const nextSelection: JobSelection = {
-      industryId: industry.id,
-      subCategoryId: null,
-      roleId: null,
-      isOther: checkIsOther,
-      customTitle: checkIsOther ? customTitle : '',
+      industryId: role.industry_id,
+      subCategoryId: role.sub_category_id,
+      roleId: role.id,
+      isOther: false,
+      customTitle: '',
     }
-    const label = checkIsOther ? (customTitle.trim() || 'Other') : industry.name
 
     startTransition(() => {
       onChange?.(nextSelection)
-      onLabelChange?.(label)
+      onLabelChange?.(role.name)
       onSelectionChange?.({
-        job_industry_id: industry.id,
-        job_sub_category_id: null,
-        job_role_id: null,
-        profession: label,
-        job_custom_title: checkIsOther ? (customTitle.trim() || null) : null,
+        job_industry_id: role.industry_id,
+        job_sub_category_id: role.sub_category_id,
+        job_role_id: role.id,
+        profession: role.name,
+        job_custom_title: null,
       })
+    })
+  }
+
+  const handleSelectOther = () => {
+    if (disabled) return
+    setSearch('')
+    setShowResults(false)
+
+    const nextSelection: JobSelection = {
+      industryId: value?.industryId ?? null,
+      subCategoryId: value?.subCategoryId ?? null,
+      roleId: null,
+      isOther: true,
+      customTitle: customTitle,
+    }
+
+    startTransition(() => {
+      onChange?.(nextSelection)
     })
   }
 
   const handleCustomTitleChange = (newTitle: string) => {
     const nextSelection: JobSelection = {
-      industryId: selectedIndustryId,
-      subCategoryId: null,
+      industryId: value?.industryId ?? null,
+      subCategoryId: value?.subCategoryId ?? null,
       roleId: null,
       isOther: true,
       customTitle: newTitle,
@@ -135,8 +188,8 @@ export function JobSelector({
       onChange?.(nextSelection)
       onLabelChange?.(label)
       onSelectionChange?.({
-        job_industry_id: selectedIndustryId,
-        job_sub_category_id: null,
+        job_industry_id: value?.industryId ?? null,
+        job_sub_category_id: value?.subCategoryId ?? null,
         job_role_id: null,
         profession: label,
         job_custom_title: newTitle.trim() || null,
@@ -149,21 +202,17 @@ export function JobSelector({
   if (loadError) {
     return (
       <p style={{ fontSize: 13, color: 'hsl(var(--destructive))', margin: 0 }}>
-        Couldn't load the industry list. Please refresh and try again.
+        Couldn't load occupations. Please refresh and try again.
       </p>
     )
   }
 
-  const selectedIndustry = industries.find((i) => i.id === selectedIndustryId)
-
   return (
-    <div style={{ display: 'grid', gap: 10 }}>
-      {/* Two-column label row: Profession | Occupation / Primary Industry */}
+    <div style={{ display: 'grid', gap: 10 }} ref={containerRef}>
+      {/* Inline label row: Profession | Occupation */}
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
         <span style={labelStyle}>Profession{star}</span>
-        <span style={{ ...labelStyle, color: 'hsl(var(--on-surface-muted) / 0.7)', fontSize: 10 }}>
-          Occupation / Primary Industry
-        </span>
+        <span style={{ ...labelStyle, fontSize: 10, opacity: 0.65 }}>Occupation</span>
       </div>
 
       {/* Search box */}
@@ -185,32 +234,60 @@ export function JobSelector({
         <input
           id={`${idPrefix}-search`}
           type="text"
-          placeholder={loading ? 'Loading industries…' : 'Search sector or industry…'}
+          autoComplete="off"
+          placeholder={loading ? 'Loading occupations…' : 'Type to search your occupation…'}
           value={search}
           disabled={disabled || loading}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value)
+            setShowResults(e.target.value.trim().length > 0)
+          }}
+          onFocus={() => {
+            if (search.trim().length > 0) setShowResults(true)
+          }}
           style={{
             ...fieldStyle,
-            height: 40,
-            paddingLeft: 34,
-            fontSize: 13,
+            height: 44,
+            paddingLeft: 36,
+            fontSize: 13.5,
             opacity: disabled || loading ? 0.55 : 1,
           }}
         />
+        {/* Clear button when search has text */}
+        {search && (
+          <button
+            type="button"
+            onClick={() => { setSearch(''); setShowResults(false) }}
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              color: 'hsl(var(--on-surface-muted))',
+              display: 'flex',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+          </button>
+        )}
       </div>
 
-      {/* Selected value badge */}
-      {selectedIndustry && (
+      {/* Selected occupation badge */}
+      {(selectedRole || (isOther && customTitle.trim())) && (
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            padding: '5px 10px',
+            padding: '6px 10px',
             borderRadius: 'var(--radius-sm)',
-            background: 'hsl(var(--primary) / 0.1)',
-            border: '1px solid hsl(var(--primary) / 0.3)',
-            fontSize: 12,
+            background: 'hsl(var(--primary) / 0.08)',
+            border: '1px solid hsl(var(--primary) / 0.25)',
+            fontSize: 12.5,
             fontWeight: 600,
             color: 'hsl(var(--primary))',
             fontFamily: "'Public Sans', sans-serif",
@@ -219,94 +296,174 @@ export function JobSelector({
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
             check_circle
           </span>
-          {selectedIndustry.name}
+          {selectedRole ? selectedRole.name : customTitle.trim()}
+          <button
+            type="button"
+            onClick={() => {
+              const cleared: JobSelection = { industryId: null, subCategoryId: null, roleId: null, isOther: false, customTitle: '' }
+              onChange?.(cleared)
+              onLabelChange?.('')
+              onSelectionChange?.({ job_industry_id: null, job_sub_category_id: null, job_role_id: null, profession: '', job_custom_title: null })
+            }}
+            style={{
+              marginLeft: 'auto',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              color: 'hsl(var(--primary))',
+              display: 'flex',
+              opacity: 0.7,
+            }}
+            title="Clear selection"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+          </button>
         </div>
       )}
 
-      {/* Scrollable industry list */}
-      <div
-        style={{
-          maxHeight: 210,
-          overflowY: 'auto',
-          border: '1px solid hsl(var(--border))',
-          borderRadius: 'var(--radius-sm)',
-          background: 'hsl(var(--card))',
-          opacity: disabled ? 0.55 : 1,
-          pointerEvents: disabled ? 'none' : 'auto',
-        }}
-      >
-        {loading && (
-          <div
-            style={{
-              padding: '16px 12px',
-              textAlign: 'center',
-              fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            Loading industries…
-          </div>
-        )}
-        {!loading && filtered.length === 0 && (
-          <div
-            style={{
-              padding: '16px 12px',
-              textAlign: 'center',
-              fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
-              fontFamily: "'Public Sans', sans-serif",
-            }}
-          >
-            No results for &ldquo;{search}&rdquo;
-          </div>
-        )}
-        {!loading &&
-          filtered.map((industry, idx) => {
-            const isSelected = industry.id === selectedIndustryId
-            return (
+      {/* Search results dropdown */}
+      {showResults && (
+        <div
+          style={{
+            border: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            background: 'hsl(var(--card))',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+            maxHeight: 220,
+            overflowY: 'auto',
+          }}
+        >
+          {filtered.length === 0 ? (
+            <>
+              <div
+                style={{
+                  padding: '12px 14px',
+                  fontSize: 12.5,
+                  color: 'hsl(var(--on-surface-muted))',
+                  fontFamily: "'Public Sans', sans-serif",
+                  borderBottom: '1px solid hsl(var(--border) / 0.5)',
+                }}
+              >
+                No matches for &ldquo;{search}&rdquo;
+              </div>
               <button
-                key={industry.id}
                 type="button"
-                onClick={() => handleSectorSelect(industry)}
+                onClick={handleSelectOther}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
+                  gap: 8,
                   width: '100%',
-                  padding: '10px 12px',
-                  background: isSelected ? 'hsl(var(--primary) / 0.08)' : 'transparent',
+                  padding: '10px 14px',
+                  background: 'transparent',
                   border: 'none',
-                  borderBottom:
-                    idx < filtered.length - 1 ? '1px solid hsl(var(--border) / 0.5)' : 'none',
                   cursor: 'pointer',
                   textAlign: 'left',
                   fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: isSelected ? 600 : 500,
                   fontSize: 13,
-                  color: isSelected ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
-                  transition: 'background 0.1s',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isSelected)
-                    (e.currentTarget as HTMLButtonElement).style.background =
-                      'hsl(var(--container-low))'
-                }}
-                onMouseLeave={(e) => {
-                  if (!isSelected)
-                    (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                  fontWeight: 500,
+                  color: 'hsl(var(--on-surface))',
                 }}
               >
-                <span>{industry.name}</span>
-                {isSelected && (
-                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                    check
-                  </span>
-                )}
+                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}>
+                  edit
+                </span>
+                Enter my occupation manually
               </button>
-            )
-          })}
-      </div>
+            </>
+          ) : (
+            <>
+              {filtered.map((role, idx) => {
+                const isSelected = role.id === selectedRoleId
+                // Find sub-category name for context hint
+                const sub = subCategories.find((s) => s.id === role.sub_category_id)
+                return (
+                  <button
+                    key={role.id}
+                    type="button"
+                    onClick={() => handleRoleSelect(role)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      padding: '9px 14px',
+                      background: isSelected ? 'hsl(var(--primary) / 0.08)' : 'transparent',
+                      border: 'none',
+                      borderBottom:
+                        idx < filtered.length - 1 ? '1px solid hsl(var(--border) / 0.4)' : 'none',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontFamily: "'Public Sans', sans-serif",
+                      fontSize: 13,
+                      fontWeight: isSelected ? 600 : 500,
+                      color: isSelected ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
+                      transition: 'background 0.1s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isSelected)
+                        (e.currentTarget as HTMLButtonElement).style.background =
+                          'hsl(var(--container-low))'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSelected)
+                        (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                    }}
+                  >
+                    <span>{role.name}</span>
+                    {sub && (
+                      <span
+                        style={{
+                          fontSize: 10,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 400,
+                          marginLeft: 8,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {sub.name}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+              {/* Always show "Other" as the last option */}
+              <button
+                type="button"
+                onClick={handleSelectOther}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  width: '100%',
+                  padding: '9px 14px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderTop: '1px solid hsl(var(--border) / 0.5)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontSize: 12.5,
+                  fontWeight: 500,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'hsl(var(--container-low))'
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                  edit
+                </span>
+                Not listed — enter manually
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Custom Title Input — rendered when "Other" is selected */}
       {isOther && (
@@ -315,17 +472,18 @@ export function JobSelector({
             htmlFor={`${idPrefix}-custom`}
             style={{ ...labelStyle, display: 'block', marginBottom: 6 }}
           >
-            Please specify your job title{star}
+            Your occupation{star}
           </label>
           <input
             id={`${idPrefix}-custom`}
             type="text"
             value={customTitle}
             disabled={disabled}
-            placeholder="e.g., Kente Weaver, Graphic Designer..."
+            placeholder="e.g., Farmer, Kente Weaver, Graphic Designer…"
             style={fieldStyle}
             onChange={(e) => handleCustomTitleChange(e.target.value)}
             maxLength={120}
+            autoFocus
           />
         </div>
       )}
