@@ -26,6 +26,7 @@ interface RegistrationFormProps {
   platform: string
   formStep: number
   formData: RegistrationFormData
+  formErrors?: Record<string, string>
   isLoading: boolean
   cooldown: number
   showPassword: boolean
@@ -65,6 +66,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
     platform,
     formStep,
     formData,
+    formErrors = {},
     isLoading,
     cooldown,
     showPassword,
@@ -280,10 +282,23 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     title="Please enter both your first and last name."
                     value={formData.fullName}
                     onChange={(e) => onInputChange('fullName', e.target.value)}
-                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                    className={cn(
+                      'w-full h-[46px] bg-transparent border px-4 text-sm font-medium transition-colors outline-none',
+                      formErrors.fullName
+                        ? 'border-destructive focus:border-destructive'
+                        : 'border-border focus:border-primary'
+                    )}
                     placeholder="Kwesi Owusu"
                     autoComplete="name"
                   />
+                  {formErrors.fullName && (
+                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        error
+                      </span>
+                      {formErrors.fullName}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -303,9 +318,22 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     value={formData.email || ''}
                     onChange={(e) => onInputChange('email', e.target.value)}
                     autoComplete="email"
-                    className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                    className={cn(
+                      'w-full h-[46px] bg-transparent border px-4 text-sm font-medium transition-colors outline-none',
+                      formErrors.email
+                        ? 'border-destructive focus:border-destructive'
+                        : 'border-border focus:border-primary'
+                    )}
                     placeholder="compatriot@thebase.gh"
                   />
+                  {formErrors.email && (
+                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        error
+                      </span>
+                      {formErrors.email}
+                    </p>
+                  )}
                   <EmailSuggestion
                     email={formData.email || ''}
                     onAccept={(v) => onInputChange('email', v)}
@@ -427,10 +455,23 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           onBlur={() => {
                             setTimeout(() => setRegionFocused(false), 200)
                           }}
-                          className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                          className={cn(
+                            'w-full h-[46px] bg-transparent border px-4 text-sm font-medium outline-none text-on-surface transition-colors',
+                            formErrors.region
+                              ? 'border-destructive focus:border-destructive'
+                              : 'border-border focus:border-primary'
+                          )}
                           placeholder="Search region"
                           autoComplete="off"
                         />
+                        {formErrors.region && (
+                          <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              error
+                            </span>
+                            {formErrors.region}
+                          </p>
+                        )}
                         {regionFocused && filteredRegions.length > 0 && (
                           <div
                             className="absolute left-0 right-0 mt-1 border border-border rounded-sm shadow-lg max-h-[180px] overflow-y-auto z-50"
@@ -476,13 +517,26 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           onBlur={() => {
                             setTimeout(() => setConstituencyFocused(false), 200)
                           }}
-                          className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
+                          className={cn(
+                            'w-full h-[46px] bg-transparent border px-4 text-sm font-medium outline-none text-on-surface disabled:bg-container-low disabled:cursor-not-allowed transition-colors',
+                            formErrors.constituency
+                              ? 'border-destructive focus:border-destructive'
+                              : 'border-border focus:border-primary'
+                          )}
                           disabled={!formData.region}
                           placeholder={
                             formData.region ? 'Search constituency' : 'Select region first'
                           }
                           autoComplete="off"
                         />
+                        {formErrors.constituency && (
+                          <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              error
+                            </span>
+                            {formErrors.constituency}
+                          </p>
+                        )}
                         {constituencyFocused && filteredConstituencies.length > 0 && (
                           <div
                             className="absolute left-0 right-0 mt-1 border border-border rounded-sm shadow-lg max-h-[180px] overflow-y-auto z-50"
@@ -647,7 +701,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         value={formData.country}
                         onChange={(e) => onInputChange('country', e.target.value)}
                         autoComplete="country-name"
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                        className={cn(
+                          'w-full h-[46px] bg-transparent border px-3 text-sm font-medium outline-none text-on-surface transition-colors',
+                          formErrors.country
+                            ? 'border-destructive focus:border-destructive'
+                            : 'border-border focus:border-primary'
+                        )}
                       >
                         <option value="">Select Country</option>
                         {dbCountries.map((c) => (
@@ -656,6 +715,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                           </option>
                         ))}
                       </select>
+                      {formErrors.country && (
+                        <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            error
+                          </span>
+                          {formErrors.country}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-1.5">
                       <label
@@ -670,10 +737,23 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         required
                         value={formData.city || ''}
                         onChange={(e) => onInputChange('city', e.target.value)}
-                        className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
+                        className={cn(
+                          'w-full h-[46px] bg-transparent border px-3 text-sm font-medium transition-colors outline-none',
+                          formErrors.city
+                            ? 'border-destructive focus:border-destructive'
+                            : 'border-border focus:border-primary'
+                        )}
                         placeholder="London / New York"
                         autoComplete="address-level2"
                       />
+                      {formErrors.city && (
+                        <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                          <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                            error
+                          </span>
+                          {formErrors.city}
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -698,11 +778,24 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       required
                       value={formData.contactNumber}
                       onChange={(e) => onInputChange('contactNumber', e.target.value)}
-                      className="flex-1 h-[46px] bg-transparent border border-border px-3 text-sm font-medium focus:border-primary transition-colors outline-none"
+                      className={cn(
+                        'flex-1 h-[46px] bg-transparent border px-3 text-sm font-medium transition-colors outline-none',
+                        formErrors.contactNumber
+                          ? 'border-destructive focus:border-destructive'
+                          : 'border-border focus:border-primary'
+                      )}
                       placeholder="24 412 8890"
                       autoComplete="tel"
                     />
                   </div>
+                  {formErrors.contactNumber && (
+                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        error
+                      </span>
+                      {formErrors.contactNumber}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -751,12 +844,25 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       required
                       value={formData.gender}
                       onChange={(e) => onInputChange('gender', e.target.value)}
-                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                      className={cn(
+                        'w-full h-[46px] bg-transparent border px-3 text-sm font-medium outline-none text-on-surface transition-colors',
+                        formErrors.gender
+                          ? 'border-destructive focus:border-destructive'
+                          : 'border-border focus:border-primary'
+                      )}
                     >
                       <option value="">Select</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                     </select>
+                    {formErrors.gender && (
+                      <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                          error
+                        </span>
+                        {formErrors.gender}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <label
@@ -798,7 +904,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       disabled={!!formData.birthYear}
                       value={formData.birthYear ? derivedBucket : formData.ageRange}
                       onChange={(e) => onInputChange('ageRange', e.target.value)}
-                      className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface disabled:bg-container-low disabled:cursor-not-allowed"
+                      className={cn(
+                        'w-full h-[46px] bg-transparent border px-3 text-sm font-medium outline-none text-on-surface disabled:bg-container-low disabled:cursor-not-allowed transition-colors',
+                        formErrors.ageRange
+                          ? 'border-destructive focus:border-destructive'
+                          : 'border-border focus:border-primary'
+                      )}
                     >
                       <option value="">Select</option>
                       <option value="18-25">18 – 25</option>
@@ -807,6 +918,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       <option value="46-60">46 – 60</option>
                       <option value="60+">60+</option>
                     </select>
+                    {formErrors.ageRange && (
+                      <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                        <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                          error
+                        </span>
+                        {formErrors.ageRange}
+                      </p>
+                    )}
                     {formData.birthYear && (
                       <p className="text-[10px] text-on-surface-muted/60 mt-0.5">
                         Set automatically from your birth year.
@@ -852,7 +971,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     id="select-party-affiliation"
                     value={formData.partyAffiliation || ''}
                     onChange={(e) => onInputChange('partyAffiliation', e.target.value)}
-                    className="w-full h-[46px] bg-transparent border border-border px-3 text-sm font-medium outline-none focus:border-primary text-on-surface"
+                    className={cn(
+                      'w-full h-[46px] bg-transparent border px-3 text-sm font-medium outline-none text-on-surface transition-colors',
+                      formErrors.partyAffiliation
+                        ? 'border-destructive focus:border-destructive'
+                        : 'border-border focus:border-primary'
+                    )}
                   >
                     <option value="">Select Party Affiliation / CSO</option>
                     {politicalParties.map((p) => (
@@ -861,6 +985,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </option>
                     ))}
                   </select>
+                  {formErrors.partyAffiliation && (
+                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        error
+                      </span>
+                      {formErrors.partyAffiliation}
+                    </p>
+                  )}
                 </div>
 
                 {platform === 'DIASPORA' && (
@@ -905,7 +1037,12 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       value={formData.password}
                       onChange={(e) => onInputChange('password', e.target.value)}
                       autoComplete="new-password"
-                      className="w-full h-[46px] bg-transparent border border-border px-4 pr-11 text-sm font-medium focus:border-primary transition-colors outline-none"
+                      className={cn(
+                        'w-full h-[46px] bg-transparent border px-4 pr-11 text-sm font-medium transition-colors outline-none',
+                        formErrors.password
+                          ? 'border-destructive focus:border-destructive'
+                          : 'border-border focus:border-primary'
+                      )}
                       placeholder="•••••••••••"
                     />
                     <button
@@ -919,6 +1056,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </span>
                     </button>
                   </div>
+                  {formErrors.password && (
+                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                        error
+                      </span>
+                      {formErrors.password}
+                    </p>
+                  )}
                   {/* Password Strength Calculation */}
                   {(() => {
                     const pwd = formData.password || ''
@@ -1154,10 +1299,23 @@ export function RegistrationForm(props: RegistrationFormProps) {
                             id="input-8dd936"
                             value={formData.emergencyContactName}
                             onChange={(e) => onInputChange('emergencyContactName', e.target.value)}
-                            className="w-full h-[46px] bg-transparent border border-border px-4 text-sm font-medium focus:border-primary transition-colors outline-none"
+                            className={cn(
+                              'w-full h-[46px] bg-transparent border px-4 text-sm font-medium transition-colors outline-none',
+                              formErrors.emergencyContactName
+                                ? 'border-destructive focus:border-destructive'
+                                : 'border-border focus:border-primary'
+                            )}
                             placeholder="Contact name"
                             autoComplete="name"
                           />
+                          {formErrors.emergencyContactName && (
+                            <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                error
+                              </span>
+                              {formErrors.emergencyContactName}
+                            </p>
+                          )}
                         </div>
                         <div className="space-y-1.5">
                           <label

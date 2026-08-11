@@ -556,7 +556,19 @@ export function BlogEditorView({
                         filename: () => string
                       }) => {
                         const { contentService } = await import('@/services/contentService')
-                        const file = new File([blobInfo.blob()], blobInfo.filename(), {
+                        // Derive a title-based filename when the article has a title set
+                        const rawExt = blobInfo.filename().split('.').pop() ?? 'jpg'
+                        const titleSlug = formData.title.trim()
+                          ? formData.title
+                              .trim()
+                              .toLowerCase()
+                              .replace(/[^\w\s-]/g, '')
+                              .replace(/\s+/g, '-')
+                              .replace(/-+/g, '-')
+                              .substring(0, 60)
+                          : blobInfo.filename().split('.').slice(0, -1).join('.') || 'image'
+                        const fileName = `${titleSlug}-${Date.now()}.${rawExt}`
+                        const file = new File([blobInfo.blob()], fileName, {
                           type: blobInfo.blob().type,
                         })
                         const url = await contentService.uploadImage(file, 'editor-content')
