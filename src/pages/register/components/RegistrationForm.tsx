@@ -919,41 +919,129 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       </span>
                     </button>
                   </div>
-                  <div className="flex gap-1 mt-1.5">
-                    <div
-                      className={cn(
-                        'flex-1 h-[3px] rounded-full bg-border',
-                        (formData.password?.length || 0) > 4 && 'bg-brand-red'
-                      )}
-                    ></div>
-                    <div
-                      className={cn(
-                        'flex-1 h-[3px] rounded-full bg-border',
-                        (formData.password?.length || 0) > 7 && 'bg-brand-gold'
-                      )}
-                    ></div>
-                    <div
-                      className={cn(
-                        'flex-1 h-[3px] rounded-full bg-border',
-                        (formData.password?.length || 0) > 10 && 'bg-brand-green'
-                      )}
-                    ></div>
-                    <div
-                      className={cn(
-                        'flex-1 h-[3px] rounded-full bg-border',
-                        (formData.password?.length || 0) > 12 && 'bg-brand-green'
-                      )}
-                    ></div>
-                  </div>
-                  <div className="text-[10.5px] font-medium text-on-surface-muted mt-1">
-                    {(formData.password?.length || 0) > 10 ? (
+                  {/* Password Strength Calculation */}
+                  {(() => {
+                    const pwd = formData.password || ''
+                    const hasMinLength = pwd.length >= 8
+                    const hasUppercase = /[A-Z]/.test(pwd)
+                    const hasLowercase = /[a-z]/.test(pwd)
+                    const hasNumber = /[0-9]/.test(pwd)
+                    const hasSymbol = /[^A-Za-z0-9]/.test(pwd)
+                    const criteriaMetCount = [
+                      hasMinLength,
+                      hasUppercase,
+                      hasLowercase,
+                      hasNumber,
+                      hasSymbol,
+                    ].filter(Boolean).length
+
+                    return (
                       <>
-                        Strong · <b className="text-primary">good</b> for a member account
+                        <div className="flex gap-1 mt-1.5">
+                          <div
+                            className={cn(
+                              'flex-1 h-[3px] rounded-full bg-border transition-colors',
+                              criteriaMetCount >= 1 && 'bg-brand-red'
+                            )}
+                          />
+                          <div
+                            className={cn(
+                              'flex-1 h-[3px] rounded-full bg-border transition-colors',
+                              criteriaMetCount >= 2 && 'bg-brand-gold'
+                            )}
+                          />
+                          <div
+                            className={cn(
+                              'flex-1 h-[3px] rounded-full bg-border transition-colors',
+                              criteriaMetCount >= 4 && 'bg-brand-green'
+                            )}
+                          />
+                          <div
+                            className={cn(
+                              'flex-1 h-[3px] rounded-full bg-border transition-colors',
+                              criteriaMetCount === 5 && 'bg-primary'
+                            )}
+                          />
+                        </div>
+
+                        <div className="text-[10.5px] font-medium text-on-surface-muted mt-1">
+                          {criteriaMetCount === 5 ? (
+                            <span className="text-primary inline-flex items-center gap-1 font-semibold">
+                              <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                                check_circle
+                              </span>
+                              Strong password — excellent security for your account
+                            </span>
+                          ) : criteriaMetCount >= 3 ? (
+                            <span className="text-brand-gold">
+                              Moderate password strength ({criteriaMetCount}/5 requirements met)
+                            </span>
+                          ) : (
+                            <span>Password requirements ({criteriaMetCount}/5 met):</span>
+                          )}
+                        </div>
+
+                        {/* Interactive Password Requirements Checklist */}
+                        <div className="grid grid-cols-2 gap-1.5 mt-2 p-2.5 rounded-sm bg-container-low/60 border border-border/60 text-[11px]">
+                          <div
+                            className={cn(
+                              'flex items-center gap-1.5 transition-colors',
+                              hasMinLength ? 'text-primary font-medium' : 'text-on-surface-muted'
+                            )}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              {hasMinLength ? 'check_circle' : 'radio_button_unchecked'}
+                            </span>
+                            At least 8 characters
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center gap-1.5 transition-colors',
+                              hasUppercase ? 'text-primary font-medium' : 'text-on-surface-muted'
+                            )}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              {hasUppercase ? 'check_circle' : 'radio_button_unchecked'}
+                            </span>
+                            One uppercase letter (A-Z)
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center gap-1.5 transition-colors',
+                              hasLowercase ? 'text-primary font-medium' : 'text-on-surface-muted'
+                            )}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              {hasLowercase ? 'check_circle' : 'radio_button_unchecked'}
+                            </span>
+                            One lowercase letter (a-z)
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center gap-1.5 transition-colors',
+                              hasNumber ? 'text-primary font-medium' : 'text-on-surface-muted'
+                            )}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              {hasNumber ? 'check_circle' : 'radio_button_unchecked'}
+                            </span>
+                            One number (0-9)
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center gap-1.5 transition-colors col-span-2',
+                              hasSymbol ? 'text-primary font-medium' : 'text-on-surface-muted'
+                            )}
+                          >
+                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+                              {hasSymbol ? 'check_circle' : 'radio_button_unchecked'}
+                            </span>
+                            One special symbol (!@#$%^&*)
+                          </div>
+                        </div>
                       </>
-                    ) : (
-                      'At least 8 characters recommended.'
-                    )}
-                  </div>
+                    )
+                  })()}
                 </div>
               </div>
             )}
