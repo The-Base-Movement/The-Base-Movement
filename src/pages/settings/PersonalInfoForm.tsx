@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { getConstituenciesByRegion } from '@/lib/pollingCascade'
 import { labelStyle, inputStyle, selectStyle } from './shared'
 import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
@@ -20,6 +22,11 @@ function deriveAgeRange(birthYear: string): string {
   return '60+'
 }
 
+// A member whose constituency was never captured -- the June physical-form
+// import left 2,863 of them -- can set it once, here. Everyone else keeps the
+// registration lock. This mirrors trg_approve_on_constituency_set, which only
+// fires when the old value was empty, so the one-time set is also what flips
+// them from 'In Review' to 'Approved'.
 interface FormState {
   fullName: string
   nationalId: string
@@ -51,6 +58,8 @@ interface FormState {
 
 interface Props {
   form: FormState
+  /** True when the member had no constituency on load -- unlocks a one-time set. */
+  canSetConstituency: boolean
   userRegNo: string
   userPlatform: string
   dbCountries: { name: string; dialing_code: string; is_diaspora: boolean }[]
@@ -63,6 +72,7 @@ interface Props {
 
 export function PersonalInfoForm({
   form,
+  canSetConstituency,
   userRegNo,
   userPlatform,
   dbCountries,
@@ -72,6 +82,15 @@ export function PersonalInfoForm({
   job,
   onJobChange,
 }: Props) {
+  const [constituencyOptions, setConstituencyOptions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!canSetConstituency) return
+    getConstituenciesByRegion(form.region || '')
+      .then(setConstituencyOptions)
+      .catch(() => setConstituencyOptions([]))
+  }, [canSetConstituency, form.region])
+
   const politicalParties = usePoliticalParties()
   return (
     <div className="panel">
@@ -423,9 +442,10 @@ export function PersonalInfoForm({
                 </div>
               </div>
 
-              {/* Constituency — locked at registration, read-only */}
+              {/* Constituency — locked once set; a member whose constituency was
+                  never captured at registration may supply it once. */}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={labelStyle}>
+                <label htmlFor="settings-constituency" style={labelStyle}>
                   Constituency{' '}
                   <span
                     style={{
@@ -435,25 +455,56 @@ export function PersonalInfoForm({
                       color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    (Locked)
+                    {canSetConstituency ? '(Set once — cannot be changed later)' : '(Locked)'}
                   </span>
-                </span>
-                <div
-                  style={{
-                    ...inputStyle,
-                    background: 'hsl(var(--container-low))',
-                    color: 'hsl(var(--on-surface-muted))',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    cursor: 'not-allowed',
-                  }}
-                >
-                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-                    lock
-                  </span>
-                  {form.constituency || 'Not set'}
-                </div>
+                </label>
+                {canSetConstituency ? (
+                  <>
+                    <select
+                      id="settings-constituency"
+                      name="constituency"
+                      value={form.constituency}
+                      onChange={(e) => onChange('constituency', e.target.value)}
+                      style={selectStyle}
+                    >
+                      <option value="">
+                        {form.region ? 'Select your constituency' : 'Select your constituency'}
+                      </option>
+                      {constituencyOptions.map((name) => (
+                        <option key={name} value={name}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                    <span
+                      style={{
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        marginTop: 4,
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      Your membership is verified once your constituency is set.
+                    </span>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      ...inputStyle,
+                      background: 'hsl(var(--container-low))',
+                      color: 'hsl(var(--on-surface-muted))',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      cursor: 'not-allowed',
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                      lock
+                    </span>
+                    {form.constituency || 'Not set'}
+                  </div>
+                )}
               </div>
             </>
           ) : (

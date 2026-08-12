@@ -140,6 +140,9 @@ export default function ProfileSettings() {
   const [userRegNo] = useState(() => sessionStore.getItem('userRegNo') || '')
   const [saved, setSaved] = useState(false)
   const [loading, setLoading] = useState(true)
+  // Latched on load: a member whose constituency was never captured may set it
+  // once. Re-reading form.constituency would flip this off mid-edit.
+  const [canSetConstituency, setCanSetConstituency] = useState(false)
   const [authId, setAuthId] = useState<string | null>(null)
   const [accountName, setAccountName] = useState('')
 
@@ -228,6 +231,10 @@ export default function ProfileSettings() {
         // District is read-only/DB-derived: prefer the stored value, else resolve
         // it from the (locked) region + constituency. May stay blank if unresolved.
         let district = profile.district || ''
+        setCanSetConstituency(
+          (profile.platform || '').toUpperCase() === 'GHANA' && !profile.constituency
+        )
+
         if (!district && profile.region && profile.constituency) {
           district = (await getDistrictForConstituency(profile.region, profile.constituency)) || ''
         }
@@ -437,6 +444,9 @@ export default function ProfileSettings() {
         district: form.district,
         // Chapter is Diaspora-only; Ghana Network members are organised by constituency
         ...(userPlatform !== 'GHANA' && { chapter: form.chapter }),
+        // Only ever sent on the one-time set; the DB derives region from it and
+        // flips the member from 'In Review' to 'Approved'.
+        ...(canSetConstituency && form.constituency && { constituency: form.constituency }),
         avatarUrl: finalAvatarUrl || undefined,
         profession: form.profession,
         country: form.country,
@@ -534,6 +544,7 @@ export default function ProfileSettings() {
         {/* ── Right column: form ────────────── */}
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <PersonalInfoForm
+            canSetConstituency={canSetConstituency}
             form={form}
             userRegNo={userRegNo}
             userPlatform={userPlatform}
@@ -643,7 +654,14 @@ export default function ProfileSettings() {
               />
             </div>
             <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                }}
+              >
                 <label htmlFor="avatar-zoom" style={{ ...modalLabelStyle, margin: 0 }}>
                   Zoom
                 </label>
