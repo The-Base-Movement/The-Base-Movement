@@ -1069,6 +1069,28 @@ export interface Message {
   is_deleted?: boolean | null
   is_flagged?: boolean | null
   flagged_reason?: string | null
+  reply_to_id?: string | null
+  edited_at?: string | null
+  recalled_at?: string | null
+}
+
+/** The six reactions offered on the message menu. */
+export const REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'] as const
+export type ReactionEmoji = (typeof REACTION_EMOJIS)[number]
+
+export interface MessageReaction {
+  id: string
+  message_id: string
+  user_id: string
+  emoji: ReactionEmoji
+  created_at: string
+}
+
+/** Reactions on one message, collapsed for display. */
+export interface ReactionSummary {
+  emoji: ReactionEmoji
+  count: number
+  reactedByMe: boolean
 }
 
 /** A reported message, decorated for the admin moderation queue. */
