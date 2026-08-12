@@ -1071,6 +1071,13 @@ export interface Message {
   flagged_reason?: string | null
 }
 
+/** A reported message, decorated for the admin moderation queue. */
+export interface FlaggedMessage extends Message {
+  scope_label: string
+  is_group: boolean
+  sender_name: string
+}
+
 export interface ConversationSummary extends Conversation {
   unread_count: number
   last_message_content: string

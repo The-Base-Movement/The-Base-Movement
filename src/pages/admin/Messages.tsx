@@ -5,7 +5,7 @@ import { messagingService } from '@/services/messagingService'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
-import type { Conversation, ConversationSummary, Message } from '@/types/admin'
+import type { Conversation, ConversationSummary, FlaggedMessage, Message } from '@/types/admin'
 
 function formatRelative(iso: string | null): string {
   if (!iso) return ''
@@ -30,6 +30,8 @@ export default function AdminMessages() {
   const [loading, setLoading] = useState(true)
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [sending, setSending] = useState(false)
+  const [flagged, setFlagged] = useState<FlaggedMessage[]>([])
+  const [moderatingId, setModeratingId] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   // Load all conversations for this leader on mount
@@ -42,41 +44,59 @@ export default function AdminMessages() {
     })()
   }, [user])
 
+  // Reported messages awaiting moderation, across every room
+  useEffect(() => {
+    if (!user) return
+    let isMounted = true
+    void (async () => {
+      const reports = await messagingService.getFlaggedMessages()
+      if (isMounted) setFlagged(reports)
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [user])
+
+  // Both effects below key off the conversation id only — reading it through a
+  // variable keeps the dependency statically checkable without widening them to
+  // the whole object, which would re-subscribe on every list refresh.
+  const activeConvId = activeConv?.id
+
   // Load thread when active conversation changes
   useEffect(() => {
-    if (!activeConv) return
+    if (!activeConvId) return
     let cancelled = false
     void (async () => {
       setLoadingMessages(true)
-      const msgs = await messagingService.getMessages(activeConv.id)
+      const msgs = await messagingService.getMessages(activeConvId)
       if (cancelled) return
       setMessages(msgs)
       setLoadingMessages(false)
-      void messagingService.markAsRead(activeConv.id, 'leader')
+      void messagingService.markAsRead(activeConvId, 'leader')
       // Clear unread badge in the list
       setConversations((prev) =>
-        prev.map((c) => (c.id === activeConv.id ? { ...c, unread_count: 0 } : c))
+        prev.map((c) => (c.id === activeConvId ? { ...c, unread_count: 0 } : c))
       )
     })()
     return () => {
       cancelled = true
     }
-  }, [activeConv?.id])
+  }, [activeConvId])
 
   // Realtime on active conversation
   useEffect(() => {
-    if (!activeConv) return
-    const unsub = messagingService.subscribeToMessages(activeConv.id, (msg) => {
+    if (!activeConvId) return
+    const unsub = messagingService.subscribeToMessages(activeConvId, (msg) => {
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev
         return [...prev, msg]
       })
       if (msg.sender_type === 'member') {
-        void messagingService.markAsRead(activeConv.id, 'leader')
+        void messagingService.markAsRead(activeConvId, 'leader')
       }
     })
     return unsub
-  }, [activeConv?.id])
+  }, [activeConvId])
 
   // Resolve member profiles for senders in thread
   useEffect(() => {
@@ -133,6 +153,34 @@ export default function AdminMessages() {
     )
   }
 
+  const handleRemoveFlagged = async (messageId: string) => {
+    if (!user) return
+    setModeratingId(messageId)
+    const ok = await messagingService.deleteMessage(messageId, user.id)
+    const { toast } = await import('sonner')
+    if (ok) {
+      setFlagged((prev) => prev.filter((m) => m.id !== messageId))
+      setMessages((prev) => prev.filter((m) => m.id !== messageId))
+      toast.success('Message removed')
+    } else {
+      toast.error('Could not remove message')
+    }
+    setModeratingId(null)
+  }
+
+  const handleDismissFlagged = async (messageId: string) => {
+    setModeratingId(messageId)
+    const ok = await messagingService.dismissFlag(messageId)
+    const { toast } = await import('sonner')
+    if (ok) {
+      setFlagged((prev) => prev.filter((m) => m.id !== messageId))
+      toast.success('Report dismissed')
+    } else {
+      toast.error('Could not dismiss report')
+    }
+    setModeratingId(null)
+  }
+
   const memberInitial = (name: string | undefined | null) =>
     name ? name.trim().charAt(0).toUpperCase() : '?'
 
@@ -156,6 +204,125 @@ export default function AdminMessages() {
           </p>
         </div>
       </div>
+
+      {/* Moderation queue — only surfaces when members have reported something */}
+      {flagged.length > 0 && (
+        <div className="panel" style={{ marginBottom: 20, overflow: 'hidden' }}>
+          <div
+            className="ph"
+            style={{
+              padding: '14px 16px',
+              borderBottom: '1px solid hsl(var(--border))',
+              alignItems: 'center',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: 18, color: 'hsl(var(--destructive))' }}
+              >
+                flag
+              </span>
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 13,
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
+                  Reported messages
+                </p>
+                <p style={{ margin: 0, fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                  {flagged.length} awaiting review
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ maxHeight: 280, overflowY: 'auto' }}>
+            {flagged.map((m) => (
+              <div
+                key={m.id}
+                style={{
+                  padding: '12px 16px',
+                  borderBottom: '1px solid hsl(var(--border))',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      marginBottom: 4,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface))',
+                      }}
+                    >
+                      {m.sender_name}
+                    </span>
+                    <span className="pill pill-mute" style={{ fontSize: 10 }}>
+                      {m.is_group ? `📢 ${m.scope_label}` : m.scope_label}
+                    </span>
+                    <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>
+                      {formatRelative(m.created_at)}
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      color: 'hsl(var(--on-surface))',
+                      lineHeight: 1.5,
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {m.content}
+                  </p>
+                  {m.flagged_reason && (
+                    <p
+                      style={{
+                        margin: '4px 0 0',
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      Reason: {m.flagged_reason}
+                    </p>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    disabled={moderatingId === m.id}
+                    onClick={() => void handleDismissFlagged(m.id)}
+                  >
+                    Keep
+                  </button>
+                  <button
+                    className="btn btn-dest btn-sm"
+                    disabled={moderatingId === m.id}
+                    onClick={() => void handleRemoveFlagged(m.id)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Two-panel layout */}
       <div
@@ -460,7 +627,8 @@ export default function AdminMessages() {
                     if (msg.sender_type === 'member') {
                       senderName =
                         activeConv.member?.full_name ??
-                        (memberProfilesMap[msg.sender_id]?.full_name ?? 'Member')
+                        memberProfilesMap[msg.sender_id]?.full_name ??
+                        'Member'
                     } else {
                       senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Leader/Admin'
                     }
