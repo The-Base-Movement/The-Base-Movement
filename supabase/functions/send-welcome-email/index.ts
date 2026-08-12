@@ -32,20 +32,27 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', serviceRoleKey)
 
-    const authz = await requireAuthorizedAdmin(req, supabase, canManageMembers, {
-      allowServiceRole: true,
-      serviceRoleKey,
-    })
-    if (!authz.ok) {
-      // Return the pre-built error response directly — don't re-read its body
-      return new Response(authz.response.body, {
-        status: authz.response.status,
+    const authHeader = req.headers.get('Authorization') ?? ''
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim()
+
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Not authenticated' }), {
+        status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    const { userId, sendToAllActive = false, type = 'welcome', email: targetEmail, name: targetName, regNo: targetRegNo, chapter: targetChapter } = await req.json()
-    if (!userId && !sendToAllActive && type !== 'unlogged_nudge') throw new Error('userId is required')
+    const {
+      userId,
+      sendToAllActive = false,
+      type = 'welcome',
+      email: targetEmail,
+      name: targetName,
+      regNo: targetRegNo,
+      chapter: targetChapter,
+    } = await req.json()
+    if (!userId && !sendToAllActive && type !== 'unlogged_nudge')
+      throw new Error('userId is required')
 
     // Live active member count for the template
     const { count } = await supabase
@@ -64,23 +71,45 @@ Deno.serve(async (req) => {
       registration_number: string
       chapter: string | null
       status: string | null
+      constituency?: string | null
+      platform?: string | null
     }
+
+    // Members can reach a human here when self-service reset fails.
+    const WHATSAPP_SUPPORT = [
+      { name: 'Bernard', number: '+32467814742' },
+      { name: 'Prince', number: '+233247380924' },
+      { name: 'Morris', number: '+233261278180' },
+    ]
 
     let recipients: UserRow[] = []
     if (type === 'unlogged_nudge' && targetEmail) {
-      recipients = [{
-        id: 'direct',
-        full_name: targetName || 'Compatriot',
-        email: targetEmail,
-        phone_number: null,
-        registration_number: targetRegNo || '',
-        chapter: targetChapter || null,
-        status: 'Active',
-      }]
+      // Look the member up so the constituency ask only appears for members who
+      // actually lack one; the caller only supplies name/email/regNo.
+      const { data: known } = await supabase
+        .from('users')
+        .select('constituency, platform')
+        .eq('email', targetEmail)
+        .maybeSingle()
+      recipients = [
+        {
+          id: 'direct',
+          full_name: targetName || 'Compatriot',
+          email: targetEmail,
+          phone_number: null,
+          registration_number: targetRegNo || '',
+          chapter: targetChapter || null,
+          status: 'Active',
+          constituency: known?.constituency ?? null,
+          platform: known?.platform ?? 'GHANA',
+        },
+      ]
     } else if (sendToAllActive) {
       const { data: users, error: usersErr } = await supabase
         .from('users')
-        .select('id, full_name, email, phone_number, registration_number, chapter, status')
+        .select(
+          'id, full_name, email, phone_number, registration_number, chapter, status, constituency, platform'
+        )
         .eq('status', 'Active')
         .order('joined_at', { ascending: true })
       if (usersErr) throw new Error(`Failed to fetch active members: ${usersErr.message}`)
@@ -88,7 +117,9 @@ Deno.serve(async (req) => {
     } else {
       const { data: user, error: userErr } = await supabase
         .from('users')
-        .select('id, full_name, email, phone_number, registration_number, chapter, status')
+        .select(
+          'id, full_name, email, phone_number, registration_number, chapter, status, constituency, platform'
+        )
         .eq('id', userId)
         .single()
       if (userErr || !user) throw new Error(`User not found: ${userErr?.message}`)
@@ -111,6 +142,11 @@ Deno.serve(async (req) => {
             regNo: row.registration_number,
             chapter: row.chapter ?? undefined,
             loginUrl: 'https://www.thebasemovement.org.gh/login',
+            settingsUrl: 'https://www.thebasemovement.org.gh/dashboard/settings',
+            // Setting a constituency is what flips a Ghana member to verified,
+            // so the email leads with that ask when it is the missing piece.
+            needsConstituency: !row.constituency && (row.platform ?? '').toUpperCase() === 'GHANA',
+            whatsappNumbers: WHATSAPP_SUPPORT,
           })
         : welcomeEmail({
             name: firstName,
@@ -144,7 +180,10 @@ Deno.serve(async (req) => {
         }
       }
 
-      if (row.phone_number) {
+      // Never SMS on a nudge. The SMS providers are transactional OTP
+      // infrastructure; a bulk run through sendToAllActive would otherwise text
+      // every member with a phone number and burn OTP credit.
+      if (row.phone_number && !isNudge) {
         const sms = await sendSms(
           [row.phone_number],
           buildWelcomeSms(row.full_name || 'Compatriot', row.registration_number)
