@@ -1048,9 +1048,10 @@ export interface Conversation {
     | 'department'
     | 'group_constituency'
     | 'group_chapter'
+    | 'group_movement'
   scope_value: string
   status: 'open' | 'closed'
-  group_type?: 'constituency' | 'chapter' | null
+  group_type?: 'constituency' | 'chapter' | 'movement' | null
   group_id?: string | null
   department_id?: string | null
   created_at: string
@@ -1065,6 +1066,9 @@ export interface Message {
   content: string
   read_at: string | null
   created_at: string
+  is_deleted?: boolean | null
+  is_flagged?: boolean | null
+  flagged_reason?: string | null
 }
 
 export interface ConversationSummary extends Conversation {

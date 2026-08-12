@@ -17,6 +17,8 @@ import type {
 class MessagingService {
   private static instance: MessagingService
   private channels = new Map<string, RealtimeChannel>()
+  /** Reason the most recent sendMessage() was rejected, for the caller's toast. */
+  public lastSendError: string | null = null
   private constructor() {}
 
   public static getInstance(): MessagingService {
@@ -278,8 +280,12 @@ class MessagingService {
       .single()
     if (error) {
       console.warn('[MessagingService] sendMessage failed:', error)
+      // The forum rate limit is enforced by a DB trigger, so its message is the only
+      // thing that tells the member why the post bounced. Hand it back to the caller.
+      this.lastSendError = error.message ?? null
       return null
     }
+    this.lastSendError = null
     // last_message_at is bumped by DB trigger update_conversation_last_message_at() — no client update needed
 
     // Notify the other party — fire and forget
@@ -287,10 +293,13 @@ class MessagingService {
       try {
         const { data: convo } = await supabase
           .from('conversations')
-          .select('member_id, leader_id')
+          .select('member_id, leader_id, group_type')
           .eq('id', conversationId)
           .single()
         if (!convo) return
+        // Group rooms have no "other party" — notifying leader_id on every post would
+        // mean one DB row + one push per forum message, all aimed at a single admin.
+        if (convo.group_type) return
         const recipientId = senderType === 'member' ? convo.leader_id : convo.member_id
         if (recipientId) {
           const preview = content.length > 80 ? content.slice(0, 80) + '…' : content
@@ -321,26 +330,42 @@ class MessagingService {
     return data as Message
   }
 
-  /** Fetch all messages for a conversation, chronological order */
-  async getMessages(conversationId: string): Promise<Message[]> {
-    const { data, error } = await supabase
+  /**
+   * Fetch a page of messages for a conversation, returned chronological.
+   * Reads the newest `limit` messages; pass `before` (an ISO created_at) to page
+   * backwards through older ones. The movement forum is one room for every member,
+   * so an unbounded fetch is not an option here.
+   */
+  async getMessages(conversationId: string, before?: string, limit = 50): Promise<Message[]> {
+    let query = supabase
       .from('messages')
       .select('*')
       .eq('conversation_id', conversationId)
+      .not('is_deleted', 'is', true) // moderator-removed posts never render
       .gt('expires_at', new Date().toISOString()) // Filter out expired messages (older than 30 days)
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (before) query = query.lt('created_at', before)
+
+    const { data, error } = await query
     if (error) {
       console.warn('[MessagingService] getMessages failed:', error)
       return []
     }
-    return (data ?? []) as Message[]
+    // Query runs newest-first so the limit takes the most recent page; flip for display.
+    return ((data ?? []) as Message[]).reverse()
   }
 
   /**
    * Subscribe to new messages in a conversation via Supabase Realtime.
    * Returns an unsubscribe function — call it on component unmount.
    */
-  subscribeToMessages(conversationId: string, onMessage: (msg: Message) => void): () => void {
+  subscribeToMessages(
+    conversationId: string,
+    onMessage: (msg: Message) => void,
+    onUpdate?: (msg: Message) => void
+  ): () => void {
     // Clean up any existing channel for this conversation (guards against React Strict Mode double-invoke)
     const existing = this.channels.get(conversationId)
     if (existing) {
@@ -360,6 +385,20 @@ class MessagingService {
         },
         (payload) => {
           onMessage(payload.new as Message)
+        }
+      )
+      // Moderator removals arrive as UPDATE (is_deleted), not INSERT — without this
+      // a deleted post stays on every other member's screen until they reload.
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          onUpdate?.(payload.new as Message)
         }
       )
       .subscribe()
@@ -384,6 +423,52 @@ class MessagingService {
       .eq('conversation_id', conversationId)
       .eq('sender_type', senderType)
       .is('read_at', null)
+  }
+
+  /**
+   * Mark a group room read for THIS member only.
+   * messages.read_at is one shared column, so in a room it would mean the first
+   * reader marks the thread read for everybody. Read state per membership instead.
+   */
+  async markGroupAsRead(conversationId: string, userId: string): Promise<void> {
+    await supabase
+      .from('group_conversation_members')
+      .update({ last_read_at: new Date().toISOString() })
+      .eq('conversation_id', conversationId)
+      .eq('user_id', userId)
+  }
+
+  /** When this member last read the room, for unread counts. */
+  async getGroupLastReadAt(conversationId: string, userId: string): Promise<string | null> {
+    const { data } = await supabase
+      .from('group_conversation_members')
+      .select('last_read_at')
+      .eq('conversation_id', conversationId)
+      .eq('user_id', userId)
+      .maybeSingle()
+    return (data as { last_read_at: string | null } | null)?.last_read_at ?? null
+  }
+
+  /**
+   * The single movement-wide forum, open to every approved member.
+   * Joins the caller to it on first access; RLS enforces that only Active/Approved
+   * members get in, and a partial unique index guarantees the room is a singleton.
+   */
+  async getMovementForum(memberId: string): Promise<Conversation | null> {
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .eq('group_type', 'movement')
+      .maybeSingle()
+
+    if (error || !data) {
+      if (error) console.warn('[MessagingService] getMovementForum failed:', error)
+      return null
+    }
+
+    const joined = await this.addGroupConversationMember(data.id as string, memberId)
+    // Pending members are rejected by the join policy — they read nothing and post nothing.
+    return joined ? (data as Conversation) : null
   }
 
   /** Admin side: all conversations for this leader with unread counts */
@@ -502,8 +587,8 @@ class MessagingService {
       scopeType === 'department'
         ? 'DEPARTMENT'
         : scopeType === 'chapter'
-        ? 'BASE_DIASPORA_LEAD'
-        : 'CONSTITUENCY_LEAD'
+          ? 'BASE_DIASPORA_LEAD'
+          : 'CONSTITUENCY_LEAD'
     return {
       id: profile.id as string,
       full_name: (profile.full_name as string | null) ?? 'Leader',

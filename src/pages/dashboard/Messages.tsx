@@ -17,6 +17,7 @@ function roleLabel(role: string): string {
 function scopeLabel(conv: Conversation): string {
   if (conv.scope_type === 'chapter') return `Diaspora: ${conv.scope_value}`
   if (conv.scope_type === 'constituency') return `Constituency: ${conv.scope_value}`
+  if (conv.scope_type === 'group_movement') return '🌍 General Discussion'
   if (conv.scope_type === 'group_chapter') return `📢 ${conv.scope_value} Forum`
   if (conv.scope_type === 'group_constituency') return `📢 ${conv.scope_value} Forum`
   if (conv.scope_type === 'department') return `🏢 ${conv.scope_value}`
@@ -44,6 +45,10 @@ export default function DashboardMessages() {
     Record<string, { full_name: string | null; avatar_url: string | null }>
   >({})
   const [sending, setSending] = useState(false)
+  const [loadingOlder, setLoadingOlder] = useState(false)
+  const [noMoreOlder, setNoMoreOlder] = useState<Record<string, boolean>>({})
+  // Group rooms track read state per member, not on the message row.
+  const [lastReadMap, setLastReadMap] = useState<Record<string, string | null>>({})
   const [expandDepartments, setExpandDepartments] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -70,13 +75,14 @@ export default function DashboardMessages() {
     if (!user) return
     let isMounted = true
     void (async () => {
-      const [convs, groupConvs, depts] = await Promise.all([
+      const [convs, groupConvs, forum, depts] = await Promise.all([
         messagingService.getOrCreateConversations(user.id),
         messagingService.getMemberGroupConversations(user.id),
+        messagingService.getMovementForum(user.id),
         messagingService.getDepartments(),
       ])
       if (!isMounted) return
-      const allConvs = [...convs, ...groupConvs]
+      const allConvs = [...convs, ...groupConvs, ...(forum ? [forum] : [])]
       setConversations(allConvs)
       setDepartments(depts)
       if (allConvs.length > 0) {
@@ -91,7 +97,16 @@ export default function DashboardMessages() {
             if (!isMounted) return
             setMessagesMap((prev) => ({ ...prev, [conv.id]: msgs }))
             if (leader) setLeaderInfoMap((prev) => ({ ...prev, [conv.id]: leader }))
-            void messagingService.markAsRead(conv.id, 'member')
+            if (conv.group_type) {
+              // Capture the previous read point before advancing it, so the badge
+              // reflects what arrived while the member was away.
+              const lastRead = await messagingService.getGroupLastReadAt(conv.id, user.id)
+              if (!isMounted) return
+              setLastReadMap((prev) => ({ ...prev, [conv.id]: lastRead }))
+              void messagingService.markGroupAsRead(conv.id, user.id)
+            } else {
+              void messagingService.markAsRead(conv.id, 'member')
+            }
           })
         )
       }
@@ -105,16 +120,31 @@ export default function DashboardMessages() {
   // Realtime subscription for active conversation
   useEffect(() => {
     if (!activeId) return
-    const unsub = messagingService.subscribeToMessages(activeId, (msg) => {
-      setMessagesMap((prev) => {
-        const cur = prev[activeId] ?? []
-        if (cur.some((m) => m.id === msg.id)) return prev
-        return { ...prev, [activeId]: [...cur, msg] }
-      })
-      if (msg.sender_type === 'leader') {
-        void messagingService.markAsRead(activeId, 'member')
+    const unsub = messagingService.subscribeToMessages(
+      activeId,
+      (msg) => {
+        setMessagesMap((prev) => {
+          const cur = prev[activeId] ?? []
+          if (cur.some((m) => m.id === msg.id)) return prev
+          return { ...prev, [activeId]: [...cur, msg] }
+        })
+        if (msg.sender_type === 'leader') {
+          void messagingService.markAsRead(activeId, 'member')
+        }
+      },
+      (msg) => {
+        // Drop removed posts live; otherwise reflect edits/flags in place.
+        setMessagesMap((prev) => {
+          const cur = prev[activeId] ?? []
+          return {
+            ...prev,
+            [activeId]: msg.is_deleted
+              ? cur.filter((m) => m.id !== msg.id)
+              : cur.map((m) => (m.id === msg.id ? msg : m)),
+          }
+        })
       }
-    })
+    )
     return unsub
   }, [activeId])
 
@@ -145,10 +175,12 @@ export default function DashboardMessages() {
     }
   }, [messages, user?.id, memberProfilesMap])
 
-  // Auto-scroll on new messages
+  // Auto-scroll on new messages. Keyed on the last message so prepending older
+  // history doesn't yank the reader back down to the bottom.
+  const lastMessageId = messages.at(-1)?.id
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [lastMessageId])
 
   const handleSend = async (content: string) => {
     if (!activeConv || !user) return
@@ -171,9 +203,22 @@ export default function DashboardMessages() {
       })
     } else {
       const { toast } = await import('sonner')
-      toast.error('Message not sent — try again')
+      toast.error(messagingService.lastSendError ?? 'Message not sent — try again')
     }
     setSending(false)
+  }
+
+  // Rooms are paged newest-first, so reaching back through history is explicit.
+  const handleLoadOlder = async () => {
+    if (!activeId || messages.length === 0 || loadingOlder) return
+    setLoadingOlder(true)
+    const older = await messagingService.getMessages(activeId, messages[0].created_at)
+    if (older.length === 0) {
+      setNoMoreOlder((prev) => ({ ...prev, [activeId]: true }))
+    } else {
+      setMessagesMap((prev) => ({ ...prev, [activeId]: [...older, ...(prev[activeId] ?? [])] }))
+    }
+    setLoadingOlder(false)
   }
 
   const handleMessageDepartment = async (dept: Department) => {
@@ -274,6 +319,7 @@ export default function DashboardMessages() {
 
   const isClosed = activeConv?.status === 'closed'
   const isGroupChat = activeConv?.scope_type?.startsWith('group_')
+  const isMovementChat = activeConv?.scope_type === 'group_movement'
   const isDeptChat = activeConv?.scope_type === 'department'
   const leaderInitial = leaderInfo?.full_name?.charAt(0)?.toUpperCase() || '?'
 
@@ -285,9 +331,7 @@ export default function DashboardMessages() {
       (c) => !c.scope_type?.startsWith('group_') && c.scope_type !== 'department'
     )
   )
-  const groupConvs = filteredSearch(
-    conversations.filter((c) => c.scope_type?.startsWith('group_'))
-  )
+  const groupConvs = filteredSearch(conversations.filter((c) => c.scope_type?.startsWith('group_')))
   const deptConvs = filteredSearch(conversations.filter((c) => c.scope_type === 'department'))
 
   return (
@@ -536,7 +580,10 @@ export default function DashboardMessages() {
                 {groupConvs.map((conv) => {
                   const isActive = conv.id === activeId
                   const convMessages = messagesMap[conv.id] ?? []
-                  const unreadCount = convMessages.filter((m) => !m.read_at).length
+                  const lastRead = lastReadMap[conv.id]
+                  const unreadCount = convMessages.filter(
+                    (m) => m.sender_id !== user?.id && (!lastRead || m.created_at > lastRead)
+                  ).length
 
                   return (
                     <button
@@ -594,7 +641,7 @@ export default function DashboardMessages() {
                             textOverflow: 'ellipsis',
                           }}
                         >
-                          {conv.scope_value} Forum
+                          {scopeLabel(conv)}
                         </div>
                         <div
                           style={{
@@ -1073,11 +1120,13 @@ export default function DashboardMessages() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {isGroupChat
-                    ? `📢 ${activeConv?.scope_value} Community Forum`
-                    : isDeptChat
-                    ? `🏢 ${activeConv?.scope_value}`
-                    : leaderInfo?.full_name ?? 'Your Leader'}
+                  {isMovementChat
+                    ? '🌍 General Discussion'
+                    : isGroupChat
+                      ? `📢 ${activeConv?.scope_value} Community Forum`
+                      : isDeptChat
+                        ? `🏢 ${activeConv?.scope_value}`
+                        : (leaderInfo?.full_name ?? 'Your Leader')}
                 </p>
                 <p
                   style={{
@@ -1090,15 +1139,17 @@ export default function DashboardMessages() {
                     textOverflow: 'ellipsis',
                   }}
                 >
-                  {isGroupChat
-                    ? `Open Discussion · ${
-                        activeConv?.scope_type === 'group_chapter' ? 'Diaspora' : 'Constituency'
-                      } Forum`
-                    : isDeptChat
-                    ? 'Official Helpdesk & Secretariat Support'
-                    : `${leaderInfo ? roleLabel(leaderInfo.role) : ''}${
-                        activeConv?.scope_value ? ` — ${activeConv.scope_value}` : ''
-                      }`}
+                  {isMovementChat
+                    ? 'Open to every member of The Base Movement'
+                    : isGroupChat
+                      ? `Open Discussion · ${
+                          activeConv?.scope_type === 'group_chapter' ? 'Diaspora' : 'Constituency'
+                        } Forum`
+                      : isDeptChat
+                        ? 'Official Helpdesk & Secretariat Support'
+                        : `${leaderInfo ? roleLabel(leaderInfo.role) : ''}${
+                            activeConv?.scope_value ? ` — ${activeConv.scope_value}` : ''
+                          }`}
                 </p>
               </div>
               {isClosed && (
@@ -1130,6 +1181,16 @@ export default function DashboardMessages() {
                 >
                   No messages yet. Send a message to get started!
                 </p>
+              )}
+              {messages.length > 0 && activeId && !noMoreOlder[activeId] && (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => void handleLoadOlder()}
+                  disabled={loadingOlder}
+                  style={{ alignSelf: 'center', fontSize: 11, flexShrink: 0 }}
+                >
+                  {loadingOlder ? 'Loading…' : 'Load older messages'}
+                </button>
               )}
               {messages.map((msg) => {
                 const isSelf = msg.sender_id === user?.id
@@ -1177,11 +1238,13 @@ export default function DashboardMessages() {
                 }}
                 disabled={sending}
                 placeholder={
-                  isGroupChat
-                    ? `Message ${activeConv?.scope_value} Forum…`
-                    : isDeptChat
-                    ? `Message ${activeConv?.scope_value}…`
-                    : 'Message your leader…'
+                  isMovementChat
+                    ? 'Message the movement…'
+                    : isGroupChat
+                      ? `Message ${activeConv?.scope_value} Forum…`
+                      : isDeptChat
+                        ? `Message ${activeConv?.scope_value}…`
+                        : 'Message your leader…'
                 }
               />
             )}
