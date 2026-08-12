@@ -13,6 +13,23 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
  * unchanged so diaspora members are reachable; Ghana rules only apply to
  * local-format numbers (024..., 233...).
  */
+/**
+ * Is this number a Ghana destination?
+ *
+ * Local formats (024..., 054..., 233...) are Ghana. An explicit foreign country
+ * code (+39..., 0044...) is not. This decides which provider pays for the
+ * message, so it errs toward Ghana only for genuinely local formats.
+ */
+export function isGhanaNumber(raw: string): boolean {
+  const trimmed = (raw || '').trim()
+  const digits = trimmed.replace(/\D/g, '')
+  if (!digits) return false
+  if (digits.startsWith('233')) return true
+  if (trimmed.startsWith('+')) return false
+  if (digits.startsWith('00')) return false
+  return true
+}
+
 export function normalizeGhanaPhone(raw: string): string {
   const trimmed = raw.trim()
   const digits = trimmed.replace(/\D/g, '')
@@ -216,35 +233,16 @@ export async function sendTwilioSms(recipients: string[], message: string): Prom
 /**
  * Send one message to one or more recipients through Infobip, MNotify, or Twilio API.
  */
-export async function sendSms(
-  recipients: string[],
-  message: string,
-  options?: { mnotifyOnly?: boolean }
-): Promise<SmsResult> {
-  // @ts-ignore: Deno global
-  const infobipKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
-  // @ts-ignore: Deno global
-  const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID')
+/**
+ * Send via MNotify. Ghana-only by policy: MNotify credits are the cheap
+ * domestic route, and international delivery through them is unreliable.
+ */
+export async function sendMnotifySms(recipients: string[], message: string): Promise<SmsResult> {
   // @ts-ignore: Deno global
   const apiKey: string | undefined = Deno.env.get('MNOTIFY_API_KEY')
   // @ts-ignore: Deno global
   const sender: string = Deno.env.get('MNOTIFY_SENDER_ID') ?? 'The Base'
 
-  // 1. If Infobip API key is configured, use Infobip for International SMS dispatches
-  if (infobipKey && !options?.mnotifyOnly) {
-    const infobipResult = await sendInfobipSms(recipients, message)
-    if (infobipResult.ok) return infobipResult
-    console.warn('[SMS] Infobip send failed, falling back:', infobipResult.detail)
-  }
-
-  // 2. If Twilio is configured, try Twilio
-  if (twilioSid && !options?.mnotifyOnly) {
-    const twilioResult = await sendTwilioSms(recipients, message)
-    if (twilioResult.ok) return twilioResult
-    console.warn('[SMS] Twilio send failed, falling back to MNotify:', twilioResult.detail)
-  }
-
-  // 3. Fall back to MNotify for Ghana SMS
   if (!apiKey) {
     console.warn('[SMS] MNOTIFY_API_KEY not set — skipping send to', recipients.length, 'numbers')
     return { ok: false, detail: 'MNOTIFY_API_KEY not set' }
@@ -359,4 +357,73 @@ export async function sendSms(
     console.error('[SMS] MNotify dispatch error:', detail)
     return { ok: false, detail }
   }
+}
+
+/**
+ * Destination-aware SMS dispatch.
+ *
+ * Routing is by the recipient's country, not by which provider happens to be
+ * configured. MNotify is the cheap domestic route and is used for +233 numbers
+ * only; international numbers go to Infobip or Twilio. The previous version
+ * tried Infobip, then Twilio, then MNotify for every recipient, so configuring
+ * Twilio silently moved the whole Ghana base onto the expensive route.
+ *
+ * options.mnotifyOnly forces everything through MNotify, for callers that
+ * deliberately want the domestic route.
+ */
+export async function sendSms(
+  recipients: string[],
+  message: string,
+  options?: { mnotifyOnly?: boolean }
+): Promise<SmsResult> {
+  if (recipients.length === 0) return { ok: true, detail: 'no recipients' }
+
+  if (options?.mnotifyOnly) return sendMnotifySms(recipients, message)
+
+  const ghana = recipients.filter(isGhanaNumber)
+  const international = recipients.filter((r) => !isGhanaNumber(r))
+
+  const details: string[] = []
+  let ok = true
+
+  if (ghana.length > 0) {
+    const res = await sendMnotifySms(ghana, message)
+    details.push(`GH(${ghana.length}): ${res.detail}`)
+    if (!res.ok) ok = false
+  }
+
+  if (international.length > 0) {
+    const res = await sendInternationalSms(international, message)
+    details.push(`INTL(${international.length}): ${res.detail}`)
+    if (!res.ok) ok = false
+  }
+
+  return { ok, detail: details.join(' | ') }
+}
+
+/**
+ * International dispatch: Infobip first when configured, then Twilio. Falls
+ * back to MNotify only as a last resort -- delivery is less reliable and the
+ * per-message cost is higher, so a failure here is worth the log line.
+ */
+async function sendInternationalSms(recipients: string[], message: string): Promise<SmsResult> {
+  // @ts-ignore: Deno global
+  const infobipKey = Deno.env.get('INFOBIP_API_KEY')?.trim()
+  // @ts-ignore: Deno global
+  const twilioSid = Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID')
+
+  if (infobipKey) {
+    const res = await sendInfobipSms(recipients, message)
+    if (res.ok) return res
+    console.warn('[SMS] Infobip send failed, falling back:', res.detail)
+  }
+
+  if (twilioSid) {
+    const res = await sendTwilioSms(recipients, message)
+    if (res.ok) return res
+    console.warn('[SMS] Twilio send failed, falling back to MNotify:', res.detail)
+  }
+
+  console.warn(`[SMS] No international provider succeeded for ${recipients.length} recipients`)
+  return sendMnotifySms(recipients, message)
 }
