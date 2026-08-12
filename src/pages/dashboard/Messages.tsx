@@ -208,6 +208,33 @@ export default function DashboardMessages() {
     setSending(false)
   }
 
+  const handleReport = async (messageId: string) => {
+    const { toast } = await import('sonner')
+    toast('Report this message to moderators?', {
+      action: {
+        label: 'Report',
+        onClick: () => {
+          void (async () => {
+            const ok = await messagingService.flagMessage(messageId, 'Reported by member')
+            if (!ok) {
+              toast.error('Could not report — try again')
+              return
+            }
+            if (activeId) {
+              setMessagesMap((prev) => ({
+                ...prev,
+                [activeId]: (prev[activeId] ?? []).map((m) =>
+                  m.id === messageId ? { ...m, is_flagged: true } : m
+                ),
+              }))
+            }
+            toast.success('Reported. Moderators will review it.')
+          })()
+        },
+      },
+    })
+  }
+
   // Rooms are paged newest-first, so reaching back through history is explicit.
   const handleLoadOlder = async () => {
     if (!activeId || messages.length === 0 || loadingOlder) return
@@ -1211,6 +1238,9 @@ export default function DashboardMessages() {
                     isSelf={isSelf}
                     timestamp={msg.created_at}
                     senderName={senderName}
+                    isFlagged={Boolean(msg.is_flagged)}
+                    // Reporting only makes sense for other people's posts in an open room.
+                    onReport={isGroupChat && !isSelf ? () => void handleReport(msg.id) : undefined}
                   />
                 )
               })}
