@@ -11,6 +11,7 @@ import type {
   Conversation,
   ConversationLeaderInfo,
   ConversationSummary,
+  FlaggedMessage,
   Message,
 } from '@/types/admin'
 
@@ -971,6 +972,54 @@ class MessagingService {
       return false
     }
 
+    return true
+  }
+
+  /**
+   * Messages members have reported, newest first — the admin moderation queue.
+   * Admins read these through the is_admin() branch on messages_select.
+   */
+  async getFlaggedMessages(limit = 50): Promise<FlaggedMessage[]> {
+    const { data, error } = await supabase
+      .from('messages')
+      .select('*, conversations!inner(scope_type, scope_value, group_type)')
+      .eq('is_flagged', true)
+      .not('is_deleted', 'is', true)
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.warn('[MessagingService] getFlaggedMessages failed:', error)
+      return []
+    }
+
+    const rows = (data ?? []) as unknown as (Message & {
+      conversations: { scope_type: string; scope_value: string; group_type: string | null } | null
+    })[]
+
+    const senders = new Map(
+      (await getPublicDirectoryProfiles(rows.map((r) => r.sender_id))).map((p) => [p.id, p])
+    )
+
+    return rows.map((r) => ({
+      ...r,
+      scope_label: r.conversations?.scope_value ?? 'Unknown',
+      is_group: Boolean(r.conversations?.group_type),
+      sender_name: senders.get(r.sender_id)?.full_name ?? 'Member',
+    }))
+  }
+
+  /** Clear a report without removing the message. */
+  async dismissFlag(messageId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('messages')
+      .update({ is_flagged: false, flagged_reason: null })
+      .eq('id', messageId)
+
+    if (error) {
+      console.warn('[MessagingService] dismissFlag failed:', error)
+      return false
+    }
     return true
   }
 

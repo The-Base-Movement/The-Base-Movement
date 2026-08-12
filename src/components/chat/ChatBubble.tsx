@@ -13,6 +13,8 @@ interface ChatBubbleProps {
   isSelf: boolean // true when this bubble belongs to the current logged-in user
   timestamp: string
   senderName?: string // shown above the bubble when isSelf is false
+  onReport?: () => void // when set, shows a report control (open rooms only)
+  isFlagged?: boolean // already reported — control becomes a static marker
 }
 
 /**
@@ -20,7 +22,14 @@ interface ChatBubbleProps {
  * -------------------------------------------------------------
  * A styled text balloon presenting a single chat message.
  */
-export function ChatBubble({ content, isSelf, timestamp, senderName }: ChatBubbleProps) {
+export function ChatBubble({
+  content,
+  isSelf,
+  timestamp,
+  senderName,
+  onReport,
+  isFlagged,
+}: ChatBubbleProps) {
   const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true })
 
   return (
@@ -65,17 +74,60 @@ export function ChatBubble({ content, isSelf, timestamp, senderName }: ChatBubbl
       >
         {content}
       </div>
-      <span
-        style={{
-          fontSize: 10,
-          color: 'hsl(var(--on-surface-muted))',
-          fontFamily: "'Public Sans', sans-serif",
-          paddingLeft: isSelf ? 0 : 4,
-          paddingRight: isSelf ? 4 : 0,
-        }}
-      >
-        {timeAgo}
-      </span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span
+          style={{
+            fontSize: 10,
+            color: 'hsl(var(--on-surface-muted))',
+            fontFamily: "'Public Sans', sans-serif",
+            paddingLeft: isSelf ? 0 : 4,
+            paddingRight: isSelf ? 4 : 0,
+          }}
+        >
+          {timeAgo}
+        </span>
+        {isFlagged ? (
+          <span
+            style={{
+              fontSize: 10,
+              color: 'hsl(var(--destructive))',
+              fontFamily: "'Public Sans', sans-serif",
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 2,
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
+              flag
+            </span>
+            Reported
+          </span>
+        ) : (
+          onReport && (
+            <button
+              onClick={onReport}
+              aria-label="Report this message"
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                fontSize: 10,
+                color: 'hsl(var(--on-surface-muted))',
+                fontFamily: "'Public Sans', sans-serif",
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 12 }}>
+                flag
+              </span>
+              Report
+            </button>
+          )
+        )}
+      </div>
     </div>
   )
 }
