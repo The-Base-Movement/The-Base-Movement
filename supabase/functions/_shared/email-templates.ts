@@ -765,11 +765,16 @@ export function unloggedMemberNudgeEmail(d: UnloggedMemberNudgeEmailData): strin
       ${constituencyBlock}
       
       <div style="background:#f6fbf4;border:1px solid #d4edda;border-radius:4px;padding:18px 20px;margin:20px 0">
-        <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 10px">What you can do in your member dashboard:</h2>
-        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>1. Verify your membership</strong> — Confirm your profile details and identity verification.</p>
-        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>2. Claim your digital ID card</strong> — Download your official membership card with QR code.</p>
-        <p style="line-height:1.6;color:#333;margin-bottom:0"><strong>3. Participate in regional polls</strong> — Vote on issues affecting your constituency & branch.</p>
+        <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 10px">Three things to do once you are in:</h2>
+        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>1. Set a new password</strong> — Your old one does not carry over.</p>
+        <p style="line-height:1.6;color:#333;margin-bottom:10px"><strong>2. Add your profile photo</strong> — It appears on your digital membership card, so your card is not complete without it.</p>
+        <p style="line-height:1.6;color:#333;margin-bottom:0">${
+          d.needsConstituency
+            ? '<strong>3. Set your constituency</strong> — This is what verifies your membership.'
+            : '<strong>3. Check your details</strong> — Confirm your constituency and contact details are correct.'
+        }</p>
       </div>
+      <p style="line-height:1.65;color:#444;margin-bottom:14px">Once that is done you can download your digital ID card with its QR code, and vote in polls affecting your constituency.</p>
 
       ${ctaButton(d.needsConstituency ? 'Set My Constituency →' : 'Access My Dashboard →', d.needsConstituency ? settingsUrl : d.loginUrl, '#006B3F')}
 
