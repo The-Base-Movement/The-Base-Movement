@@ -713,13 +713,45 @@ export interface UnloggedMemberNudgeEmailData {
   regNo: string
   chapter?: string
   loginUrl: string
+  /** Deep link to Settings, where a Ghana member supplies a missing constituency. */
+  settingsUrl?: string
+  /** True when this member has no constituency -- the thing that blocks verification. */
+  needsConstituency?: boolean
+  /** WhatsApp numbers a member can reach a human on. */
+  whatsappNumbers?: { name: string; number: string }[]
 }
 
 export function unloggedMemberNudgeEmail(d: UnloggedMemberNudgeEmailData): string {
   const chapterInfo = d.chapter ? ` (Chapter: ${d.chapter})` : ''
+  const settingsUrl = d.settingsUrl || 'https://www.thebasemovement.org.gh/dashboard/settings'
+  const whatsapp = d.whatsappNumbers ?? []
+  const whatsappLinks = whatsapp
+    .map(
+      (w) =>
+        `<a href="https://wa.me/${w.number.replace(/\D/g, '')}" style="color:#006B3F;font-weight:700;text-decoration:none">${w.name} ${w.number}</a>`
+    )
+    .join(' &nbsp;·&nbsp; ')
+
+  // Members migrated from the old site cannot reuse their old password -- the
+  // accounts here were provisioned fresh. Saying so up front stops them
+  // concluding their membership is broken when the old one is rejected.
+  const passwordNotice = `
+      <div style="background:#fff8e6;border:1px solid #f0d98c;border-radius:4px;padding:16px 18px;margin:20px 0">
+        <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 8px">First time here? Your old password will not work.</h2>
+        <p style="line-height:1.6;color:#333;margin:0">If you joined through our previous website, your account was moved across but your old password did not come with it. Choose <strong>"Forgot Password"</strong> on the login page to set a new one. You can reset by phone or by email &mdash; whichever you registered with.</p>
+      </div>`
+
+  const constituencyBlock = d.needsConstituency
+    ? `
+      <div style="background:#f6fbf4;border:1px solid #006B3F;border-radius:4px;padding:18px 20px;margin:20px 0">
+        <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 8px">One step to become a verified member</h2>
+        <p style="line-height:1.6;color:#333;margin:0 0 12px">Your constituency is missing from your record, and it is the only thing standing between you and full verification. Set it once in your profile settings and your membership is verified straight away.</p>
+        <p style="line-height:1.6;color:#333;margin:0"><strong>Not sure which constituency you belong to?</strong> Message us on WhatsApp and we will work it out with you, or ask your constituency or diaspora lead.</p>
+      </div>`
+    : ''
   return `${SHELL_OPEN}
   <div class="email-preheader" style="font-size:10px;color:#888;font-family:'Public Sans',Arial;font-weight:700;letter-spacing:.04em;background:#f4f4f4;padding:10px 24px">
-    Access your dashboard to verify your membership and claim your digital card.
+    ${d.needsConstituency ? 'Your old password will not work here — reset it, then set your constituency to be verified.' : 'Your old password will not work here — reset it to access your member dashboard.'}
   </div>
   <div class="email-card" style="background:#fff;border-radius:4px;overflow:hidden">
     ${TOP_BAR}
@@ -729,6 +761,8 @@ export function unloggedMemberNudgeEmail(d: UnloggedMemberNudgeEmailData): strin
       <div style="font-size:15px;font-weight:700;margin-bottom:18px;color:#181d19">Akwaaba, ${d.name} 🇬🇭</div>
       <h1 class="email-title" style="font-family:'Public Sans',Arial;font-weight:800;font-size:26px;letter-spacing:-.02em;line-height:1.15;color:#181d19;margin:0 0 14px">Activate your member dashboard & verify your membership.</h1>
       <p style="line-height:1.65;color:#444;margin-bottom:14px">You registered as an official member of The Base Movement (Registration No: <strong>${d.regNo}</strong>${chapterInfo}), but you haven't accessed your member portal yet.</p>
+      ${passwordNotice}
+      ${constituencyBlock}
       
       <div style="background:#f6fbf4;border:1px solid #d4edda;border-radius:4px;padding:18px 20px;margin:20px 0">
         <h2 style="font-family:'Public Sans',Arial;font-weight:800;font-size:15px;color:#181d19;margin:0 0 10px">What you can do in your member dashboard:</h2>
@@ -737,13 +771,18 @@ export function unloggedMemberNudgeEmail(d: UnloggedMemberNudgeEmailData): strin
         <p style="line-height:1.6;color:#333;margin-bottom:0"><strong>3. Participate in regional polls</strong> — Vote on issues affecting your constituency & branch.</p>
       </div>
 
-      ${ctaButton('Access My Dashboard →', d.loginUrl, '#006B3F')}
+      ${ctaButton(d.needsConstituency ? 'Set My Constituency →' : 'Access My Dashboard →', d.needsConstituency ? settingsUrl : d.loginUrl, '#006B3F')}
 
       <hr style="border:0;border-top:1px solid #eee;margin:18px 0">
-      <p style="line-height:1.65;color:#888;font-size:12px;margin:0">Need help logging in? Click "Forgot Password" on the login page or contact support@thebasemovement.org.gh.</p>
+      <p style="line-height:1.65;color:#444;font-size:13px;margin:0 0 8px"><strong>Cannot get in?</strong> Choose "Forgot Password" at <a href="${d.loginUrl}" style="color:#006B3F;font-weight:700;text-decoration:none">the login page</a> to reset by phone or email. If that still fails, submit a recovery request there and our team will restore your access by hand.</p>
+      ${
+        whatsappLinks
+          ? `<p style="line-height:1.65;color:#444;font-size:13px;margin:0 0 8px"><strong>Prefer to talk to someone?</strong> Message us on WhatsApp: ${whatsappLinks}</p>`
+          : ''
+      }
+      <p style="line-height:1.65;color:#888;font-size:12px;margin:0">Or email support@thebasemovement.org.gh.</p>
     </div>
     ${emailFooter(`Ghana First, jobs for the youth! · The Base Movement · Accra, Ghana · www.thebasemovement.org.gh`)}
   </div>
 ${SHELL_CLOSE}`
 }
-
