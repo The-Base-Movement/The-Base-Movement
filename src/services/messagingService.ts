@@ -745,111 +745,52 @@ class MessagingService {
   }
 
   /**
-   * Get or create a group conversation for a constituency or chapter forum.
-   * All members of that constituency/chapter can read and write.
-   */
-  async getOrCreateGroupConversation(
-    groupType: 'constituency' | 'chapter',
-    groupId: string,
-    groupName: string,
-    leaderId: string
-  ): Promise<Conversation | null> {
-    // Check if conversation exists
-    const { data: existing } = await supabase
-      .from('conversations')
-      .select('*')
-      .eq('group_type', groupType)
-      .eq('group_id', groupId)
-      .maybeSingle()
-
-    if (existing) return existing as Conversation
-
-    // Create new group conversation
-    const { data: newConv, error } = await supabase
-      .from('conversations')
-      .insert({
-        member_id: null,
-        leader_id: leaderId,
-        scope_type: `group_${groupType}` as unknown as Conversation['scope_type'],
-        scope_value: groupName,
-        group_type: groupType,
-        group_id: groupId,
-      })
-      .select()
-      .single()
-
-    if (error) {
-      console.warn('[MessagingService] Failed to create group conversation:', error)
-      return null
-    }
-
-    return newConv as Conversation
-  }
-
-  /**
-   * Get all group conversations a member can access
-   * (based on their constituency/chapter). Creates forums if they don't exist.
+   * The constituency and chapter forums this member belongs to.
+   *
+   * Forums are seeded infrastructure — one per constituency and per chapter, with a
+   * unique index enforcing that — so this only ever looks a room up by name and joins
+   * the member to it. It never creates rooms. The previous version tried to create
+   * them on demand and could not: it wrote an integer constituency id into a uuid
+   * column, and it required a leader_id that only 1 of 276 constituencies and 0 of 73
+   * chapters actually had.
    */
   async getMemberGroupConversations(memberId: string): Promise<Conversation[]> {
-    // Get member's constituency and chapter, plus their scope info
     const { data: member } = await supabase
       .from('users')
-      .select('id, constituency, chapter, platform')
+      .select('constituency, chapter')
       .eq('id', memberId)
       .single()
 
     if (!member) return []
 
+    // Blank strings are common in this column and are not a constituency.
+    const named = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0
+    const names = [member.constituency, member.chapter].filter(named)
+    if (names.length === 0) return []
+
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .in('group_type', ['constituency', 'chapter'])
+      .in('scope_value', names)
+
+    if (error) {
+      console.warn('[MessagingService] getMemberGroupConversations failed:', error)
+      return []
+    }
+
+    // Match the room type to the field it came from — a chapter could in principle
+    // share a name with a constituency.
+    const forums = ((data ?? []) as Conversation[]).filter(
+      (f) =>
+        (f.group_type === 'constituency' && f.scope_value === member.constituency) ||
+        (f.group_type === 'chapter' && f.scope_value === member.chapter)
+    )
+
     const results: Conversation[] = []
-
-    // Handle constituency forum for Ghana network members
-    if (member.constituency) {
-      // Get constituency ID and lead
-      const { data: constituency } = await supabase
-        .from('ghana_constituencies')
-        .select('id, leader_id')
-        .eq('name', member.constituency)
-        .maybeSingle()
-
-      if (constituency?.id && constituency?.leader_id) {
-        // Get or create forum (pass UUID, not name)
-        const forum = await this.getOrCreateGroupConversation(
-          'constituency',
-          constituency.id,
-          member.constituency,
-          constituency.leader_id
-        )
-        if (forum) {
-          await this.addGroupConversationMember(forum.id, memberId)
-          results.push(forum)
-        }
-      }
+    for (const forum of forums) {
+      if (await this.addGroupConversationMember(forum.id, memberId)) results.push(forum)
     }
-
-    // Handle chapter forum for Diaspora network members
-    if (member.chapter) {
-      // Get chapter ID and lead
-      const { data: chapter } = await supabase
-        .from('chapters')
-        .select('id, leader_id')
-        .eq('name', member.chapter)
-        .maybeSingle()
-
-      if (chapter?.id && chapter?.leader_id) {
-        // Get or create forum (pass UUID, not name)
-        const forum = await this.getOrCreateGroupConversation(
-          'chapter',
-          chapter.id,
-          member.chapter,
-          chapter.leader_id
-        )
-        if (forum) {
-          await this.addGroupConversationMember(forum.id, memberId)
-          results.push(forum)
-        }
-      }
-    }
-
     return results
   }
 
