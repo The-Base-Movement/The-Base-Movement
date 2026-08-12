@@ -39,6 +39,16 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
 
 const DRY_RUN = process.env.DRY_RUN !== 'false'
 const BATCH_SIZE = 25
+// One campaign key per send. Every dispatch is written to member_nudges under
+// this key, and the audience query excludes anyone already logged against it,
+// so re-running the script never re-contacts the same member.
+const CAMPAIGN = process.env.CAMPAIGN || 'activate_dashboard_2026_08'
+const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : 0
+// 'GHANA' | 'DIASPORA' | '' (both). The constituency backlog this campaign
+// targets is Ghana-only, and mNotify SMS to foreign numbers costs more and
+// delivers less reliably -- so scope deliberately rather than by accident.
+const PLATFORM = (process.env.PLATFORM || '').toUpperCase()
+const PAGE_SIZE = 1000
 
 function normalizeGhanaPhone(raw) {
   if (!raw) return ''
@@ -91,21 +101,43 @@ async function sendMnotifySms(phone, message) {
 async function main() {
   console.log(`🚀 Starting Unlogged Member Activation Nudge... (DRY_RUN = ${DRY_RUN})\n`)
 
-  // Query users who are unverified or pending activation
-  const { data: users, error } = await supabase
-    .from('users')
-    .select('id, full_name, email, phone_number, registration_number, chapter, status, verification_status')
-    .or('status.eq.Pending,status.eq.In Review,verification_status.eq.Unverified,verification_status.is.null')
-    .order('joined_at', { ascending: true })
-
-  if (error) {
-    console.error('❌ Error fetching unlogged/unverified members:', error.message)
-    process.exit(1)
+  // Audience = members who have NEVER signed in (auth.users.last_sign_in_at is
+  // null), minus opt-outs, minus anyone already logged for this campaign.
+  // The previous version filtered on verification status instead, which is a
+  // different question entirely and included members who log in regularly.
+  // Paged: PostgREST caps a single response at 1000 rows, and the audience is
+  // north of 12,000 -- an unpaged read silently nudges the first 1000 only.
+  const fetchAudience = async (channel) => {
+    const all = []
+    for (let page = 0; ; page++) {
+      const { data, error } = await supabase
+        .rpc('get_nudge_audience', { p_campaign: CAMPAIGN, p_channel: channel })
+        .range(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE - 1)
+      if (error) {
+        console.error(`Error fetching ${channel} audience:`, error.message)
+        process.exit(1)
+      }
+      all.push(...(data || []))
+      if (!data || data.length < PAGE_SIZE) break
+    }
+    return PLATFORM ? all.filter((u) => (u.platform || '').toUpperCase() === PLATFORM) : all
   }
 
-  console.log(`📊 Found ${users.length} members who need dashboard activation / membership verification.`)
-  if (users.length === 0) {
-    console.log('🎉 All members are active and verified!')
+  let smsTargets = await fetchAudience('sms')
+  let emailTargets = await fetchAudience('email')
+  if (LIMIT > 0) {
+    smsTargets = smsTargets.slice(0, LIMIT)
+    emailTargets = emailTargets.slice(0, LIMIT)
+  }
+
+  console.log(`📊 Campaign "${CAMPAIGN}" — never-signed-in members still to contact:`)
+  console.log(`   SMS:   ${smsTargets.length}`)
+  console.log(`   Email: ${emailTargets.length}`)
+  if (LIMIT > 0) console.log(`   (capped by LIMIT=${LIMIT})`)
+
+  const users = smsTargets
+  if (smsTargets.length === 0 && emailTargets.length === 0) {
+    console.log('🎉 Nobody left to contact on this campaign.')
     return
   }
 
@@ -117,11 +149,13 @@ async function main() {
   if (DRY_RUN) {
     console.log('📋 --- DRY RUN ACTIVE: LISTING RECIPIENTS ---')
     users.slice(0, 30).forEach((u, i) => {
-      console.log(`[${i + 1}] ${u.full_name} | Reg: ${u.registration_number} | Phone: ${u.phone_number || 'N/A'} | Email: ${u.email || 'N/A'} | Status: ${u.status || 'N/A'}`)
+      console.log(`[${i + 1}] ${u.full_name} | Reg: ${u.registration_number} | Phone: ${u.phone_number || 'N/A'} | Email: ${u.email || 'N/A'}`)
     })
     if (users.length > 30) {
       console.log(`... and ${users.length - 30} more members.`)
     }
+    console.log(`
+Estimated SMS credits needed: ${smsTargets.length} (mNotify balance is checked at dispatch).`)
     console.log('---------------------------------------------')
     console.log('\nTo execute dispatch for real, set DRY_RUN=false:')
     console.log('  $env:DRY_RUN="false"; node scripts/nudge-unlogged-members.mjs')
@@ -173,49 +207,90 @@ async function main() {
 
     const callerJwt = sessionData.session.access_token
 
-    console.log(`\n✉️ Sending notifications in batches of ${BATCH_SIZE}...`)
+    // Claim the member BEFORE dispatching. The unique index on
+    // (user_id, channel, campaign) means a claim that fails is a member
+    // someone else already contacted -- skip rather than double-send. Erring
+    // this way can log a send that then fails, which is the safe direction.
+    const claim = async (u, channel, recipient) => {
+      const { error } = await supabase
+        .from('member_nudges')
+        .insert({ user_id: u.user_id, channel, campaign: CAMPAIGN, recipient })
+      if (error) {
+        if (error.code === '23505') return false // already nudged on this campaign
+        console.warn(`Could not claim ${channel} for ${u.registration_number}: ${error.message}`)
+        return false
+      }
+      return true
+    }
+
+    const markFailed = async (u, channel, response) => {
+      await supabase
+        .from('member_nudges')
+        .update({ status: 'failed', provider_response: String(response).slice(0, 500) })
+        .eq('user_id', u.user_id)
+        .eq('channel', channel)
+        .eq('campaign', CAMPAIGN)
+    }
+
+    console.log(`
+Sending notifications in batches of ${BATCH_SIZE}...`)
     let emailsSent = 0
     let smsSent = 0
+    let smsFailed = 0
+    let emailsFailed = 0
 
-    for (let i = 0; i < users.length; i += BATCH_SIZE) {
-      const batch = users.slice(i, i + BATCH_SIZE)
-      console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(users.length / BATCH_SIZE)}...`)
-
+    for (let i = 0; i < smsTargets.length; i += BATCH_SIZE) {
+      const batch = smsTargets.slice(i, i + BATCH_SIZE)
+      console.log(`SMS batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(smsTargets.length / BATCH_SIZE)}...`)
       for (const u of batch) {
-        const smsContent = formatSmsText(u.full_name, u.registration_number)
-
-        // Dispatch SMS via mNotify if phone number exists
-        if (u.phone_number) {
-          const sent = await sendMnotifySms(u.phone_number, smsContent)
-          if (sent) smsSent++
-        }
-
-        // Dispatch Email via send-welcome-email Edge Function if email exists
-        if (u.email) {
-          try {
-            const res = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${callerJwt}`,
-              },
-              body: JSON.stringify({
-                type: 'unlogged_nudge',
-                email: u.email,
-                name: u.full_name,
-                regNo: u.registration_number,
-                chapter: u.chapter,
-              }),
-            })
-            if (res.ok) emailsSent++
-          } catch (err) {
-            console.warn(`⚠️ Email send error for ${u.registration_number}:`, err.message)
-          }
+        if (!(await claim(u, 'sms', u.phone_number))) continue
+        const sent = await sendMnotifySms(u.phone_number, formatSmsText(u.full_name, u.registration_number))
+        if (sent) {
+          smsSent++
+        } else {
+          smsFailed++
+          await markFailed(u, 'sms', 'mnotify send failed')
         }
       }
     }
 
-    console.log(`\n✅ Dispatch complete! Emails sent: ${emailsSent}, SMS sent: ${smsSent}`)
+    for (let i = 0; i < emailTargets.length; i += BATCH_SIZE) {
+      const batch = emailTargets.slice(i, i + BATCH_SIZE)
+      console.log(`Email batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(emailTargets.length / BATCH_SIZE)}...`)
+      for (const u of batch) {
+        if (!(await claim(u, 'email', u.email))) continue
+        try {
+          const res = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${callerJwt}`,
+            },
+            body: JSON.stringify({
+              type: 'unlogged_nudge',
+              email: u.email,
+              name: u.full_name,
+              regNo: u.registration_number,
+              chapter: u.chapter,
+            }),
+          })
+          if (res.ok) {
+            emailsSent++
+          } else {
+            emailsFailed++
+            await markFailed(u, 'email', `HTTP ${res.status}`)
+          }
+        } catch (err) {
+          emailsFailed++
+          await markFailed(u, 'email', err.message)
+          console.warn(`Email send error for ${u.registration_number}:`, err.message)
+        }
+      }
+    }
+
+    console.log(`
+Dispatch complete. SMS sent: ${smsSent} (failed ${smsFailed}), emails sent: ${emailsSent} (failed ${emailsFailed})`)
+    console.log(`Every dispatch is logged in member_nudges under campaign "${CAMPAIGN}".`)
   } finally {
     // Cleanup temporary admin user
     await supabase.from('admins').delete().eq('id', tempAdminId)
