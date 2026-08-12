@@ -24,7 +24,10 @@ function loadEnv() {
 
 loadEnv()
 
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://vhlyekyxutwbxlvktnzd.supabase.co'
+const SUPABASE_URL =
+  process.env.SUPABASE_URL ||
+  process.env.VITE_SUPABASE_URL ||
+  'https://vhlyekyxutwbxlvktnzd.supabase.co'
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
 const MNOTIFY_API_KEY = process.env.MNOTIFY_API_KEY
 
@@ -49,6 +52,20 @@ const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : 0
 // delivers less reliably -- so scope deliberately rather than by accident.
 const PLATFORM = (process.env.PLATFORM || '').toUpperCase()
 const PAGE_SIZE = 1000
+
+// Mirrors isGhanaNumber() in supabase/functions/_shared/sms.ts. MNotify is the
+// cheap domestic route and is used for Ghana numbers only; diaspora numbers go
+// to Twilio. Sending a foreign number through MNotify burns a credit for poor
+// delivery, which is the exact waste this campaign cannot afford.
+function isGhanaNumber(raw) {
+  const trimmed = (raw || '').trim()
+  const digits = trimmed.replace(/\D/g, '')
+  if (!digits) return false
+  if (digits.startsWith('233')) return true
+  if (trimmed.startsWith('+')) return false
+  if (digits.startsWith('00')) return false
+  return true
+}
 
 function normalizeGhanaPhone(raw) {
   if (!raw) return ''
@@ -75,17 +92,20 @@ async function sendMnotifySms(phone, message) {
   if (!normalized) return false
 
   try {
-    const res = await fetch(`https://api.mnotify.com/api/sms/quick?key=${encodeURIComponent(MNOTIFY_API_KEY)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        recipient: [normalized],
-        sender: process.env.MNOTIFY_SENDER_ID || 'The Base',
-        message,
-        is_schedule: false,
-        schedule_date: '',
-      }),
-    })
+    const res = await fetch(
+      `https://api.mnotify.com/api/sms/quick?key=${encodeURIComponent(MNOTIFY_API_KEY)}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          recipient: [normalized],
+          sender: process.env.MNOTIFY_SENDER_ID || 'The Base',
+          message,
+          is_schedule: false,
+          schedule_date: '',
+        }),
+      }
+    )
     const text = await res.text()
     if (res.ok && (text.includes('success') || text.includes('2000'))) {
       return true
@@ -123,7 +143,9 @@ async function main() {
     return PLATFORM ? all.filter((u) => (u.platform || '').toUpperCase() === PLATFORM) : all
   }
 
-  let smsTargets = await fetchAudience('sms')
+  const allSmsTargets = await fetchAudience('sms')
+  let smsTargets = allSmsTargets.filter((u) => isGhanaNumber(u.phone_number))
+  const intlSmsTargets = allSmsTargets.filter((u) => !isGhanaNumber(u.phone_number))
   let emailTargets = await fetchAudience('email')
   if (LIMIT > 0) {
     smsTargets = smsTargets.slice(0, LIMIT)
@@ -131,8 +153,11 @@ async function main() {
   }
 
   console.log(`📊 Campaign "${CAMPAIGN}" — never-signed-in members still to contact:`)
-  console.log(`   SMS:   ${smsTargets.length}`)
-  console.log(`   Email: ${emailTargets.length}`)
+  console.log(`   SMS via MNotify (Ghana):    ${smsTargets.length}`)
+  console.log(
+    `   SMS via Twilio (diaspora):  ${intlSmsTargets.length}  [not dispatched by this script]`
+  )
+  console.log(`   Email via Resend:           ${emailTargets.length}`)
   if (LIMIT > 0) console.log(`   (capped by LIMIT=${LIMIT})`)
 
   const users = smsTargets
@@ -149,7 +174,9 @@ async function main() {
   if (DRY_RUN) {
     console.log('📋 --- DRY RUN ACTIVE: LISTING RECIPIENTS ---')
     users.slice(0, 30).forEach((u, i) => {
-      console.log(`[${i + 1}] ${u.full_name} | Reg: ${u.registration_number} | Phone: ${u.phone_number || 'N/A'} | Email: ${u.email || 'N/A'}`)
+      console.log(
+        `[${i + 1}] ${u.full_name} | Reg: ${u.registration_number} | Phone: ${u.phone_number || 'N/A'} | Email: ${u.email || 'N/A'}`
+      )
     })
     if (users.length > 30) {
       console.log(`... and ${users.length - 30} more members.`)
@@ -241,10 +268,15 @@ Sending notifications in batches of ${BATCH_SIZE}...`)
 
     for (let i = 0; i < smsTargets.length; i += BATCH_SIZE) {
       const batch = smsTargets.slice(i, i + BATCH_SIZE)
-      console.log(`SMS batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(smsTargets.length / BATCH_SIZE)}...`)
+      console.log(
+        `SMS batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(smsTargets.length / BATCH_SIZE)}...`
+      )
       for (const u of batch) {
         if (!(await claim(u, 'sms', u.phone_number))) continue
-        const sent = await sendMnotifySms(u.phone_number, formatSmsText(u.full_name, u.registration_number))
+        const sent = await sendMnotifySms(
+          u.phone_number,
+          formatSmsText(u.full_name, u.registration_number)
+        )
         if (sent) {
           smsSent++
         } else {
@@ -256,7 +288,9 @@ Sending notifications in batches of ${BATCH_SIZE}...`)
 
     for (let i = 0; i < emailTargets.length; i += BATCH_SIZE) {
       const batch = emailTargets.slice(i, i + BATCH_SIZE)
-      console.log(`Email batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(emailTargets.length / BATCH_SIZE)}...`)
+      console.log(
+        `Email batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(emailTargets.length / BATCH_SIZE)}...`
+      )
       for (const u of batch) {
         if (!(await claim(u, 'email', u.email))) continue
         try {
