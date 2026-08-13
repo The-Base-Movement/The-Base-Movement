@@ -68,7 +68,7 @@ export default function DashboardMessages() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isMobile, setIsMobile] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messageListRef = useRef<HTMLDivElement>(null)
 
   // Detect mobile on mount and window resize
   useEffect(() => {
@@ -217,7 +217,11 @@ export default function DashboardMessages() {
   // history doesn't yank the reader back down to the bottom.
   const lastMessageId = messages.at(-1)?.id
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Scroll the list itself rather than calling scrollIntoView on a sentinel:
+    // scrollIntoView walks up and scrolls *every* scrollable ancestor, including
+    // the document, which yanked the whole page down on each send.
+    const list = messageListRef.current
+    if (list) list.scrollTop = list.scrollHeight
   }, [lastMessageId])
 
   const handleSend = async (content: string) => {
@@ -1360,9 +1364,11 @@ export default function DashboardMessages() {
 
             {/* Messages scrollable area */}
             <div
+              ref={messageListRef}
               style={{
                 flex: 1,
                 overflowY: 'auto',
+                overscrollBehavior: 'contain',
                 padding: '12px 16px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -1450,7 +1456,6 @@ export default function DashboardMessages() {
                   />
                 )
               })}
-              <div ref={bottomRef} />
             </div>
 
             {/* Input bar or closed banner */}

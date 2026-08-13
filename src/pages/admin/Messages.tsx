@@ -32,7 +32,7 @@ export default function AdminMessages() {
   const [sending, setSending] = useState(false)
   const [flagged, setFlagged] = useState<FlaggedMessage[]>([])
   const [moderatingId, setModeratingId] = useState<string | null>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messageListRef = useRef<HTMLDivElement>(null)
 
   // Load all conversations for this leader on mount
   useEffect(() => {
@@ -125,9 +125,11 @@ export default function AdminMessages() {
     }
   }, [messages, user?.id, memberProfilesMap])
 
-  // Auto-scroll
+  // Auto-scroll the thread only. scrollIntoView on a sentinel also scrolls every
+  // scrollable ancestor, which drags the whole admin page down on each send.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const list = messageListRef.current
+    if (list) list.scrollTop = list.scrollHeight
   }, [messages])
 
   const handleSend = async (content: string) => {
@@ -588,9 +590,11 @@ export default function AdminMessages() {
 
               {/* Messages */}
               <div
+                ref={messageListRef}
                 style={{
                   flex: 1,
                   overflowY: 'auto',
+                  overscrollBehavior: 'contain',
                   padding: '16px 20px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -644,7 +648,6 @@ export default function AdminMessages() {
                     />
                   )
                 })}
-                <div ref={bottomRef} />
               </div>
 
               {/* Input or closed banner */}
