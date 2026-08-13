@@ -363,6 +363,79 @@ class MessagingService {
   }
 
   /**
+   * Upload a recording into the member's own folder in the private voice-notes
+   * bucket. Returns the storage path, which is what gets stored on the message —
+   * never a URL, since the bucket is private and playback is signed on demand.
+   */
+  async uploadVoiceNote(blob: Blob, userId: string, extension: string): Promise<string | null> {
+    const path = `${userId}/${crypto.randomUUID()}.${extension}`
+    // MediaRecorder reports types like "audio/webm;codecs=opus"; the bucket's
+    // allowed_mime_types matches the bare type, so drop the codec parameter.
+    const contentType = (blob.type || 'audio/webm').split(';')[0]
+    const { error } = await supabase.storage
+      .from('voice-notes')
+      .upload(path, blob, { contentType, upsert: false })
+
+    if (error) {
+      console.warn('[MessagingService] uploadVoiceNote failed:', error)
+      this.lastSendError = error.message ?? 'Could not upload voice note'
+      return null
+    }
+    return path
+  }
+
+  /** Post a voice note. Duration is capped at 60s by a CHECK constraint. */
+  async sendVoiceNote(
+    conversationId: string,
+    senderType: 'member' | 'leader',
+    senderId: string,
+    audioPath: string,
+    durationSeconds: number,
+    replyToId?: string | null
+  ): Promise<Message | null> {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert({
+        conversation_id: conversationId,
+        sender_type: senderType,
+        sender_id: senderId,
+        content: '',
+        audio_url: audioPath,
+        audio_duration_seconds: Math.max(1, Math.min(60, Math.round(durationSeconds))),
+        reply_to_id: replyToId ?? null,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.warn('[MessagingService] sendVoiceNote failed:', error)
+      this.lastSendError = error.message ?? null
+      // The row never landed, so the uploaded file is already an orphan. Drop it
+      // now rather than leaving it for the nightly sweep.
+      void supabase.storage.from('voice-notes').remove([audioPath])
+      return null
+    }
+    this.lastSendError = null
+    return data as Message
+  }
+
+  /**
+   * A short-lived signed URL for playback. The bucket is private, and the storage
+   * policy only grants access to files a readable message still points at — so a
+   * recalled or purged note stops playing immediately.
+   */
+  async getVoiceNoteUrl(audioPath: string): Promise<string | null> {
+    const { data, error } = await supabase.storage
+      .from('voice-notes')
+      .createSignedUrl(audioPath, 60 * 60)
+    if (error) {
+      console.warn('[MessagingService] getVoiceNoteUrl failed:', error)
+      return null
+    }
+    return data?.signedUrl ?? null
+  }
+
+  /**
    * Edit your own message. The 15-minute window and "authors only" rule are both
    * enforced by a DB trigger, so the error it raises is the message worth showing.
    * Returns null on success, or the reason it was refused.
