@@ -61,6 +61,8 @@ export default function DashboardMessages() {
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set())
   // Message whose reactors are being viewed, if any.
   const [reactionViewer, setReactionViewer] = useState<string | null>(null)
+  // Message pending a "delete for everyone" confirmation, if any.
+  const [confirmRecallId, setConfirmRecallId] = useState<string | null>(null)
   const [replyTo, setReplyTo] = useState<Message | null>(null)
   const [editing, setEditing] = useState<Message | null>(null)
   // Ticks so the 15-minute Edit option disappears on its own once it lapses,
@@ -407,32 +409,30 @@ export default function DashboardMessages() {
     }
   }
 
-  const handleRecall = async (messageId: string) => {
-    const { toast } = await import('sonner')
-    toast('Delete this message for everyone?', {
-      action: {
-        label: 'Delete',
-        onClick: () => {
-          void (async () => {
-            const err = await messagingService.recallMessage(messageId)
-            if (err) {
-              toast.error(err)
-              return
-            }
-            if (activeId) {
-              setMessagesMap((prev) => ({
-                ...prev,
-                [activeId]: (prev[activeId] ?? []).map((m) =>
-                  m.id === messageId
-                    ? { ...m, recalled_at: new Date().toISOString(), content: '' }
-                    : m
-                ),
-              }))
-            }
-          })()
-        },
-      },
-    })
+  // Opens the centered confirmation below rather than a toast, since a corner
+  // toast for a destructive action is easy to miss or dismiss by accident.
+  const handleRecall = (messageId: string) => {
+    setConfirmRecallId(messageId)
+  }
+
+  const confirmRecall = async () => {
+    const messageId = confirmRecallId
+    if (!messageId) return
+    setConfirmRecallId(null)
+    const err = await messagingService.recallMessage(messageId)
+    if (err) {
+      const { toast } = await import('sonner')
+      toast.error(err)
+      return
+    }
+    if (activeId) {
+      setMessagesMap((prev) => ({
+        ...prev,
+        [activeId]: (prev[activeId] ?? []).map((m) =>
+          m.id === messageId ? { ...m, recalled_at: new Date().toISOString(), content: '' } : m
+        ),
+      }))
+    }
   }
 
   const handleDeleteForMe = async (messageId: string) => {
@@ -732,6 +732,60 @@ export default function DashboardMessages() {
                     </button>
                   )
                 })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete-for-everyone confirmation, centered over the chat screen rather
+          than a corner toast — a destructive action is easy to miss or dismiss
+          by accident in a toast. */}
+      {confirmRecallId && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setConfirmRecallId(null)}
+        >
+          <div
+            className="panel"
+            style={{ width: '100%', maxWidth: 320, padding: 20 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p
+              style={{
+                margin: '0 0 6px',
+                fontSize: 14,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              Delete this message?
+            </p>
+            <p
+              style={{
+                margin: '0 0 18px',
+                fontSize: 12.5,
+                color: 'hsl(var(--on-surface-muted))',
+                lineHeight: 1.5,
+              }}
+            >
+              This removes it for everyone in this conversation. This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button className="btn btn-outline btn-sm" onClick={() => setConfirmRecallId(null)}>
+                Cancel
+              </button>
+              <button className="btn btn-dest btn-sm" onClick={() => void confirmRecall()}>
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -1300,12 +1354,13 @@ export default function DashboardMessages() {
             width: isMobile ? '100%' : 'auto',
           }}
         >
-          {/* Mobile header with back button */}
+          {/* Mobile header with back button, right-aligned */}
           {isMobile && activeId && (
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'flex-end',
                 gap: 12,
                 marginBottom: 16,
               }}
@@ -1414,8 +1469,32 @@ export default function DashboardMessages() {
               flex: 1,
               minHeight: 0,
               overflow: 'hidden',
+              position: 'relative',
             }}
           >
+            {/* Eagle watermark. Absolutely positioned within the panel rather than
+                inside the scrollable list, so it stays put while messages scroll
+                over it instead of scrolling away with them. */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: 0.06,
+                pointerEvents: 'none',
+                zIndex: 0,
+              }}
+            >
+              <img
+                src="/branding/patterns/eagle-in-flight.webp"
+                alt=""
+                style={{ width: '70%', maxWidth: 280, objectFit: 'contain' }}
+              />
+            </div>
+
             {/* Conversation header */}
             <div
               style={{
@@ -1587,13 +1666,17 @@ export default function DashboardMessages() {
               {messages.map((msg) => {
                 const isSelf = msg.sender_id === user?.id
                 let senderName: string | undefined = undefined
-                if (!isSelf) {
-                  if (msg.sender_type === 'leader') {
-                    senderName =
-                      leaderInfo?.full_name ?? (isDeptChat ? activeConv?.scope_value : 'Leader')
-                  } else {
-                    senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Member'
-                  }
+                let senderAvatarUrl: string | null | undefined
+                if (isSelf) {
+                  senderAvatarUrl =
+                    (user?.user_metadata as { avatar_url?: string } | undefined)?.avatar_url ?? null
+                } else if (msg.sender_type === 'leader') {
+                  senderName =
+                    leaderInfo?.full_name ?? (isDeptChat ? activeConv?.scope_value : 'Leader')
+                  senderAvatarUrl = leaderInfo?.avatar_url ?? null
+                } else {
+                  senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Member'
+                  senderAvatarUrl = memberProfilesMap[msg.sender_id]?.avatar_url ?? null
                 }
 
                 const quoted = msg.reply_to_id ? messageById.get(msg.reply_to_id) : undefined
@@ -1616,6 +1699,7 @@ export default function DashboardMessages() {
                     isSelf={isSelf}
                     timestamp={msg.created_at}
                     senderName={senderName}
+                    senderAvatarUrl={senderAvatarUrl}
                     isFlagged={Boolean(msg.is_flagged)}
                     isEdited={Boolean(msg.edited_at)}
                     isRecalled={isRecalled}
@@ -1635,7 +1719,7 @@ export default function DashboardMessages() {
                     onReply={isRecalled ? undefined : () => setReplyTo(msg)}
                     onReact={isRecalled ? undefined : (emoji) => void handleReact(msg.id, emoji)}
                     onEdit={isSelf && !isRecalled ? () => setEditing(msg) : undefined}
-                    onRecall={isSelf && !isRecalled ? () => void handleRecall(msg.id) : undefined}
+                    onRecall={isSelf && !isRecalled ? () => handleRecall(msg.id) : undefined}
                     onDeleteForMe={() => void handleDeleteForMe(msg.id)}
                     // Reporting only makes sense for other people's posts in an open room.
                     onReport={
