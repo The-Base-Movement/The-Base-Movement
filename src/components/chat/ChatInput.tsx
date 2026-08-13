@@ -11,6 +11,13 @@ interface ChatInputProps {
   onSend: (content: string) => void
   disabled?: boolean
   placeholder?: string
+  /**
+   * Prefilled text, used when editing an existing message. The caller remounts this
+   * component with a `key` when it changes, so there is no prop-to-state effect here.
+   */
+  initialValue?: string
+  /** Shows a cancel control — set while editing or replying. */
+  onCancel?: () => void
 }
 
 /**
@@ -22,8 +29,10 @@ export function ChatInput({
   onSend,
   disabled = false,
   placeholder = 'Type a message…',
+  initialValue = '',
+  onCancel,
 }: ChatInputProps) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(initialValue)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   /**
@@ -78,6 +87,7 @@ export function ChatInput({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
+        autoFocus={Boolean(initialValue)}
         rows={1}
         style={{
           flex: 1,
@@ -97,6 +107,21 @@ export function ChatInput({
           opacity: disabled ? 0.5 : 1,
         }}
       />
+      {onCancel && (
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={() => {
+            setValue('')
+            onCancel()
+          }}
+          aria-label="Cancel"
+          style={{ flexShrink: 0, height: 36, display: 'flex', alignItems: 'center' }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+            close
+          </span>
+        </button>
+      )}
       <button
         className="btn btn-primary btn-sm"
         onClick={handleSend}

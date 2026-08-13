@@ -5,7 +5,14 @@ import { messagingService } from '@/services/messagingService'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
-import type { Conversation, ConversationLeaderInfo, Message } from '@/types/admin'
+import type {
+  Conversation,
+  ConversationLeaderInfo,
+  Message,
+  MessageReaction,
+  ReactionEmoji,
+  ReactionSummary,
+} from '@/types/admin'
 
 function roleLabel(role: string): string {
   return role
@@ -49,6 +56,14 @@ export default function DashboardMessages() {
   const [noMoreOlder, setNoMoreOlder] = useState<Record<string, boolean>>({})
   // Group rooms track read state per member, not on the message row.
   const [lastReadMap, setLastReadMap] = useState<Record<string, string | null>>({})
+  const [reactions, setReactions] = useState<MessageReaction[]>([])
+  // "Delete for me" is per-member state, so hidden ids are filtered at render.
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set())
+  const [replyTo, setReplyTo] = useState<Message | null>(null)
+  const [editing, setEditing] = useState<Message | null>(null)
+  // Ticks so the 15-minute Edit option disappears on its own once it lapses,
+  // instead of being offered until the next re-render happens to occur.
+  const [now, setNow] = useState(() => Date.now())
   const [expandDepartments, setExpandDepartments] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -65,10 +80,33 @@ export default function DashboardMessages() {
 
   const activeConv = conversations.find((c) => c.id === activeId) ?? null
   const leaderInfo = activeId ? (leaderInfoMap[activeId] ?? null) : null
-  const messages = useMemo(
+  const allMessages = useMemo(
     () => (activeId ? (messagesMap[activeId] ?? []) : []),
     [activeId, messagesMap]
   )
+  // Messages this member chose to hide never render, but stay visible to everyone else.
+  const messages = useMemo(
+    () => allMessages.filter((m) => !hiddenIds.has(m.id)),
+    [allMessages, hiddenIds]
+  )
+  const messageById = useMemo(() => new Map(allMessages.map((m) => [m.id, m])), [allMessages])
+
+  /** Reactions on one message, collapsed to one chip per emoji. */
+  const reactionsFor = useMemo(() => {
+    const byMessage = new Map<string, ReactionSummary[]>()
+    for (const r of reactions) {
+      const list = byMessage.get(r.message_id) ?? []
+      const found = list.find((s) => s.emoji === r.emoji)
+      if (found) {
+        found.count += 1
+        found.reactedByMe = found.reactedByMe || r.user_id === user?.id
+      } else {
+        list.push({ emoji: r.emoji, count: 1, reactedByMe: r.user_id === user?.id })
+      }
+      byMessage.set(r.message_id, list)
+    }
+    return byMessage
+  }, [reactions, user?.id])
 
   // Load all conversations (personal + group) + departments on mount
   useEffect(() => {
@@ -186,6 +224,25 @@ export default function DashboardMessages() {
     if (!activeConv || !user) return
     setSending(true)
 
+    // Editing an existing message rather than posting a new one
+    if (editing) {
+      const err = await messagingService.editMessage(editing.id, content)
+      const { toast } = await import('sonner')
+      if (err) {
+        toast.error(err)
+      } else {
+        setMessagesMap((prev) => ({
+          ...prev,
+          [activeConv.id]: (prev[activeConv.id] ?? []).map((m) =>
+            m.id === editing.id ? { ...m, content, edited_at: new Date().toISOString() } : m
+          ),
+        }))
+        setEditing(null)
+      }
+      setSending(false)
+      return
+    }
+
     // Check anti-flood protection
     const floodCheck = await messagingService.checkCanSendMessage(activeConv.id, user.id)
     if (floodCheck) {
@@ -195,8 +252,15 @@ export default function DashboardMessages() {
       return
     }
 
-    const msg = await messagingService.sendMessage(activeConv.id, content, 'member', user.id)
+    const msg = await messagingService.sendMessage(
+      activeConv.id,
+      content,
+      'member',
+      user.id,
+      replyTo?.id ?? null
+    )
     if (msg) {
+      setReplyTo(null)
       setMessagesMap((prev) => {
         const cur = prev[activeConv.id] ?? []
         return cur.some((m) => m.id === msg.id) ? prev : { ...prev, [activeConv.id]: [...cur, msg] }
@@ -206,6 +270,114 @@ export default function DashboardMessages() {
       toast.error(messagingService.lastSendError ?? 'Message not sent — try again')
     }
     setSending(false)
+  }
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Reactions for the visible thread, refreshed when it changes or a reaction lands.
+  const messageIdsKey = messages.map((m) => m.id).join(',')
+  useEffect(() => {
+    const ids = messageIdsKey ? messageIdsKey.split(',') : []
+    if (!activeId || ids.length === 0) return
+    let isMounted = true
+    const load = () => {
+      void (async () => {
+        const rows = await messagingService.getReactions(ids)
+        if (isMounted) setReactions(rows)
+      })()
+    }
+    load()
+    const unsub = messagingService.subscribeToReactions(activeId, load)
+    return () => {
+      isMounted = false
+      unsub()
+    }
+  }, [activeId, messageIdsKey])
+
+  // Which messages this member has hidden from their own view
+  useEffect(() => {
+    if (!user) return
+    let isMounted = true
+    void (async () => {
+      const ids = await messagingService.getHiddenMessageIds(user.id)
+      if (isMounted) setHiddenIds(new Set(ids))
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [user])
+
+  const handleReact = async (messageId: string, emoji: ReactionEmoji) => {
+    if (!user) return
+    const isOn = Boolean(
+      reactions.find(
+        (r) => r.message_id === messageId && r.user_id === user.id && r.emoji === emoji
+      )
+    )
+    // Optimistic — realtime reconciles it either way.
+    setReactions((prev) =>
+      isOn
+        ? prev.filter(
+            (r) => !(r.message_id === messageId && r.user_id === user.id && r.emoji === emoji)
+          )
+        : [
+            ...prev,
+            {
+              id: `optimistic-${messageId}-${emoji}`,
+              message_id: messageId,
+              user_id: user.id,
+              emoji,
+              created_at: new Date().toISOString(),
+            },
+          ]
+    )
+    const ok = await messagingService.toggleReaction(messageId, user.id, emoji, isOn)
+    if (!ok) {
+      const rows = await messagingService.getReactions(messages.map((m) => m.id))
+      setReactions(rows)
+    }
+  }
+
+  const handleRecall = async (messageId: string) => {
+    const { toast } = await import('sonner')
+    toast('Delete this message for everyone?', {
+      action: {
+        label: 'Delete',
+        onClick: () => {
+          void (async () => {
+            const err = await messagingService.recallMessage(messageId)
+            if (err) {
+              toast.error(err)
+              return
+            }
+            if (activeId) {
+              setMessagesMap((prev) => ({
+                ...prev,
+                [activeId]: (prev[activeId] ?? []).map((m) =>
+                  m.id === messageId
+                    ? { ...m, recalled_at: new Date().toISOString(), content: '' }
+                    : m
+                ),
+              }))
+            }
+          })()
+        },
+      },
+    })
+  }
+
+  const handleDeleteForMe = async (messageId: string) => {
+    if (!user) return
+    const ok = await messagingService.hideMessageForMe(messageId, user.id)
+    const { toast } = await import('sonner')
+    if (!ok) {
+      toast.error('Could not remove message')
+      return
+    }
+    setHiddenIds((prev) => new Set(prev).add(messageId))
   }
 
   const handleReport = async (messageId: string) => {
@@ -1231,6 +1403,19 @@ export default function DashboardMessages() {
                   }
                 }
 
+                const quoted = msg.reply_to_id ? messageById.get(msg.reply_to_id) : undefined
+                const quotedName = quoted
+                  ? quoted.sender_id === user?.id
+                    ? 'You'
+                    : quoted.sender_type === 'leader'
+                      ? (leaderInfo?.full_name ?? 'Leader')
+                      : (memberProfilesMap[quoted.sender_id]?.full_name ?? 'Member')
+                  : null
+                const isRecalled = Boolean(msg.recalled_at)
+                // The 15-minute edit window is enforced in the DB; mirror it here so
+                // the action is only offered while it would actually succeed.
+                const withinEditWindow = now - new Date(msg.created_at).getTime() < 15 * 60 * 1000
+
                 return (
                   <ChatBubble
                     key={msg.id}
@@ -1239,8 +1424,29 @@ export default function DashboardMessages() {
                     timestamp={msg.created_at}
                     senderName={senderName}
                     isFlagged={Boolean(msg.is_flagged)}
+                    isEdited={Boolean(msg.edited_at)}
+                    isRecalled={isRecalled}
+                    replyPreview={
+                      quoted && quotedName
+                        ? {
+                            senderName: quotedName,
+                            content: quoted.recalled_at ? 'Deleted message' : quoted.content,
+                          }
+                        : null
+                    }
+                    reactions={reactionsFor.get(msg.id)}
+                    canEdit={isSelf && withinEditWindow}
+                    onReply={isRecalled ? undefined : () => setReplyTo(msg)}
+                    onReact={isRecalled ? undefined : (emoji) => void handleReact(msg.id, emoji)}
+                    onEdit={isSelf && !isRecalled ? () => setEditing(msg) : undefined}
+                    onRecall={isSelf && !isRecalled ? () => void handleRecall(msg.id) : undefined}
+                    onDeleteForMe={() => void handleDeleteForMe(msg.id)}
                     // Reporting only makes sense for other people's posts in an open room.
-                    onReport={isGroupChat && !isSelf ? () => void handleReport(msg.id) : undefined}
+                    onReport={
+                      isGroupChat && !isSelf && !isRecalled
+                        ? () => void handleReport(msg.id)
+                        : undefined
+                    }
                   />
                 )
               })}
@@ -1262,21 +1468,106 @@ export default function DashboardMessages() {
                 This conversation has been closed.
               </div>
             ) : (
-              <ChatInput
-                onSend={(content) => {
-                  void handleSend(content)
-                }}
-                disabled={sending}
-                placeholder={
-                  isMovementChat
-                    ? 'Message the movement…'
-                    : isGroupChat
-                      ? `Message ${activeConv?.scope_value} Forum…`
-                      : isDeptChat
-                        ? `Message ${activeConv?.scope_value}…`
-                        : 'Message your leader…'
-                }
-              />
+              <>
+                {(replyTo || editing) && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      padding: '8px 16px',
+                      borderTop: '1px solid hsl(var(--border))',
+                      background: 'hsl(var(--container-low))',
+                    }}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: 16, color: 'hsl(var(--primary))', flexShrink: 0 }}
+                    >
+                      {editing ? 'edit' : 'reply'}
+                    </span>
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        borderLeft: '3px solid hsl(var(--primary))',
+                        paddingLeft: 8,
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          color: 'hsl(var(--primary))',
+                        }}
+                      >
+                        {editing ? 'Editing your message' : 'Replying to'}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {(editing ?? replyTo)?.content}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setReplyTo(null)
+                        setEditing(null)
+                      }}
+                      aria-label="Cancel"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: 'hsl(var(--on-surface-muted))',
+                        flexShrink: 0,
+                        display: 'flex',
+                      }}
+                    >
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                        close
+                      </span>
+                    </button>
+                  </div>
+                )}
+                <ChatInput
+                  // Remount when switching into or out of editing so the field
+                  // picks up the message text without a prop-to-state effect.
+                  key={editing ? `edit-${editing.id}` : 'compose'}
+                  onSend={(content) => {
+                    void handleSend(content)
+                  }}
+                  initialValue={editing?.content ?? ''}
+                  onCancel={
+                    editing || replyTo
+                      ? () => {
+                          setEditing(null)
+                          setReplyTo(null)
+                        }
+                      : undefined
+                  }
+                  disabled={sending}
+                  placeholder={
+                    editing
+                      ? 'Edit your message…'
+                      : replyTo
+                        ? 'Write a reply…'
+                        : isMovementChat
+                          ? 'Message the movement…'
+                          : isGroupChat
+                            ? `Message ${activeConv?.scope_value} Forum…`
+                            : isDeptChat
+                              ? `Message ${activeConv?.scope_value}…`
+                              : 'Message your leader…'
+                  }
+                />
+              </>
             )}
           </div>
         </div>

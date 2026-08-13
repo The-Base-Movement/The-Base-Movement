@@ -13,6 +13,8 @@ import type {
   ConversationSummary,
   FlaggedMessage,
   Message,
+  MessageReaction,
+  ReactionEmoji,
 } from '@/types/admin'
 
 class MessagingService {
@@ -267,7 +269,8 @@ class MessagingService {
     conversationId: string,
     content: string,
     senderType: 'member' | 'leader',
-    senderId: string
+    senderId: string,
+    replyToId?: string | null
   ): Promise<Message | null> {
     const { data, error } = await supabase
       .from('messages')
@@ -276,6 +279,7 @@ class MessagingService {
         sender_type: senderType,
         sender_id: senderId,
         content,
+        reply_to_id: replyToId ?? null,
       })
       .select()
       .single()
@@ -356,6 +360,125 @@ class MessagingService {
     }
     // Query runs newest-first so the limit takes the most recent page; flip for display.
     return ((data ?? []) as Message[]).reverse()
+  }
+
+  /**
+   * Edit your own message. The 15-minute window and "authors only" rule are both
+   * enforced by a DB trigger, so the error it raises is the message worth showing.
+   * Returns null on success, or the reason it was refused.
+   */
+  async editMessage(messageId: string, content: string): Promise<string | null> {
+    const { error } = await supabase.from('messages').update({ content }).eq('id', messageId)
+    if (error) {
+      console.warn('[MessagingService] editMessage failed:', error)
+      return error.message ?? 'Could not edit message'
+    }
+    return null
+  }
+
+  /**
+   * Recall your own message for everyone. The trigger wipes the content; the row
+   * stays as a tombstone so replies around it still make sense.
+   */
+  async recallMessage(messageId: string): Promise<string | null> {
+    const { error } = await supabase
+      .from('messages')
+      .update({ recalled_at: new Date().toISOString() })
+      .eq('id', messageId)
+    if (error) {
+      console.warn('[MessagingService] recallMessage failed:', error)
+      return error.message ?? 'Could not recall message'
+    }
+    return null
+  }
+
+  /** Hide a message from your own view only. Everyone else still sees it. */
+  async hideMessageForMe(messageId: string, userId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('message_hides')
+      .upsert({ message_id: messageId, user_id: userId }, { onConflict: 'message_id, user_id' })
+    if (error) {
+      console.warn('[MessagingService] hideMessageForMe failed:', error)
+      return false
+    }
+    return true
+  }
+
+  /** Message ids this member has hidden from their own view. */
+  async getHiddenMessageIds(userId: string): Promise<string[]> {
+    const { data } = await supabase.from('message_hides').select('message_id').eq('user_id', userId)
+    return ((data ?? []) as { message_id: string }[]).map((r) => r.message_id)
+  }
+
+  /** Add the reaction, or remove it if this member already reacted with that emoji. */
+  async toggleReaction(
+    messageId: string,
+    userId: string,
+    emoji: ReactionEmoji,
+    isOn: boolean
+  ): Promise<boolean> {
+    const { error } = isOn
+      ? await supabase
+          .from('message_reactions')
+          .delete()
+          .eq('message_id', messageId)
+          .eq('user_id', userId)
+          .eq('emoji', emoji)
+      : await supabase.from('message_reactions').insert({
+          message_id: messageId,
+          user_id: userId,
+          emoji,
+        })
+
+    if (error) {
+      console.warn('[MessagingService] toggleReaction failed:', error)
+      return false
+    }
+    return true
+  }
+
+  /** All reactions on the given messages. RLS limits this to messages you can see. */
+  async getReactions(messageIds: string[]): Promise<MessageReaction[]> {
+    if (messageIds.length === 0) return []
+    const { data, error } = await supabase
+      .from('message_reactions')
+      .select('*')
+      .in('message_id', messageIds)
+    if (error) {
+      console.warn('[MessagingService] getReactions failed:', error)
+      return []
+    }
+    return (data ?? []) as MessageReaction[]
+  }
+
+  /**
+   * Live reaction changes. message_reactions has no conversation_id, so this cannot
+   * be filtered server-side and the caller drops events for messages it is not
+   * showing. RLS still limits delivery to reactions the member is allowed to see.
+   *
+   * ponytail: unfiltered subscription; denormalise conversation_id onto
+   * message_reactions if reaction traffic in the movement forum gets noisy.
+   */
+  subscribeToReactions(key: string, onChange: () => void): () => void {
+    const channelKey = `reactions:${key}`
+    const existing = this.channels.get(channelKey)
+    if (existing) {
+      void supabase.removeChannel(existing)
+      this.channels.delete(channelKey)
+    }
+
+    const channel: RealtimeChannel = supabase
+      .channel(channelKey)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions' }, () =>
+        onChange()
+      )
+      .subscribe()
+
+    this.channels.set(channelKey, channel)
+    return () => {
+      void supabase.removeChannel(channel)
+      this.channels.delete(channelKey)
+    }
   }
 
   /**
