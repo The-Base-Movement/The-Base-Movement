@@ -79,3 +79,10 @@ ml-service/tests/
 scripts/fast_export_filter.py
 scripts/filter_msg.py
 scripts/filter_repo_callback.py
+
+# Feeds written into public/ by scripts/generate-rss.mjs for dev-mode serving.
+# The deployed copies are generated straight into dist/ during the Vercel build,
+# so these are regenerated on every build and must not be committed.
+public/feed.xml
+public/rss.xml
+public/blog/
