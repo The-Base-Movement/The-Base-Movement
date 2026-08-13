@@ -13,6 +13,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { REACTION_EMOJIS, type ReactionEmoji, type ReactionSummary } from '@/types/admin'
+import { VoiceNotePlayer } from './VoiceNotePlayer'
 
 interface ChatBubbleProps {
   content: string
@@ -26,6 +27,9 @@ interface ChatBubbleProps {
   reactions?: ReactionSummary[]
   isEdited?: boolean
   isRecalled?: boolean
+  /** Set for a voice note. The path is null once the audio is purged or recalled. */
+  audioPath?: string | null
+  audioDurationSeconds?: number | null
   /** Author-only actions; omit to hide them from the menu. */
   canEdit?: boolean
   onReply?: () => void
@@ -56,6 +60,8 @@ export function ChatBubble({
   reactions,
   isEdited,
   isRecalled,
+  audioPath,
+  audioDurationSeconds,
   canEdit,
   onReply,
   onReact,
@@ -259,7 +265,15 @@ export function ChatBubble({
                 </span>
               </button>
             )}
-            {content}
+            {audioDurationSeconds ? (
+              <VoiceNotePlayer
+                audioPath={audioPath ?? null}
+                durationSeconds={audioDurationSeconds}
+                isSelf={isSelf}
+              />
+            ) : (
+              content
+            )}
           </>
         )}
       </div>

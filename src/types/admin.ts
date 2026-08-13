@@ -1072,7 +1072,14 @@ export interface Message {
   reply_to_id?: string | null
   edited_at?: string | null
   recalled_at?: string | null
+  /** Storage path in the private voice-notes bucket; null once purged or recalled. */
+  audio_url?: string | null
+  /** Present for a voice note even after the audio is purged, so the UI can say so. */
+  audio_duration_seconds?: number | null
 }
+
+/** Hard cap on voice notes, mirrored by a CHECK constraint on messages. */
+export const VOICE_NOTE_MAX_SECONDS = 60
 
 /** The six reactions offered on the message menu. */
 export const REACTION_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'] as const

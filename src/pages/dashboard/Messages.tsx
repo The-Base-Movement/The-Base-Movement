@@ -314,6 +314,38 @@ export default function DashboardMessages() {
     }
   }, [user])
 
+  const handleSendVoice = async (blob: Blob, durationSeconds: number, extension: string) => {
+    if (!activeConv || !user) return
+    setSending(true)
+    const { toast } = await import('sonner')
+
+    const path = await messagingService.uploadVoiceNote(blob, user.id, extension)
+    if (!path) {
+      toast.error(messagingService.lastSendError ?? 'Could not upload voice note')
+      setSending(false)
+      return
+    }
+
+    const msg = await messagingService.sendVoiceNote(
+      activeConv.id,
+      'member',
+      user.id,
+      path,
+      durationSeconds,
+      replyTo?.id ?? null
+    )
+    if (msg) {
+      setReplyTo(null)
+      setMessagesMap((prev) => {
+        const cur = prev[activeConv.id] ?? []
+        return cur.some((m) => m.id === msg.id) ? prev : { ...prev, [activeConv.id]: [...cur, msg] }
+      })
+    } else {
+      toast.error(messagingService.lastSendError ?? 'Voice note not sent — try again')
+    }
+    setSending(false)
+  }
+
   const handleReact = async (messageId: string, emoji: ReactionEmoji) => {
     if (!user) return
     const isOn = Boolean(
@@ -1432,6 +1464,8 @@ export default function DashboardMessages() {
                     isFlagged={Boolean(msg.is_flagged)}
                     isEdited={Boolean(msg.edited_at)}
                     isRecalled={isRecalled}
+                    audioPath={msg.audio_url ?? null}
+                    audioDurationSeconds={msg.audio_duration_seconds ?? null}
                     replyPreview={
                       quoted && quotedName
                         ? {
@@ -1549,6 +1583,14 @@ export default function DashboardMessages() {
                     void handleSend(content)
                   }}
                   initialValue={editing?.content ?? ''}
+                  // Voice notes are for leader DMs and department chats. Audio in the
+                  // ~10k-member forum would be the hardest content to moderate and the
+                  // fastest to consume storage.
+                  onSendVoice={
+                    !isGroupChat && !editing
+                      ? (blob, seconds, ext) => void handleSendVoice(blob, seconds, ext)
+                      : undefined
+                  }
                   onCancel={
                     editing || replyTo
                       ? () => {
