@@ -102,6 +102,11 @@ export function ChatInput({
       return
     }
 
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setMicError('Recording needs a secure (https) connection')
+      return
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       const recorder = new MediaRecorder(stream, {
@@ -140,8 +145,16 @@ export function ChatInput({
           recorderRef.current.stop()
         }
       }, 250)
-    } catch {
-      setMicError('Microphone permission denied')
+    } catch (err) {
+      // A Permissions-Policy block and a user denial both surface as
+      // NotAllowedError, so the copy has to cover both rather than blaming
+      // the member for a refusal they never made.
+      const name = (err as DOMException)?.name
+      setMicError(
+        name === 'NotFoundError' || name === 'DevicesNotFoundError'
+          ? 'No microphone found'
+          : 'Microphone unavailable — allow access in your browser and reload'
+      )
     }
   }
 
