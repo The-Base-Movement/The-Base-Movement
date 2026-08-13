@@ -645,6 +645,13 @@ export default function AdminMessages() {
                       isSelf={isSelf}
                       timestamp={msg.created_at}
                       senderName={senderName}
+                      // Members record voice notes to their leader, so this side is
+                      // where they actually get listened to.
+                      audioPath={msg.audio_url ?? null}
+                      audioDurationSeconds={msg.audio_duration_seconds ?? null}
+                      isRecalled={Boolean(msg.recalled_at)}
+                      isEdited={Boolean(msg.edited_at)}
+                      isFlagged={Boolean(msg.is_flagged)}
                     />
                   )
                 })}
