@@ -1823,11 +1823,8 @@ export default function DashboardMessages() {
                     void handleSend(content)
                   }}
                   initialValue={editing?.content ?? ''}
-                  // Voice notes are for leader DMs and department chats. Audio in the
-                  // ~10k-member forum would be the hardest content to moderate and the
-                  // fastest to consume storage.
                   onSendVoice={
-                    !isGroupChat && !editing
+                    !editing
                       ? (blob, seconds, ext) => void handleSendVoice(blob, seconds, ext)
                       : undefined
                   }

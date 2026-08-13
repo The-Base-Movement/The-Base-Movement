@@ -5,6 +5,7 @@ import { messagingService } from '@/services/messagingService'
 import { getPublicDirectoryProfiles } from '@/lib/publicDirectory'
 import { ChatBubble } from '@/components/chat/ChatBubble'
 import { ChatInput } from '@/components/chat/ChatInput'
+import { VoiceNotePlayer } from '@/components/chat/VoiceNotePlayer'
 import type { Conversation, ConversationSummary, FlaggedMessage, Message } from '@/types/admin'
 
 function formatRelative(iso: string | null): string {
@@ -281,17 +282,27 @@ export default function AdminMessages() {
                       {formatRelative(m.created_at)}
                     </span>
                   </div>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: 13,
-                      color: 'hsl(var(--on-surface))',
-                      lineHeight: 1.5,
-                      wordBreak: 'break-word',
-                    }}
-                  >
-                    {m.content}
-                  </p>
+                  {m.audio_duration_seconds ? (
+                    // A voice note has empty content, so the report would otherwise
+                    // render nothing at all for a moderator to review.
+                    <VoiceNotePlayer
+                      audioPath={m.audio_url ?? null}
+                      durationSeconds={m.audio_duration_seconds}
+                      isSelf={false}
+                    />
+                  ) : (
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        color: 'hsl(var(--on-surface))',
+                        lineHeight: 1.5,
+                        wordBreak: 'break-word',
+                      }}
+                    >
+                      {m.content}
+                    </p>
+                  )}
                   {m.flagged_reason && (
                     <p
                       style={{
