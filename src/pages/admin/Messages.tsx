@@ -516,7 +516,13 @@ export default function AdminMessages() {
         {/* Right: thread */}
         <main
           className="panel"
-          style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', minWidth: 0 }}
+          style={{
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            minWidth: 0,
+            position: 'relative',
+          }}
         >
           {!activeConv ? (
             <div
@@ -537,6 +543,29 @@ export default function AdminMessages() {
             </div>
           ) : (
             <>
+              {/* Eagle watermark, matching the member-side chat panel. Positioned
+                  within the panel rather than the scrollable list, so it stays put
+                  while messages scroll over it. */}
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: 0.06,
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}
+              >
+                <img
+                  src="/branding/patterns/eagle-in-flight.webp"
+                  alt=""
+                  style={{ width: '70%', maxWidth: 280, objectFit: 'contain' }}
+                />
+              </div>
+
               {/* Thread header */}
               <div
                 style={{
@@ -627,15 +656,23 @@ export default function AdminMessages() {
                 {messages.map((msg) => {
                   const isSelf = msg.sender_type === 'leader' && msg.sender_id === user?.id
                   let senderName: string | undefined = undefined
-                  if (!isSelf) {
-                    if (msg.sender_type === 'member') {
-                      senderName =
-                        activeConv.member?.full_name ??
-                        memberProfilesMap[msg.sender_id]?.full_name ??
-                        'Member'
-                    } else {
-                      senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Leader/Admin'
-                    }
+                  let senderAvatarUrl: string | null | undefined
+                  if (isSelf) {
+                    senderAvatarUrl =
+                      (user?.user_metadata as { avatar_url?: string } | undefined)?.avatar_url ??
+                      null
+                  } else if (msg.sender_type === 'member') {
+                    senderName =
+                      activeConv.member?.full_name ??
+                      memberProfilesMap[msg.sender_id]?.full_name ??
+                      'Member'
+                    senderAvatarUrl =
+                      activeConv.member?.avatar_url ??
+                      memberProfilesMap[msg.sender_id]?.avatar_url ??
+                      null
+                  } else {
+                    senderName = memberProfilesMap[msg.sender_id]?.full_name ?? 'Leader/Admin'
+                    senderAvatarUrl = memberProfilesMap[msg.sender_id]?.avatar_url ?? null
                   }
 
                   return (
@@ -645,6 +682,7 @@ export default function AdminMessages() {
                       isSelf={isSelf}
                       timestamp={msg.created_at}
                       senderName={senderName}
+                      senderAvatarUrl={senderAvatarUrl}
                       // Members record voice notes to their leader, so this side is
                       // where they actually get listened to.
                       audioPath={msg.audio_url ?? null}
