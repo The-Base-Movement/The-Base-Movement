@@ -59,6 +59,8 @@ export default function DashboardMessages() {
   const [reactions, setReactions] = useState<MessageReaction[]>([])
   // "Delete for me" is per-member state, so hidden ids are filtered at render.
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set())
+  // Message whose reactors are being viewed, if any.
+  const [reactionViewer, setReactionViewer] = useState<string | null>(null)
   const [replyTo, setReplyTo] = useState<Message | null>(null)
   const [editing, setEditing] = useState<Message | null>(null)
   // Ticks so the 15-minute Edit option disappears on its own once it lapses,
@@ -313,6 +315,34 @@ export default function DashboardMessages() {
       isMounted = false
     }
   }, [user])
+
+  // Reactors are usually not the people who sent messages, so their names are not
+  // in memberProfilesMap yet. Resolve them when the list is opened rather than for
+  // every reaction in the thread.
+  const viewerReactorIds = reactionViewer
+    ? reactions.filter((r) => r.message_id === reactionViewer).map((r) => r.user_id)
+    : []
+  const viewerReactorKey = viewerReactorIds.join(',')
+  useEffect(() => {
+    const ids = viewerReactorKey ? viewerReactorKey.split(',') : []
+    const missing = Array.from(new Set(ids)).filter(
+      (id) => id !== user?.id && !memberProfilesMap[id]
+    )
+    if (missing.length === 0) return
+    let isMounted = true
+    void (async () => {
+      const profiles = await getPublicDirectoryProfiles(missing)
+      if (!isMounted) return
+      setMemberProfilesMap((prev) => {
+        const next = { ...prev }
+        for (const p of profiles) next[p.id] = { full_name: p.full_name, avatar_url: p.avatar_url }
+        return next
+      })
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [viewerReactorKey, user?.id, memberProfilesMap])
 
   const handleSendVoice = async (blob: Blob, durationSeconds: number, extension: string) => {
     if (!activeConv || !user) return
@@ -582,6 +612,131 @@ export default function DashboardMessages() {
         scrollBehavior: 'auto',
       }}
     >
+      {/* Who reacted */}
+      {reactionViewer && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setReactionViewer(null)}
+        >
+          <div
+            className="panel"
+            style={{
+              width: '100%',
+              maxWidth: 340,
+              maxHeight: '70vh',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                padding: '14px 16px',
+                borderBottom: '1px solid hsl(var(--border))',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 13,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
+                Reactions
+              </p>
+              <button
+                onClick={() => setReactionViewer(null)}
+                aria-label="Close"
+                style={{
+                  marginLeft: 'auto',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'hsl(var(--on-surface-muted))',
+                  display: 'flex',
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  close
+                </span>
+              </button>
+            </div>
+
+            <div style={{ overflowY: 'auto' }}>
+              {reactions
+                .filter((r) => r.message_id === reactionViewer)
+                .map((r) => {
+                  const isMe = r.user_id === user?.id
+                  const name = isMe ? 'You' : (memberProfilesMap[r.user_id]?.full_name ?? 'Member')
+                  return (
+                    <button
+                      key={r.id}
+                      // Only your own reaction is actionable — tapping it removes it,
+                      // which is the one place a reaction can be taken back now that
+                      // tapping the chip opens this list instead of toggling.
+                      onClick={
+                        isMe
+                          ? () => {
+                              void handleReact(r.message_id, r.emoji)
+                              setReactionViewer(null)
+                            }
+                          : undefined
+                      }
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        padding: '10px 16px',
+                        background: 'none',
+                        border: 'none',
+                        borderBottom: '1px solid hsl(var(--border))',
+                        textAlign: 'left',
+                        cursor: isMe ? 'pointer' : 'default',
+                        fontFamily: "'Public Sans', sans-serif",
+                      }}
+                    >
+                      <span style={{ fontSize: 18, flexShrink: 0 }}>{r.emoji}</span>
+                      <span
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface))',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {name}
+                      </span>
+                      {isMe && (
+                        <span style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                          Tap to remove
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -1475,6 +1630,7 @@ export default function DashboardMessages() {
                         : null
                     }
                     reactions={reactionsFor.get(msg.id)}
+                    onViewReactions={() => setReactionViewer(msg.id)}
                     canEdit={isSelf && withinEditWindow}
                     onReply={isRecalled ? undefined : () => setReplyTo(msg)}
                     onReact={isRecalled ? undefined : (emoji) => void handleReact(msg.id, emoji)}

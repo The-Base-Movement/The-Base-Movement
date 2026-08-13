@@ -34,6 +34,8 @@ interface ChatBubbleProps {
   canEdit?: boolean
   onReply?: () => void
   onReact?: (emoji: ReactionEmoji) => void
+  /** Tapping a reaction chip shows who reacted, rather than toggling silently. */
+  onViewReactions?: () => void
   onEdit?: () => void
   onRecall?: () => void
   onDeleteForMe?: () => void
@@ -65,6 +67,7 @@ export function ChatBubble({
   canEdit,
   onReply,
   onReact,
+  onViewReactions,
   onEdit,
   onRecall,
   onDeleteForMe,
@@ -284,9 +287,10 @@ export function ChatBubble({
           {reactions.map((r) => (
             <button
               key={r.emoji}
-              onClick={() => onReact?.(r.emoji)}
-              disabled={!onReact}
-              aria-label={`${r.emoji} ${r.count}`}
+              onClick={onViewReactions}
+              disabled={!onViewReactions}
+              aria-label={`${r.emoji} ${r.count} — see who reacted`}
+              title="See who reacted"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -294,7 +298,7 @@ export function ChatBubble({
                 padding: '1px 7px',
                 fontSize: 11,
                 lineHeight: 1.6,
-                cursor: onReact ? 'pointer' : 'default',
+                cursor: onViewReactions ? 'pointer' : 'default',
                 borderRadius: 'var(--radius-pill)',
                 border: `1px solid ${r.reactedByMe ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
                 background: r.reactedByMe ? 'hsl(var(--container-low))' : 'hsl(var(--card))',
