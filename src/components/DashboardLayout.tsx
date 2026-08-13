@@ -527,7 +527,10 @@ export default function DashboardLayout() {
           </div>
         </div>
 
-        <DashboardFooter />
+        {/* Messages fills the viewport as a fixed-height chat surface, so the
+            footer below it would sit off-screen or force extra scroll for
+            nothing — every other dashboard page keeps it. */}
+        {location.pathname !== '/dashboard/messages' && <DashboardFooter />}
         <style
           dangerouslySetInnerHTML={{
             __html: `
