@@ -5,6 +5,7 @@ import { adminService } from '@/services/adminService'
 import { discordService } from '@/services/discordService'
 import { sessionStore } from '@/lib/sessionStore'
 import { trackMetric } from '@/lib/sentry'
+import { getMemberEmailValidationError } from '@/lib/memberEmailValidation'
 import type { RegistrationFormData } from '@/types/registration'
 import type { Area } from 'react-easy-crop'
 
@@ -76,6 +77,8 @@ export const registrationService = {
       config
 
     const authEmail = formData.email ? formData.email.trim() : null
+    const emailError = getMemberEmailValidationError(authEmail)
+    if (emailError) throw new Error(emailError)
     const cleanPhone = normalizeRegistrationPhone(formData.countryCode, formData.contactNumber)
     const duplicate = await findDuplicateRegistration(cleanPhone, authEmail)
     if (duplicate) {

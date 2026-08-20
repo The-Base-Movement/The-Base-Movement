@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { adminService } from '@/services/adminService'
+import { getMemberEmailValidationError } from '@/lib/memberEmailValidation'
 import { toast } from 'sonner'
 import type { User } from '@/types/admin'
 
@@ -290,6 +291,9 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
           if (!recordData.phone_number && !recordData.email) {
             errors.push('Missing: phone number or email')
           }
+
+          const emailError = getMemberEmailValidationError(recordData.email)
+          if (emailError) errors.push(emailError)
 
           recordData.platform = detectPlatform(
             recordData.phone_number,
