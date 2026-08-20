@@ -5,7 +5,6 @@ import { SelIcon } from './SelIcon'
 import { JobSelector } from '@/components/JobSelector'
 import type { JobSelection } from '@/services/jobTaxonomyService'
 import { emergencyRelationships, religions } from '@/components/admin/RegistrationForm.constants'
-import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { diasporaName } from '@/lib/diaspora'
 
@@ -91,7 +90,6 @@ export function PersonalInfoForm({
       .catch(() => setConstituencyOptions([]))
   }, [canSetConstituency, form.region])
 
-  const politicalParties = usePoliticalParties()
   return (
     <div className="panel">
       <div className="ph">
@@ -340,29 +338,6 @@ export function PersonalInfoForm({
                 {religions.map((r) => (
                   <option key={r} value={r}>
                     {r}
-                  </option>
-                ))}
-              </select>
-              <SelIcon />
-            </div>
-          </div>
-
-          {/* Party Affiliation / CSO — required */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor="select-party-affiliation" style={labelStyle}>
-              Party Affiliation / CSO <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-            </label>
-            <div style={{ position: 'relative' }}>
-              <select
-                id="select-party-affiliation"
-                value={form.partyAffiliation}
-                onChange={(e) => onChange('partyAffiliation', e.target.value)}
-                style={selectStyle}
-              >
-                <option value="">Select</option>
-                {politicalParties.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
                   </option>
                 ))}
               </select>

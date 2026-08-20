@@ -285,7 +285,6 @@ export default function Register() {
       const phoneErr = validatePhone(formData.contactNumber, formData.countryCode)
       if (phoneErr) errs.contactNumber = phoneErr
 
-      if (!formData.partyAffiliation) errs.partyAffiliation = 'Please select your party affiliation / CSO.'
       if (!formData.gender) errs.gender = 'Please select your gender.'
       if (!formData.ageRange && !formData.birthYear)
         errs.ageRange = 'Please select your age range or enter your birth year.'

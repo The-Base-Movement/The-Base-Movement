@@ -190,10 +190,6 @@ export default function RegistrationForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formStep < 4) {
-      if (formStep === 2 && !formData.partyAffiliation) {
-        toast.error('Party affiliation / CSO is required.')
-        return
-      }
       if (formStep === 3) {
         const nameClean = formData.emergencyContactName.trim()
         if (nameClean && !/^[\p{L}\s'-]+$/u.test(nameClean)) {

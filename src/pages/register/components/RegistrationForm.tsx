@@ -18,7 +18,6 @@ import {
   educationLevels,
   religions,
 } from '@/components/admin/RegistrationForm.constants'
-import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
 
@@ -84,7 +83,6 @@ export function RegistrationForm(props: RegistrationFormProps) {
     onBack,
     onSubmit,
   } = props
-  const politicalParties = usePoliticalParties()
   const displayStep = formStep
   const totalSteps = 4
 
@@ -233,7 +231,11 @@ export function RegistrationForm(props: RegistrationFormProps) {
             {formStep === 1 && (
               <>
                 Join the movement to build a better Ghana. Read our{' '}
-                <Link to="/blog/how-to-register-and-get-verified" target="_blank" className="text-primary font-medium hover:underline">
+                <Link
+                  to="/blog/how-to-register-and-get-verified"
+                  target="_blank"
+                  className="text-primary font-medium hover:underline"
+                >
                   Registration Guide →
                 </Link>
               </>
@@ -957,42 +959,6 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       ))}
                     </select>
                   </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="select-party-affiliation"
-                    className="text-[10.5px] font-medium text-on-surface-muted uppercase tracking-[.06em] block"
-                  >
-                    Party Affiliation / CSO <span className="text-destructive">*</span>
-                  </label>
-                  <select
-                    name="name-party-affiliation"
-                    id="select-party-affiliation"
-                    value={formData.partyAffiliation || ''}
-                    onChange={(e) => onInputChange('partyAffiliation', e.target.value)}
-                    className={cn(
-                      'w-full h-[46px] bg-transparent border px-3 text-sm font-medium outline-none text-on-surface transition-colors',
-                      formErrors.partyAffiliation
-                        ? 'border-destructive focus:border-destructive'
-                        : 'border-border focus:border-primary'
-                    )}
-                  >
-                    <option value="">Select Party Affiliation / CSO</option>
-                    {politicalParties.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
-                      </option>
-                    ))}
-                  </select>
-                  {formErrors.partyAffiliation && (
-                    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
-                      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                        error
-                      </span>
-                      {formErrors.partyAffiliation}
-                    </p>
-                  )}
                 </div>
 
                 {platform === 'DIASPORA' && (
