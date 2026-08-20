@@ -535,7 +535,7 @@ class MemberService {
       emergencyName: u.emergency_name,
       emergencyRelationship: u.emergency_relationship,
       emergencyPhone: u.emergency_phone,
-      submitted: new Date(u.joined_at as string).toLocaleString(),
+      submitted: u.joined_at ? new Date(u.joined_at as string).toLocaleString() : 'Unknown',
       status: u.verification_status,
       photoUrl: u.avatar_url,
       chapter: u.chapter,
