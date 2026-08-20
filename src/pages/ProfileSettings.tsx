@@ -375,11 +375,6 @@ export default function ProfileSettings() {
     const regNo = sessionStore.getItem('userRegNo')
     if (!regNo) return
 
-    if (!form.partyAffiliation) {
-      toast.error('Party affiliation / CSO is required.')
-      return
-    }
-
     if (form.emergencyName) {
       const nameClean = form.emergencyName.trim()
       if (!/^[\p{L}\s'-]+$/u.test(nameClean)) {

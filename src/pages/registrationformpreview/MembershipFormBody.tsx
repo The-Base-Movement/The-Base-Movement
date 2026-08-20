@@ -2,7 +2,6 @@ interface MembershipFormBodyProps {
   platform: string
   formTitle: string
   logoUrl: string
-  parties?: string[]
   regions?: string[]
   watermarkOpacity?: number
 }
@@ -17,7 +16,7 @@ function SectionHeader({ number, label }: { number: number; label: string }) {
         background: 'hsl(156 100% 18%)',
         color: '#ffffff',
         padding: '5px 12px',
-        fontSize: '10.5px',
+        fontSize: '11.5px',
         fontWeight: 700,
         letterSpacing: '0.05em',
         textTransform: 'uppercase',
@@ -38,7 +37,7 @@ function SectionHeader({ number, label }: { number: number; label: string }) {
           borderRadius: '50%',
           background: 'hsl(45 80% 45%)',
           color: '#0f1310',
-          fontSize: '9.5px',
+          fontSize: '10.5px',
           fontWeight: 800,
         }}
       >
@@ -49,12 +48,20 @@ function SectionHeader({ number, label }: { number: number; label: string }) {
   )
 }
 
-function FieldLine({ label, required = false, hint }: { label: string; required?: boolean; hint?: string }) {
+function FieldLine({
+  label,
+  required = false,
+  hint,
+}: {
+  label: string
+  required?: boolean
+  hint?: string
+}) {
   return (
     <div style={{ marginBottom: 9 }}>
       <p
         style={{
-          fontSize: '10px',
+          fontSize: '11px',
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.03em',
@@ -65,7 +72,9 @@ function FieldLine({ label, required = false, hint }: { label: string; required?
         }}
       >
         {label} {required && <span style={{ color: '#dc2626' }}>*</span>}{' '}
-        {hint && <span style={{ textTransform: 'none', fontWeight: 400, color: '#64748b' }}>({hint})</span>}
+        {hint && (
+          <span style={{ textTransform: 'none', fontWeight: 400, color: '#64748b' }}>({hint})</span>
+        )}
       </p>
       <div
         style={{
@@ -100,7 +109,7 @@ function CheckboxGroup({ items, columns = 0 }: { items: string[]; columns?: numb
           />
           <span
             style={{
-              fontSize: '10.5px',
+              fontSize: '11.5px',
               fontWeight: 500,
               color: '#1e293b',
               fontFamily: "'Public Sans', sans-serif",
@@ -119,7 +128,6 @@ export function MembershipFormBody({
   platform,
   formTitle,
   logoUrl,
-  parties,
   regions,
   watermarkOpacity = 0.03,
 }: MembershipFormBodyProps) {
@@ -146,21 +154,6 @@ export function MembershipFormBody({
           'Western',
           'Western North',
         ]
-
-  const partyList = parties && parties.length > 0 ? parties : [
-    'NPP — New Patriotic Party',
-    'NDC — National Democratic Congress',
-    'CPP — Convention People\'s Party',
-    'GUM — Ghana Union Movement',
-    'The New Force',
-    'Civil Society Organisation (CSO)',
-  ]
-
-  const partyChecklist = [
-    ...partyList,
-    'Independent / Unaffiliated',
-    'Other: _______________________',
-  ]
 
   return (
     <div
@@ -227,7 +220,7 @@ export function MembershipFormBody({
           <div>
             <h1
               style={{
-                fontSize: 21,
+                fontSize: 22,
                 fontWeight: 800,
                 letterSpacing: '-0.02em',
                 margin: 0,
@@ -240,7 +233,7 @@ export function MembershipFormBody({
             </h1>
             <h2
               style={{
-                fontSize: 13.5,
+                fontSize: 14.5,
                 fontWeight: 700,
                 color: 'hsl(156 100% 18%)',
                 margin: '2px 0 3px',
@@ -253,7 +246,7 @@ export function MembershipFormBody({
             </h2>
             <p
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 500,
                 color: '#64748b',
                 margin: 0,
@@ -265,9 +258,20 @@ export function MembershipFormBody({
                 : 'Global Ghanaian Network · Diaspora Contribution · Youth & Economic Development'}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
-              <span style={{ fontSize: '9px', fontWeight: 600, textTransform: 'uppercase', color: '#475569' }}>Date Completed:</span>
+              <span
+                style={{
+                  fontSize: '9px',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  color: '#475569',
+                }}
+              >
+                Date Completed:
+              </span>
               <div style={{ width: 110, borderBottom: '1.5px solid #334155' }} />
-              <span style={{ fontSize: '8.5px', color: '#94a3b8', fontStyle: 'italic' }}>(DD / MM / YYYY)</span>
+              <span style={{ fontSize: '9.5px', color: '#94a3b8', fontStyle: 'italic' }}>
+                (DD / MM / YYYY)
+              </span>
             </div>
           </div>
         </div>
@@ -297,7 +301,7 @@ export function MembershipFormBody({
           </span>
           <p
             style={{
-              fontSize: 8.5,
+              fontSize: 9.5,
               fontWeight: 600,
               color: '#64748b',
               margin: 0,
@@ -327,12 +331,30 @@ export function MembershipFormBody({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '11.5px', fontWeight: 800, color: 'hsl(45 80% 45%)' }}>[ ✓ ]</span>
-          <span style={{ fontSize: '10.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            {isGhana ? 'PLATFORM: GHANA RESIDENT NETWORK (CONSTITUENCY-BASED)' : 'PLATFORM: DIASPORA NETWORK (DIASPORA-BASED)'}
+          <span style={{ fontSize: '11.5px', fontWeight: 800, color: 'hsl(45 80% 45%)' }}>
+            [ ✓ ]
+          </span>
+          <span
+            style={{
+              fontSize: '11.5px',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em',
+            }}
+          >
+            {isGhana
+              ? 'PLATFORM: GHANA RESIDENT NETWORK (CONSTITUENCY-BASED)'
+              : 'PLATFORM: DIASPORA NETWORK (DIASPORA-BASED)'}
           </span>
         </div>
-        <span style={{ fontSize: '9.5px', fontWeight: 700, color: 'hsl(45 80% 65%)', textTransform: 'uppercase' }}>
+        <span
+          style={{
+            fontSize: '10.5px',
+            fontWeight: 700,
+            color: 'hsl(45 80% 65%)',
+            textTransform: 'uppercase',
+          }}
+        >
           OFFICIAL FORM
         </span>
       </div>
@@ -343,15 +365,16 @@ export function MembershipFormBody({
           background: '#f1f5f9',
           borderLeft: '4px solid hsl(45 80% 45%)',
           padding: '7px 12px',
-          fontSize: '10px',
+          fontSize: '11px',
           color: '#334155',
           marginBottom: 14,
           borderRadius: 2,
           lineHeight: 1.35,
         }}
       >
-        <strong>INSTRUCTIONS:</strong> Please complete all required sections in BLOCK LETTERS using a black or blue pen.
-        Tick (✓) appropriate boxes. Once completed, hand to your local chapter officer or scan/upload via the online portal.
+        <strong>INSTRUCTIONS:</strong> Please complete all required sections in BLOCK LETTERS using
+        a black or blue pen. Tick (✓) appropriate boxes. Once completed, hand to your local chapter
+        officer or scan/upload via the online portal.
       </div>
 
       {/* Section 1: Personal Information */}
@@ -364,7 +387,7 @@ export function MembershipFormBody({
           <div>
             <p
               style={{
-                fontSize: '10px',
+                fontSize: '11px',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 color: '#334155',
@@ -379,7 +402,7 @@ export function MembershipFormBody({
           <div>
             <p
               style={{
-                fontSize: '10px',
+                fontSize: '11px',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 color: '#334155',
@@ -409,7 +432,7 @@ export function MembershipFormBody({
         <div style={{ marginTop: 6 }}>
           <p
             style={{
-              fontSize: '10px',
+              fontSize: '11px',
               fontWeight: 600,
               textTransform: 'uppercase',
               color: '#334155',
@@ -419,34 +442,15 @@ export function MembershipFormBody({
           >
             Religion
           </p>
-          <CheckboxGroup items={['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']} />
+          <CheckboxGroup
+            items={['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']}
+          />
         </div>
       </div>
 
-      {/* Section 2: Party Affiliation / CSO */}
+      {/* Section 2: Contact & Location */}
       <div style={{ marginBottom: 14 }}>
-        <SectionHeader number={2} label="Political Affiliation / CSO" />
-        <p
-          style={{
-            fontSize: '10px',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            color: '#334155',
-            margin: '0 0 6px',
-            lineHeight: 1.3,
-          }}
-        >
-          Party Affiliation / CSO <span style={{ color: '#dc2626' }}>*</span>{' '}
-          <span style={{ textTransform: 'none', fontWeight: 500, color: '#0284c7', fontStyle: 'italic', marginLeft: 6 }}>
-            (Note: Registrar selects only ONE option)
-          </span>
-        </p>
-        <CheckboxGroup items={partyChecklist} columns={3} />
-      </div>
-
-      {/* Section 3: Contact & Location */}
-      <div style={{ marginBottom: 14 }}>
-        <SectionHeader number={3} label="Contact & Location" />
+        <SectionHeader number={2} label="Contact & Location" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
           <FieldLine
             label="Primary Phone"
@@ -466,7 +470,7 @@ export function MembershipFormBody({
             <div style={{ marginTop: 8, marginBottom: 10 }}>
               <p
                 style={{
-                  fontSize: '10px',
+                  fontSize: '11px',
                   fontWeight: 600,
                   textTransform: 'uppercase',
                   color: '#334155',
@@ -475,7 +479,15 @@ export function MembershipFormBody({
                 }}
               >
                 Region <span style={{ color: '#dc2626' }}>*</span>{' '}
-                <span style={{ textTransform: 'none', fontWeight: 500, color: '#0284c7', fontStyle: 'italic', marginLeft: 6 }}>
+                <span
+                  style={{
+                    textTransform: 'none',
+                    fontWeight: 500,
+                    color: '#0284c7',
+                    fontStyle: 'italic',
+                    marginLeft: 6,
+                  }}
+                >
                   (Tick the region where you vote)
                 </span>
               </p>
@@ -488,14 +500,14 @@ export function MembershipFormBody({
                 gridTemplateColumns: '1fr',
                 gap: 10,
                 marginTop: 6,
-                pageBreakBefore: 'always',
-                breakBefore: 'page',
-                paddingTop: 12,
               }}
             >
               <FieldLine label="Constituency" required hint="e.g. Ayawaso West Wuogon" />
               <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
-              <FieldLine label="Polling Station Code / Name" hint="e.g. C090201 — Bawaleshie Primary School" />
+              <FieldLine
+                label="Polling Station Code / Name"
+                hint="e.g. C090201 — Bawaleshie Primary School"
+              />
             </div>
           </>
         ) : (
@@ -512,74 +524,168 @@ export function MembershipFormBody({
         )}
       </div>
 
-      {/* Section 4: Profession & Career */}
+      {/* Section 3: Profession & Career — starts page 2 for Ghana; Diaspora's page 2 starts at Emergency Contact instead */}
       <div
         style={{
           marginBottom: 14,
-          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 12 }),
+          ...(isGhana ? { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 12 } : {}),
         }}
       >
-        <SectionHeader number={4} label="Profession & Career" />
+        <SectionHeader number={3} label="Profession & Career" />
 
         {/* Employed */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 8 }}>
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 5px', lineHeight: 1.3 }}>
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                color: '#334155',
+                margin: '0 0 5px',
+                lineHeight: 1.3,
+              }}
+            >
               Employed <span style={{ color: '#dc2626' }}>*</span>
             </p>
             <CheckboxGroup items={['Yes', 'No']} />
           </div>
           <div>
-            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 5px', lineHeight: 1.3 }}>
-              Job Level <span style={{ fontStyle: 'italic', fontWeight: 400, textTransform: 'none', color: '#64748b' }}>(if employed)</span>
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                color: '#334155',
+                margin: '0 0 5px',
+                lineHeight: 1.3,
+              }}
+            >
+              Job Level{' '}
+              <span
+                style={{
+                  fontStyle: 'italic',
+                  fontWeight: 400,
+                  textTransform: 'none',
+                  color: '#64748b',
+                }}
+              >
+                (if employed)
+              </span>
             </p>
-            <CheckboxGroup items={['Entry Level', 'Professional', 'Senior Specialist', 'Management', 'Executive']} />
+            <CheckboxGroup
+              items={[
+                'Entry Level',
+                'Professional',
+                'Senior Specialist',
+                'Management',
+                'Executive',
+              ]}
+            />
           </div>
         </div>
 
         {/* Profession — Ghana gets a common-jobs checklist, Diaspora gets a free-text line */}
         {isGhana ? (
           <div style={{ marginBottom: 8 }}>
-            <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 5px', lineHeight: 1.3 }}>
-              Profession / Job Title <span style={{ fontStyle: 'italic', fontWeight: 400, textTransform: 'none', color: '#64748b' }}>(tick one or write below)</span>
+            <p
+              style={{
+                fontSize: '11px',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                color: '#334155',
+                margin: '0 0 5px',
+                lineHeight: 1.3,
+              }}
+            >
+              Profession / Job Title{' '}
+              <span
+                style={{
+                  fontStyle: 'italic',
+                  fontWeight: 400,
+                  textTransform: 'none',
+                  color: '#64748b',
+                }}
+              >
+                (tick one or write below)
+              </span>
             </p>
             <CheckboxGroup
               items={[
-                'Farmer', 'Trader', 'Driver', 'Mason', 'Auto-Mechanic',
-                'Nurse', 'Teacher', 'Clergy', 'Doctor', 'Hairdresser',
-                'Barber', 'Tailor', 'Seamstress', 'Spiritualist', 'Student',
+                'Farmer',
+                'Trader',
+                'Driver',
+                'Mason',
+                'Auto-Mechanic',
+                'Nurse',
+                'Teacher',
+                'Clergy',
+                'Doctor',
+                'Hairdresser',
+                'Barber',
+                'Tailor',
+                'Seamstress',
+                'Spiritualist',
+                'Student',
               ]}
               columns={5}
             />
             <div style={{ marginTop: 6 }}>
-              <FieldLine label="Other Profession / Job Title" hint="write here if not listed above" />
+              <FieldLine
+                label="Other Profession / Job Title"
+                hint="write here if not listed above"
+              />
             </div>
           </div>
         ) : (
           <div style={{ marginBottom: 8 }}>
-            <FieldLine label="Profession / Job Title" hint="e.g. Software Engineer, Accountant, Nurse" />
+            <FieldLine
+              label="Profession / Job Title"
+              hint="e.g. Software Engineer, Accountant, Nurse"
+            />
           </div>
         )}
 
         {/* Education Level */}
         <div>
-          <p style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', color: '#334155', margin: '0 0 5px', lineHeight: 1.3 }}>
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: '#334155',
+              margin: '0 0 5px',
+              lineHeight: 1.3,
+            }}
+          >
             Education Level
           </p>
           <CheckboxGroup
             items={[
-              'None', 'Primary', 'JHS / Middle School', 'SHS / Secondary',
-              'Vocational / Technical', 'Diploma / HND', "Bachelor's Degree",
-              "Master's Degree", 'PhD / Doctorate', 'Professional Certification',
+              'None',
+              'Primary',
+              'JHS / Middle School',
+              'SHS / Secondary',
+              'Vocational / Technical',
+              'Diploma / HND',
+              "Bachelor's Degree",
+              "Master's Degree",
+              'PhD / Doctorate',
+              'Professional Certification',
             ]}
             columns={isGhana ? 4 : 5}
           />
         </div>
       </div>
 
-      {/* Section 5: Emergency Contact */}
-      <div style={{ marginBottom: 14 }}>
-        <SectionHeader number={5} label="Emergency Contact" />
+      {/* Section 4: Emergency Contact — starts page 2 for Diaspora */}
+      <div
+        style={{
+          marginBottom: 14,
+          ...(isGhana ? {} : { pageBreakBefore: 'always', breakBefore: 'page', paddingTop: 12 }),
+        }}
+      >
+        <SectionHeader number={4} label="Emergency Contact" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
           <FieldLine label="Emergency Contact Name" />
           <FieldLine label="Emergency Contact Phone" />
@@ -587,7 +693,7 @@ export function MembershipFormBody({
         <div style={{ marginTop: 6 }}>
           <p
             style={{
-              fontSize: '9.5px',
+              fontSize: '10.5px',
               fontWeight: 600,
               textTransform: 'uppercase',
               color: '#475569',
@@ -626,7 +732,7 @@ export function MembershipFormBody({
       >
         <p
           style={{
-            fontSize: '9.5px',
+            fontSize: '10.5px',
             fontWeight: 800,
             textTransform: 'uppercase',
             letterSpacing: '0.05em',
@@ -652,7 +758,7 @@ export function MembershipFormBody({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            fontSize: '8.5px',
+            fontSize: '9.5px',
             color: '#64748b',
             fontWeight: 600,
           }}

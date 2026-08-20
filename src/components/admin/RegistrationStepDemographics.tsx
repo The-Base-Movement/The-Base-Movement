@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { ageRanges, religions } from './RegistrationForm.constants'
-import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 import {
   getConstituenciesByRegion,
@@ -34,7 +33,6 @@ function ageBucketForBirthYear(birthYear?: string): string {
 
 export function RegistrationStepDemographics(props: RegistrationStepDemographicsProps) {
   const { formData, platform, isMobile, dbRegions, handleChange, setFields } = props
-  const politicalParties = usePoliticalParties()
 
   const [psSearch, setPsSearch] = useState(() => formData.pollingStationCode || '')
   const [psFocused, setPsFocused] = useState(false)
@@ -364,46 +362,6 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
           {religions.map((r) => (
             <option key={r} value={r}>
               {r}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="space-y-2">
-        <label
-          htmlFor="select-party-affiliation-admin"
-          style={{
-            display: 'block',
-            marginBottom: '8px',
-            fontSize: '11px',
-            fontWeight: 'var(--font-weight-medium, 500)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em',
-            color: 'hsl(var(--on-surface-muted))',
-          }}
-        >
-          Party Affiliation / CSO <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-        </label>
-        <select
-          name="name-party-affiliation-admin"
-          id="select-party-affiliation-admin"
-          value={formData.partyAffiliation || ''}
-          onChange={(e) => handleChange('partyAffiliation', e.target.value)}
-          className="reg"
-          style={{
-            width: '100%',
-            padding: '14px 18px',
-            fontSize: '14px',
-            background: 'hsl(var(--container-low))',
-            border: '1px solid hsl(var(--border))',
-            borderRadius: 'var(--radius-sm)',
-            color: 'hsl(var(--on-surface))',
-          }}
-        >
-          <option value="">Select Party Affiliation / CSO</option>
-          {politicalParties.map((p) => (
-            <option key={p} value={p}>
-              {p}
             </option>
           ))}
         </select>
