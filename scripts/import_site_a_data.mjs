@@ -101,15 +101,15 @@ function parseCSV(filePath) {
   const lines = content.split(/\r?\n/).filter(line => line.trim().length > 0);
   if (lines.length === 0) return [];
   
-  const headers = parseCSVLine(lines[0]);
+  const headers = parseCSVLine(lines[0]).map(h => h.trim());
   const rows = [];
-  
+
   for (let i = 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i]);
     if (values.length === headers.length) {
       const obj = {};
       headers.forEach((h, idx) => {
-        obj[h] = values[idx];
+        obj[h] = values[idx].trim();
       });
       rows.push(obj);
     }
