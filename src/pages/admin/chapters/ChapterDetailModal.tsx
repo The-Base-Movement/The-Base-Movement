@@ -290,7 +290,7 @@ export function ChapterDetailModal({
                         onMouseEnter={(e) =>
                           (e.currentTarget.style.background = 'hsl(var(--container-low))')
                         }
-                        onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                       >
                         <span style={{ color: 'hsl(var(--on-surface))' }}>{m.name}</span>
                         <span style={{ fontSize: 10, color: 'hsl(var(--on-surface-muted))' }}>

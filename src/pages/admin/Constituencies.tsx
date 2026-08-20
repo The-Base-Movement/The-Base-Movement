@@ -10,6 +10,8 @@ import { toast } from 'sonner'
 import { Modal } from './regions/Modal'
 import { DeleteModal } from './regions/DeleteModal'
 import { inputSt } from './regions/utils'
+import { RegionalImpactStats } from '@/components/admin/RegionalImpactStats'
+import { impactColorForCount } from '@/lib/impactColor'
 
 const GHANA_REGIONS = [
   'All Regions',
@@ -53,6 +55,16 @@ export default function AdminConstituencies() {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editConstituency, setEditConstituency] = useState<Constituency | null>(null)
   const [deleteConstituency, setDeleteConstituency] = useState<Constituency | null>(null)
+
+  // Assignment reconciliation table controls
+  const [issueSearch, setIssueSearch] = useState('')
+  const [issuePlatformFilter, setIssuePlatformFilter] = useState<'All' | 'GHANA' | 'DIASPORA'>(
+    'All'
+  )
+  const [issuePage, setIssuePage] = useState(1)
+  const [reassigningId, setReassigningId] = useState<string | null>(null)
+  const [reassignValue, setReassignValue] = useState('')
+  const [isReassigning, setIsReassigning] = useState(false)
 
   // Form input states
   const [inputValue, setInputValue] = useState('')
@@ -178,6 +190,72 @@ export default function AdminConstituencies() {
   const total = constituencies.length
   const activeCount = constituencies.filter((c) => c.status === 'Active').length
   const unledCount = constituencies.filter((c) => !c.leaderId).length
+
+  // Regional resource-to-impact — grouped by actual constituency region, not chapters.
+  const regionalImpactStats = useMemo(() => {
+    const byRegion = new Map<string, { memberCount: number; unitCount: number }>()
+    constituencies.forEach((c) => {
+      if (!c.regionName) return
+      const entry = byRegion.get(c.regionName) || { memberCount: 0, unitCount: 0 }
+      entry.memberCount += c.memberCount || 0
+      entry.unitCount += 1
+      byRegion.set(c.regionName, entry)
+    })
+    return Array.from(byRegion.entries()).map(([label, { memberCount, unitCount }]) => ({
+      label,
+      memberCount,
+      unitCount,
+      color: impactColorForCount(memberCount),
+    }))
+  }, [constituencies])
+
+  const maxRegionMemberCount = useMemo(
+    () => Math.max(...regionalImpactStats.map((s) => s.memberCount), 1),
+    [regionalImpactStats]
+  )
+
+  const filteredIssues = useMemo(() => {
+    return assignmentIssues.filter((issue) => {
+      const q = issueSearch.trim().toLowerCase()
+      const matchesSearch =
+        !q ||
+        issue.fullName.toLowerCase().includes(q) ||
+        (issue.registrationNumber || '').toLowerCase().includes(q) ||
+        (issue.constituency || '').toLowerCase().includes(q) ||
+        (issue.chapter || '').toLowerCase().includes(q) ||
+        (issue.region || '').toLowerCase().includes(q)
+      const matchesPlatform =
+        issuePlatformFilter === 'All' || issue.platform === issuePlatformFilter
+      return matchesSearch && matchesPlatform
+    })
+  }, [assignmentIssues, issueSearch, issuePlatformFilter])
+
+  const ISSUES_PER_PAGE = 8
+  const issueTotalPages = Math.ceil(filteredIssues.length / ISSUES_PER_PAGE)
+  const paginatedIssues = useMemo(() => {
+    return filteredIssues.slice((issuePage - 1) * ISSUES_PER_PAGE, issuePage * ISSUES_PER_PAGE)
+  }, [filteredIssues, issuePage])
+
+  const handleStartReassign = (issue: MemberAssignmentIssue) => {
+    setReassigningId(issue.id)
+    setReassignValue(issue.constituency || '')
+  }
+
+  const handleSaveReassign = async (issue: MemberAssignmentIssue) => {
+    if (!reassignValue.trim() || !issue.registrationNumber) return
+    setIsReassigning(true)
+    const ok = await adminService.updateMemberProfile(issue.registrationNumber, {
+      constituency: reassignValue.trim(),
+    })
+    setIsReassigning(false)
+    if (ok) {
+      toast.success(`Updated ${issue.fullName}'s constituency`)
+      setReassigningId(null)
+      refresh()
+    } else {
+      toast.error('Failed to update constituency')
+    }
+  }
 
   return (
     <div className="main">
@@ -355,6 +433,8 @@ export default function AdminConstituencies() {
         </div>
       </div>
 
+      <RegionalImpactStats stats={regionalImpactStats} maxMemberCount={maxRegionMemberCount} />
+
       {assignmentIssues.length > 0 && (
         <section className="panel" style={{ marginBottom: 20, overflow: 'hidden' }}>
           <div className="ph">
@@ -365,11 +445,87 @@ export default function AdminConstituencies() {
               </p>
             </div>
           </div>
+
+          {/* Search + platform filter */}
+          <div
+            style={{
+              display: 'flex',
+              gap: 10,
+              alignItems: 'center',
+              padding: '0 16px 16px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ position: 'relative', flex: '1 1 220px' }}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  position: 'absolute',
+                  left: 10,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  fontSize: 16,
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
+              >
+                search
+              </span>
+              <input
+                id="issue-search"
+                name="issue-search"
+                value={issueSearch}
+                onChange={(e) => {
+                  setIssueSearch(e.target.value)
+                  setIssuePage(1)
+                }}
+                placeholder="Search by name, reg. number, or assignment..."
+                style={{
+                  width: '100%',
+                  height: 36,
+                  paddingLeft: 32,
+                  paddingRight: 10,
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: 12,
+                  fontFamily: "'Public Sans', sans-serif",
+                  boxSizing: 'border-box',
+                  background: 'hsl(var(--background))',
+                  color: 'hsl(var(--on-surface))',
+                }}
+              />
+            </div>
+            <label htmlFor="issue-platform-filter" style={{ display: 'none' }}>
+              Filter by platform
+            </label>
+            <select
+              id="issue-platform-filter"
+              value={issuePlatformFilter}
+              onChange={(e) => {
+                setIssuePlatformFilter(e.target.value as 'All' | 'GHANA' | 'DIASPORA')
+                setIssuePage(1)
+              }}
+              style={{
+                height: 36,
+                padding: '0 10px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 12,
+                fontFamily: "'Public Sans', sans-serif",
+                background: 'hsl(var(--background))',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
+              <option value="All">All platforms</option>
+              <option value="GHANA">Ghana</option>
+              <option value="DIASPORA">Diaspora</option>
+            </select>
+          </div>
+
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  {['Member', 'Platform', 'Current assignment', 'Issue'].map((label) => (
+                  {['Member', 'Platform', 'Current assignment', 'Issue', 'Actions'].map((label) => (
                     <th key={label} style={{ padding: 12, textAlign: 'left' }}>
                       {label}
                     </th>
@@ -377,28 +533,109 @@ export default function AdminConstituencies() {
                 </tr>
               </thead>
               <tbody>
-                {assignmentIssues.map((issue) => (
-                  <tr key={issue.id}>
-                    <td style={{ padding: 12 }}>
-                      <button
-                        className="btn btn-outline btn-sm"
-                        onClick={() => navigate('/admin/members/' + issue.id)}
-                      >
-                        {issue.fullName}
-                      </button>
-                    </td>
-                    <td style={{ padding: 12 }}>{issue.platform}</td>
-                    <td style={{ padding: 12 }}>
-                      {issue.constituency || issue.chapter || issue.region || 'Unassigned'}
-                    </td>
-                    <td style={{ padding: 12 }}>
-                      <span className="pill pill-warn">{issue.issueCode.replaceAll('_', ' ')}</span>
+                {paginatedIssues.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      style={{ padding: 24, color: 'hsl(var(--on-surface-muted))', fontSize: 13 }}
+                    >
+                      No matching members.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  paginatedIssues.map((issue) => (
+                    <tr key={issue.id} style={{ borderTop: '1px solid hsl(var(--border))' }}>
+                      <td style={{ padding: 12 }}>
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => navigate('/admin/members/' + issue.id)}
+                        >
+                          {issue.fullName}
+                        </button>
+                      </td>
+                      <td style={{ padding: 12 }}>{issue.platform}</td>
+                      <td style={{ padding: 12 }}>
+                        {reassigningId === issue.id ? (
+                          <input
+                            autoFocus
+                            value={reassignValue}
+                            onChange={(e) => setReassignValue(e.target.value)}
+                            placeholder="Constituency name"
+                            style={{
+                              height: 32,
+                              padding: '0 8px',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: 'var(--radius-sm)',
+                              fontSize: 12,
+                              fontFamily: "'Public Sans', sans-serif",
+                              background: 'hsl(var(--card))',
+                              color: 'hsl(var(--on-surface))',
+                              boxSizing: 'border-box',
+                            }}
+                            list="constituency-names-datalist"
+                          />
+                        ) : (
+                          issue.constituency || issue.chapter || issue.region || 'Unassigned'
+                        )}
+                      </td>
+                      <td style={{ padding: 12 }}>
+                        <span className="pill pill-warn">
+                          {issue.issueCode.replaceAll('_', ' ')}
+                        </span>
+                      </td>
+                      <td style={{ padding: 12 }}>
+                        {issue.platform === 'GHANA' &&
+                          (reassigningId === issue.id ? (
+                            <div style={{ display: 'flex', gap: 6 }}>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                disabled={isReassigning || !reassignValue.trim()}
+                                onClick={() => handleSaveReassign(issue)}
+                              >
+                                {isReassigning ? 'Saving…' : 'Save'}
+                              </button>
+                              <button
+                                className="btn btn-outline btn-sm"
+                                onClick={() => setReassigningId(null)}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              className="btn btn-outline btn-sm"
+                              onClick={() => handleStartReassign(issue)}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                                edit_location_alt
+                              </span>
+                              Reassign
+                            </button>
+                          ))}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
+            <datalist id="constituency-names-datalist">
+              {constituencies.map((c) => (
+                <option key={c.id} value={c.name} />
+              ))}
+            </datalist>
           </div>
+
+          {filteredIssues.length > 0 && (
+            <div style={{ padding: '0 16px 16px' }}>
+              <Pagination
+                currentPage={issuePage}
+                totalPages={issueTotalPages}
+                onPageChange={setIssuePage}
+                totalItems={filteredIssues.length}
+                pageSize={ISSUES_PER_PAGE}
+              />
+            </div>
+          )}
         </section>
       )}
 
