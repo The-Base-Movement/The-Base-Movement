@@ -80,6 +80,9 @@ scripts/fast_export_filter.py
 scripts/filter_msg.py
 scripts/filter_repo_callback.py
 
+# Local-only one-off scripts (contain secrets or are throwaway/temporal jobs)
+scripts/verify_legacy_db.mjs
+
 # Feeds written into public/ by scripts/generate-rss.mjs for dev-mode serving.
 # The deployed copies are generated straight into dist/ during the Vercel build,
 # so these are regenerated on every build and must not be committed.
