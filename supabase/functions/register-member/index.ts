@@ -6,6 +6,7 @@ import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 const MAX_BODY_BYTES = 50 * 1024 // 50 KB max payload
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const KNOWN_INVALID_MEMBER_EMAILS = new Set(['morgangroupgh100hj8@gmail.com'])
 const PHONE_REGEX = /^\+?[1-9]\d{1,14}$/
 const PASSWORD_POLICY_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,128}$/
 
@@ -103,6 +104,17 @@ serve(async (req: Request) => {
 
     if (authEmail && !EMAIL_REGEX.test(authEmail)) {
       return json({ success: false, error: 'Invalid email address format.' }, 400)
+    }
+
+    if (authEmail && KNOWN_INVALID_MEMBER_EMAILS.has(authEmail.toLowerCase())) {
+      return json(
+        {
+          success: false,
+          error:
+            'This email address is not accepted. Use a working email address or continue with phone registration.',
+        },
+        400
+      )
     }
 
     if (phone && !PHONE_REGEX.test(phone.replace(/\s+/g, ''))) {

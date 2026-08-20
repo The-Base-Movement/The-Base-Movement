@@ -16,6 +16,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 // @ts-ignore: Deno supports URL imports
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { getCorsHeaders, handleCorsPreflight } from '../_shared/cors.ts'
 import {
   checkPersistentRateLimit,
@@ -60,8 +61,10 @@ function clientIp(req: Request) {
   )
 }
 
-// deno-lint-ignore no-explicit-any
-async function resolveProfile(admin: any, identifier: string) {
+async function resolveProfile(
+  admin: SupabaseClient,
+  identifier: string
+): Promise<{ id: string } | null> {
   const trimmed = identifier.trim()
   const digits = trimmed.replace(/\D/g, '')
   const looksLikePhone = digits.length >= 7 && /^[+\d\s().-]+$/.test(trimmed)
@@ -182,9 +185,7 @@ serve(async (req: Request) => {
       return json({ error: GENERIC_FAIL }, 401)
     }
 
-    const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(
-      (profile as any).id
-    )
+    const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(profile.id)
     if (authUserError || (!authUser?.user?.email && !authUser?.user?.phone)) {
       await recordFailedAttempt(admin, throttleKey, 300)
       await delay(FAILURE_DELAY_MS)
@@ -194,16 +195,35 @@ serve(async (req: Request) => {
     // Sign in with the real auth email or phone using the anon client so the resulting
     // session is a normal user session (not service-role)
     const anon = createClient(supabaseUrl, anonKey)
-    const signInParams: Record<string, string> = { password }
-    if (authUser.user.email) {
-      signInParams.email = authUser.user.email
-    } else {
-      signInParams.phone = authUser.user.phone ?? ''
-    }
+    const signInCredentials = authUser.user.email
+      ? { email: authUser.user.email, password }
+      : { phone: authUser.user.phone ?? '', password }
 
-    const { data, error } = await anon.auth.signInWithPassword(signInParams as any)
+    const { data, error } = await anon.auth.signInWithPassword(signInCredentials)
 
     if (error || !data.session) {
+      // Fallback: Check if user has a valid legacy SHA-512 password from Site A
+      const { data: isLegacyValid } = await admin.rpc('verify_legacy_password', {
+        p_identifier: loginIdentifier,
+        p_plain_password: password,
+      })
+
+      if (isLegacyValid) {
+        // Legacy password verified! Update the user's password in auth.users
+        await admin.auth.admin.updateUserById(profile.id, { password })
+
+        // Re-attempt sign in with the newly updated password
+        const { data: legacySessionData, error: legacySessionErr } =
+          await anon.auth.signInWithPassword(signInCredentials)
+
+        if (!legacySessionErr && legacySessionData?.session) {
+          return json({
+            access_token: legacySessionData.session.access_token,
+            refresh_token: legacySessionData.session.refresh_token,
+          })
+        }
+      }
+
       await recordFailedAttempt(admin, throttleKey, 300)
       await delay(FAILURE_DELAY_MS)
       return json({ error: GENERIC_FAIL }, 401)

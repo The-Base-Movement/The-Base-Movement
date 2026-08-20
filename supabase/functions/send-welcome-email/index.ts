@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck: Deno edge function module imports and environment typing
 // THE BASE: WELCOME EMAIL
 // Sent when an admin approves a pending member (status → Active).
 // Invoked fire-and-forget from adminService.verifyMember().
