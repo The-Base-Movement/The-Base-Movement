@@ -8,15 +8,34 @@ import {
   Cell,
   CartesianGrid,
 } from 'recharts'
-import type { RegionalStat } from '@/services/adminService'
 
-interface ChaptersStatsProps {
-  regionalStats: RegionalStat[]
-  maxMemberCount: number
+export interface ImpactStat {
+  label: string
+  memberCount: number
+  unitCount: number
+  color: string
 }
 
-export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsProps) {
-  const sorted = [...regionalStats].sort((a, b) => b.memberCount - a.memberCount)
+interface RegionalImpactStatsProps {
+  stats: ImpactStat[]
+  maxMemberCount: number
+  unitLabel?: string
+  correlationTitle?: string
+  correlationSubtitle?: string
+  footprintTitle?: string
+  footprintSubtitle?: string
+}
+
+export function RegionalImpactStats({
+  stats,
+  maxMemberCount,
+  unitLabel = 'hub',
+  correlationTitle = 'Resource-to-impact correlation',
+  correlationSubtitle = 'Mobilization strength by regional hub',
+  footprintTitle = 'Logistical footprint',
+  footprintSubtitle = 'Jurisdictional resource distribution',
+}: RegionalImpactStatsProps) {
+  const sorted = [...stats].sort((a, b) => b.memberCount - a.memberCount)
   const chartHeight = Math.max(260, sorted.length * 32)
 
   return (
@@ -25,8 +44,8 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
       <div className="panel">
         <div className="ph">
           <div>
-            <h3>Resource-to-impact correlation</h3>
-            <div className="meta">Mobilization strength by regional hub</div>
+            <h3>{correlationTitle}</h3>
+            <div className="meta">{correlationSubtitle}</div>
           </div>
         </div>
         <div style={{ padding: '8px 18px 18px', height: chartHeight, overflowX: 'hidden' }}>
@@ -42,7 +61,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 fontFamily: "'Public Sans', sans-serif",
               }}
             >
-              No regional data yet
+              No data yet
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
@@ -68,7 +87,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                 />
                 <YAxis
                   type="category"
-                  dataKey="region"
+                  dataKey="label"
                   width={105}
                   axisLine={false}
                   tickLine={false}
@@ -90,10 +109,7 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
                     boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                   }}
                   itemStyle={{ color: 'hsl(var(--on-surface))' }}
-                  formatter={(value: number, name: string) => [
-                    name === 'memberCount' ? `${value} members` : `${value} chapters`,
-                    name === 'memberCount' ? 'Mobilization strength' : 'Diaspora density',
-                  ]}
+                  formatter={(value: number) => [`${value} members`, 'Mobilization strength']}
                   labelStyle={{
                     color: 'hsl(var(--accent))',
                     fontSize: 10,
@@ -112,12 +128,12 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
         </div>
       </div>
 
-      {/* Logistical footprint — all regions */}
+      {/* Logistical footprint */}
       <div className="panel">
         <div className="ph">
           <div>
-            <h3>Logistical footprint</h3>
-            <div className="meta">Jurisdictional resource distribution</div>
+            <h3>{footprintTitle}</h3>
+            <div className="meta">{footprintSubtitle}</div>
           </div>
         </div>
         <div
@@ -130,61 +146,76 @@ export function ChaptersStats({ regionalStats, maxMemberCount }: ChaptersStatsPr
             overflowY: 'auto',
           }}
         >
-          {sorted.map((stat) => (
-            <div key={stat.region}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontFamily: "'Public Sans', sans-serif",
-                    color: 'hsl(var(--on-surface))',
-                  }}
-                >
-                  {stat.region}
-                </span>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {sorted.length === 0 ? (
+            <div
+              style={{
+                color: 'hsl(var(--on-surface-muted))',
+                fontSize: 12,
+                fontFamily: "'Public Sans', sans-serif",
+                textAlign: 'center',
+                padding: '20px 0',
+              }}
+            >
+              No data yet
+            </div>
+          ) : (
+            sorted.map((stat) => (
+              <div key={stat.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <span
                     style={{
-                      fontSize: 10,
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: 'hsl(var(--on-surface-muted))',
-                    }}
-                  >
-                    {stat.chapters} hub{stat.chapters !== 1 ? 's' : ''}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 10,
+                      fontSize: 12,
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontFamily: "'Public Sans', sans-serif",
-                      color: stat.color,
+                      color: 'hsl(var(--on-surface))',
                     }}
                   >
-                    {stat.memberCount} members
+                    {stat.label}
                   </span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontFamily: "'Public Sans', sans-serif",
+                        color: 'hsl(var(--on-surface-muted))',
+                      }}
+                    >
+                      {stat.unitCount} {unitLabel}
+                      {stat.unitCount !== 1 ? 's' : ''}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        color: stat.color,
+                      }}
+                    >
+                      {stat.memberCount} members
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div
-                style={{
-                  height: 4,
-                  background: 'hsl(var(--border))',
-                  borderRadius: 'var(--radius-pill)',
-                  overflow: 'hidden',
-                }}
-              >
                 <div
                   style={{
-                    height: '100%',
-                    width: `${Math.min((stat.memberCount / maxMemberCount) * 100, 100)}%`,
-                    background: stat.color,
-                    transition: 'width 0.8s',
+                    height: 4,
+                    background: 'hsl(var(--border))',
                     borderRadius: 'var(--radius-pill)',
+                    overflow: 'hidden',
                   }}
-                />
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${Math.min((stat.memberCount / maxMemberCount) * 100, 100)}%`,
+                      background: stat.color,
+                      transition: 'width 0.8s',
+                      borderRadius: 'var(--radius-pill)',
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

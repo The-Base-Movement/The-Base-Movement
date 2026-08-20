@@ -1,22 +1,22 @@
 import { useState, useEffect, useMemo } from 'react'
 import { adminService } from '@/services/adminService'
-import type { RegionalStat, Country } from '@/services/adminService'
+import type { Country } from '@/services/adminService'
 import { useChapters } from '@/context/ChaptersContext'
 import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
+import { RegionalImpactStats } from '@/components/admin/RegionalImpactStats'
+import { impactColorForCount } from '@/lib/impactColor'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
 import { PollManagementModal } from './chapters/PollManagementModal'
 import { PollCreateEditModal } from './chapters/PollCreateEditModal'
 import { ChapterDetailModal } from './chapters/ChapterDetailModal'
-import { ChaptersStats } from './chapters/ChaptersStats'
 import { ChaptersMap } from './chapters/ChaptersMap'
 import { useChapterForm } from './chapters/useChapterForm'
 import { usePollManagement } from './chapters/usePollManagement'
 
 export default function ChaptersManagement() {
   const { chapters } = useChapters()
-  const [regionalStats, setRegionalStats] = useState<RegionalStat[]>([])
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
   const [regionFilter, setRegionFilter] = useState('')
@@ -29,13 +29,10 @@ export default function ChaptersManagement() {
   const pollMgmt = usePollManagement()
 
   useEffect(() => {
-    Promise.all([adminService.getRegionalStats(), adminService.getCountries()]).then(
-      ([stats, c]) => {
-        setRegionalStats(stats)
-        setCountries(c)
-        setIsLoading(false)
-      }
-    )
+    adminService.getCountries().then((c) => {
+      setCountries(c)
+      setIsLoading(false)
+    })
   }, [])
 
   useEffect(() => {
@@ -100,16 +97,36 @@ export default function ChaptersManagement() {
     [chapters]
   )
 
-  const itemsPerPage = 14
+  const itemsPerPage = 17
   const totalPages = Math.ceil(sortedChapters.length / itemsPerPage)
   const currentChapters = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage
     return sortedChapters.slice(start, start + itemsPerPage)
   }, [sortedChapters, currentPage])
 
+  // Diaspora hubs are grouped by country, not Ghana region — the region-based
+  // stats belong on the Constituency management page instead.
+  const diasporaStats = useMemo(() => {
+    const byCountry = new Map<string, { memberCount: number; unitCount: number }>()
+    chapters.forEach((c) => {
+      const key = c.country || c.city_or_region
+      if (!key) return
+      const entry = byCountry.get(key) || { memberCount: 0, unitCount: 0 }
+      entry.memberCount += c.member_count || 0
+      entry.unitCount += 1
+      byCountry.set(key, entry)
+    })
+    return Array.from(byCountry.entries()).map(([label, { memberCount, unitCount }]) => ({
+      label,
+      memberCount,
+      unitCount,
+      color: impactColorForCount(memberCount),
+    }))
+  }, [chapters])
+
   const maxMemberCount = useMemo(
-    () => Math.max(...regionalStats.map((s) => s.memberCount), 1),
-    [regionalStats]
+    () => Math.max(...diasporaStats.map((s) => s.memberCount), 1),
+    [diasporaStats]
   )
 
   if (isLoading) {
@@ -194,7 +211,13 @@ export default function ChaptersManagement() {
         />
       </div>
 
-      <ChaptersStats regionalStats={regionalStats} maxMemberCount={maxMemberCount} />
+      <RegionalImpactStats
+        stats={diasporaStats}
+        maxMemberCount={maxMemberCount}
+        unitLabel="chapter"
+        correlationSubtitle="Mobilization strength by country"
+        footprintSubtitle="Diaspora resource distribution by country"
+      />
 
       <ChaptersMap
         chapters={chapters}

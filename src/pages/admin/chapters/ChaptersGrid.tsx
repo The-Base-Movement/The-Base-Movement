@@ -459,7 +459,7 @@ export function ChaptersGrid({
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = 'hsl(var(--border))'
-              e.currentTarget.style.background = '#fff'
+              e.currentTarget.style.background = 'transparent'
             }}
           >
             <span
