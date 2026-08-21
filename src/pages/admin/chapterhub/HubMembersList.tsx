@@ -2,7 +2,21 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { ChapterMember } from './types'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 import { downloadCsv } from '@/lib/csv'
+
+const selectStyle: React.CSSProperties = {
+  height: 38,
+  padding: '0 10px',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-xs)',
+  fontSize: 12,
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  background: 'hsl(var(--container-low))',
+  color: 'hsl(var(--on-surface))',
+  flexShrink: 0,
+}
 
 interface HubMembersListProps {
   members: ChapterMember[]
@@ -34,24 +48,46 @@ export function HubMembersList({
   canSeePhone = false,
   chapterName,
 }: HubMembersListProps) {
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [sortField, setSortField] = useState<'name' | 'joined'>('joined')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [statusFilter, setStatusFilter] = useState('All')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 20
+
+  const statusOptions = useMemo(
+    () => ['All', ...Array.from(new Set(members.map((m) => m.status).filter(Boolean)))],
+    [members]
+  )
 
   const sortedMembers = useMemo(() => {
     const list = members.filter((m) => {
       const q = searchQuery.toLowerCase()
-      return (
+      const matchesSearch =
         !q ||
         m.name.toLowerCase().includes(q) ||
         m.regNo.toLowerCase().includes(q) ||
         m.phone.includes(q)
-      )
+      const matchesStatus = statusFilter === 'All' || m.status === statusFilter
+      return matchesSearch && matchesStatus
     })
     return list.sort((a, b) => {
+      if (sortField === 'joined') {
+        const diff =
+          (a.joinedAt ? new Date(a.joinedAt).getTime() : 0) -
+          (b.joinedAt ? new Date(b.joinedAt).getTime() : 0)
+        return sortOrder === 'asc' ? diff : -diff
+      }
       const nameA = a.name || ''
       const nameB = b.name || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
-  }, [members, searchQuery, sortOrder])
+  }, [members, searchQuery, statusFilter, sortField, sortOrder])
+
+  const totalPages = Math.ceil(sortedMembers.length / itemsPerPage)
+  const paginatedMembers = useMemo(
+    () => sortedMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    [sortedMembers, currentPage]
+  )
 
   const handleExport = () =>
     downloadCsv(
@@ -113,7 +149,10 @@ export function HubMembersList({
           type="text"
           placeholder="Search by name, reg. ID, or phone..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value)
+            setCurrentPage(1)
+          }}
           style={{
             width: '100%',
             height: 38,
@@ -130,7 +169,43 @@ export function HubMembersList({
           }}
         />
       </div>
-      <SortToggle value={sortOrder} onChange={setSortOrder} />
+      <label htmlFor="hub-member-status-filter" style={{ display: 'none' }}>
+        Filter by status
+      </label>
+      <select
+        id="hub-member-status-filter"
+        name="statusFilter"
+        value={statusFilter}
+        onChange={(e) => {
+          setStatusFilter(e.target.value)
+          setCurrentPage(1)
+        }}
+        style={selectStyle}
+      >
+        {statusOptions.map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
+      <label htmlFor="hub-member-sort-field" style={{ display: 'none' }}>
+        Sort field
+      </label>
+      <select
+        id="hub-member-sort-field"
+        name="sortField"
+        value={sortField}
+        onChange={(e) => setSortField(e.target.value as 'name' | 'joined')}
+        style={selectStyle}
+      >
+        <option value="joined">Joined</option>
+        <option value="name">Name</option>
+      </select>
+      <SortToggle
+        value={sortOrder}
+        onChange={setSortOrder}
+        label={sortField === 'joined' ? 'Newest' : 'A–Z'}
+      />
       <Link
         to={`/admin/membership-cards?platform=DIASPORA${chapterName ? `&country=${encodeURIComponent(chapterName)}` : ''}`}
         className="btn btn-outline btn-sm"
@@ -211,7 +286,7 @@ export function HubMembersList({
                 <td colSpan={5}>{emptyState}</td>
               </tr>
             ) : (
-              sortedMembers.map((m) => (
+              paginatedMembers.map((m) => (
                 <tr key={m.regNo} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '12px 18px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -345,7 +420,7 @@ export function HubMembersList({
           emptyState
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {sortedMembers.map((m) => (
+            {paginatedMembers.map((m) => (
               <div
                 key={m.regNo}
                 style={{
@@ -434,6 +509,18 @@ export function HubMembersList({
           </div>
         )}
       </div>
+
+      {sortedMembers.length > 0 && (
+        <div style={{ padding: '0 18px 14px' }}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={sortedMembers.length}
+            pageSize={itemsPerPage}
+          />
+        </div>
+      )}
     </div>
   )
 }

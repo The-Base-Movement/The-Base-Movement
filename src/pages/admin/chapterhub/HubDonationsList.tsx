@@ -1,10 +1,26 @@
 import { useState, useMemo } from 'react'
 import type { ChapterDonation } from './types'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
+import { downloadCsv } from '@/lib/csv'
+
+const selectStyle: React.CSSProperties = {
+  height: 38,
+  padding: '0 10px',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-xs)',
+  fontSize: 12,
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  background: 'hsl(var(--container-low))',
+  color: 'hsl(var(--on-surface))',
+  flexShrink: 0,
+}
 
 interface HubDonationsListProps {
   donations: ChapterDonation[]
   canSeePhone?: boolean
+  chapterName?: string
 }
 
 function firstName(full: string) {
@@ -22,19 +38,32 @@ function donationStatusClass(status: string) {
   return 'pill-mute'
 }
 
-export function HubDonationsList({ donations, canSeePhone = false }: HubDonationsListProps) {
+export function HubDonationsList({
+  donations,
+  canSeePhone = false,
+  chapterName,
+}: HubDonationsListProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [methodFilter, setMethodFilter] = useState('All')
   const [sortOrder, setSortOrder] = useState<'date_desc' | 'asc' | 'desc'>('date_desc')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 20
+
+  const methodOptions = useMemo(
+    () => ['All', ...Array.from(new Set(donations.map((d) => d.payment_method).filter(Boolean)))],
+    [donations]
+  )
 
   const sortedDonations = useMemo(() => {
     const list = donations.filter((d) => {
       const q = searchQuery.toLowerCase()
-      return (
+      const matchesSearch =
         !q ||
         d.full_name.toLowerCase().includes(q) ||
         (d.reference && d.reference.toLowerCase().includes(q)) ||
         d.phone.includes(q)
-      )
+      const matchesMethod = methodFilter === 'All' || d.payment_method === methodFilter
+      return matchesSearch && matchesMethod
     })
     return list.sort((a, b) => {
       if (sortOrder === 'date_desc') {
@@ -44,7 +73,29 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
       const nameB = b.full_name || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
-  }, [donations, searchQuery, sortOrder])
+  }, [donations, searchQuery, methodFilter, sortOrder])
+
+  const totalPages = Math.ceil(sortedDonations.length / itemsPerPage)
+  const paginatedDonations = useMemo(
+    () => sortedDonations.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    [sortedDonations, currentPage]
+  )
+
+  const handleExport = () =>
+    downloadCsv(
+      `${(chapterName || 'diaspora').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-donations`,
+      ['Donor', 'Phone', 'Amount', 'Method', 'Reference', 'Status', 'Date'],
+      sortedDonations.map((d) => [
+        d.full_name,
+        d.phone,
+        String(d.amount),
+        d.payment_method,
+        d.reference || '',
+        d.status,
+        new Date(d.created_at).toISOString(),
+      ])
+    )
+
   const searchBar = (
     <div
       style={{
@@ -78,7 +129,10 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
           type="text"
           placeholder="Search by donor, phone, or reference..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value)
+            setCurrentPage(1)
+          }}
           style={{
             width: '100%',
             height: 38,
@@ -95,6 +149,25 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
           }}
         />
       </div>
+      <label htmlFor="hub-donation-method-filter" style={{ display: 'none' }}>
+        Filter by payment method
+      </label>
+      <select
+        id="hub-donation-method-filter"
+        name="methodFilter"
+        value={methodFilter}
+        onChange={(e) => {
+          setMethodFilter(e.target.value)
+          setCurrentPage(1)
+        }}
+        style={selectStyle}
+      >
+        {methodOptions.map((m) => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
       <SortToggle
         value={sortOrder === 'date_desc' ? 'desc' : sortOrder}
         onChange={() => {
@@ -104,6 +177,17 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
         }}
         label={sortOrder === 'date_desc' ? 'Newest' : 'A–Z'}
       />
+      <button
+        className="btn btn-outline btn-sm"
+        onClick={handleExport}
+        disabled={sortedDonations.length === 0}
+        title="Download these donations as CSV"
+      >
+        <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+          download
+        </span>
+        Export
+      </button>
     </div>
   )
 
@@ -162,7 +246,7 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
                 <td colSpan={6}>{emptyState}</td>
               </tr>
             ) : (
-              sortedDonations.map((d) => (
+              paginatedDonations.map((d) => (
                 <tr key={d.id} style={{ borderBottom: '1px solid hsl(var(--border))' }}>
                   <td style={{ padding: '12px 18px' }}>
                     <p
@@ -269,7 +353,7 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
           emptyState
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {sortedDonations.map((d) => (
+            {paginatedDonations.map((d) => (
               <div
                 key={d.id}
                 style={{
@@ -358,6 +442,18 @@ export function HubDonationsList({ donations, canSeePhone = false }: HubDonation
           </div>
         )}
       </div>
+
+      {sortedDonations.length > 0 && (
+        <div style={{ padding: '0 18px 14px' }}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={sortedDonations.length}
+            pageSize={itemsPerPage}
+          />
+        </div>
+      )}
     </div>
   )
 }

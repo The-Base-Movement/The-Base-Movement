@@ -9,6 +9,7 @@ export interface ChapterMember {
   constituency: string
   status: string
   joined: string
+  joinedAt: string | null
   avatarUrl?: string
 }
 
