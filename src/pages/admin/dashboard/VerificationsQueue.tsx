@@ -116,7 +116,7 @@ export function VerificationsQueue({
                   <span className="reg">{member.id.slice(0, 8).toUpperCase()}</span>
                 </td>
                 <td>{member.chapter || member.region}</td>
-                <td>{new Date(member.submitted).toLocaleDateString()}</td>
+                <td>{member.submitted}</td>
                 <td>
                   <span
                     className={cn(

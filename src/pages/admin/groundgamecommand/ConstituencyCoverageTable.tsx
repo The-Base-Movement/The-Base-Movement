@@ -1,3 +1,5 @@
+import { Pagination } from '@/components/Pagination'
+
 interface ConstituencyStat {
   constituency: string
   region: string
@@ -7,10 +9,28 @@ interface ConstituencyStat {
 }
 
 interface ConstituencyCoverageTableProps {
+  /** Already-paginated page slice to render. */
   constituencyStats: ConstituencyStat[]
+  /** Total count across all pages of the filtered result. */
+  totalStats: number
+  search: string
+  onSearchChange: (val: string) => void
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  pageSize: number
 }
 
-export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCoverageTableProps) {
+export function ConstituencyCoverageTable({
+  constituencyStats,
+  totalStats,
+  search,
+  onSearchChange,
+  currentPage,
+  totalPages,
+  onPageChange,
+  pageSize,
+}: ConstituencyCoverageTableProps) {
   return (
     <div
       className="panel"
@@ -33,11 +53,52 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
           </p>
         </div>
         <span className="meta">
-          {constituencyStats.length}{' '}
-          {constituencyStats.length === 1 ? 'constituency' : 'constituencies'}
+          {totalStats} {totalStats === 1 ? 'constituency' : 'constituencies'}
         </span>
       </div>
-      {constituencyStats.length === 0 ? (
+
+      <div style={{ padding: '12px 18px', borderBottom: '1px solid hsl(var(--border))' }}>
+        <div style={{ position: 'relative' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              fontSize: 16,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            search
+          </span>
+          <input
+            id="coverage-search"
+            name="coverageSearch"
+            aria-label="Search constituencies or regions"
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search constituency or region…"
+            style={{
+              width: '100%',
+              height: 34,
+              paddingLeft: 34,
+              paddingRight: 12,
+              border: '1px solid hsl(var(--border))',
+              borderRadius: 'var(--radius-sm)',
+              fontFamily: "'Public Sans'",
+              fontSize: 12,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              boxSizing: 'border-box',
+              outline: 'none',
+              background: 'hsl(var(--card))',
+              color: 'hsl(var(--on-surface))',
+            }}
+          />
+        </div>
+      </div>
+
+      {totalStats === 0 ? (
         <p
           style={{
             padding: '32px 18px',
@@ -48,8 +109,9 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          No member data yet. Members will appear here once they set their constituency in profile
-          settings.
+          {search.trim()
+            ? 'No constituencies match your search.'
+            : 'No member data yet. Members will appear here once they set their constituency in profile settings.'}
         </p>
       ) : (
         <>
@@ -342,6 +404,18 @@ export function ConstituencyCoverageTable({ constituencyStats }: ConstituencyCov
             })}
           </div>
         </>
+      )}
+
+      {totalStats > 0 && (
+        <div style={{ padding: '10px 18px', borderTop: '1px solid hsl(var(--border))' }}>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            totalItems={totalStats}
+            pageSize={pageSize}
+          />
+        </div>
       )}
     </div>
   )
