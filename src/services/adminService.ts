@@ -2710,6 +2710,26 @@ class AdminService {
     }))
   }
 
+  async getDiasporaMembersSummary(): Promise<
+    Array<{ country: string; status: string; joined_at: string | null }>
+  > {
+    const { data, error } = await supabase
+      .from('users')
+      .select('country, status, joined_at')
+      .eq('platform', 'DIASPORA')
+      .not('country', 'is', null)
+      .neq('country', '')
+    if (error) {
+      console.error('[DATABASE] getDiasporaMembersSummary failed:', error)
+      return []
+    }
+    return (data || []).map((u) => ({
+      country: u.country as string,
+      status: (u.status as string) || '',
+      joined_at: (u.joined_at as string | null) || null,
+    }))
+  }
+
   async getVoterRegistrationsWithMembers(): Promise<
     Array<{
       id: string
