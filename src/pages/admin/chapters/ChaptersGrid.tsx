@@ -28,10 +28,12 @@ interface ChaptersGridProps {
   statusFilter: 'All' | 'Active' | 'Pending'
   regionFilter: string
   availableRegions: string[]
+  sortField: 'name' | 'members'
   sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
   onStatusFilterChange: (val: 'All' | 'Active' | 'Pending') => void
   onRegionFilterChange: (val: string) => void
+  onSortFieldChange: (val: 'name' | 'members') => void
   onSortOrderChange: (val: 'asc' | 'desc') => void
   onPageChange: (page: number) => void
   onOpenAddModal: () => void
@@ -51,10 +53,12 @@ export function ChaptersGrid({
   statusFilter,
   regionFilter,
   availableRegions,
+  sortField,
   sortOrder,
   onSearchChange,
   onStatusFilterChange,
   onRegionFilterChange,
+  onSortFieldChange,
   onSortOrderChange,
   onPageChange,
   onOpenAddModal,
@@ -127,7 +131,24 @@ export function ChaptersGrid({
             </option>
           ))}
         </select>
-        <SortToggle value={sortOrder} onChange={onSortOrderChange} />
+        <label htmlFor="select-sort-field" style={{ display: 'none' }}>
+          Sort field
+        </label>
+        <select
+          name="sortField"
+          id="select-sort-field"
+          value={sortField}
+          onChange={(e) => onSortFieldChange(e.target.value as 'name' | 'members')}
+          style={{ ...fieldStyle, width: 130, appearance: 'none' as const }}
+        >
+          <option value="name">Name</option>
+          <option value="members">Members</option>
+        </select>
+        <SortToggle
+          value={sortOrder}
+          onChange={onSortOrderChange}
+          label={sortField === 'members' ? 'Members' : 'A–Z'}
+        />
       </div>
 
       {/* Search + filter - Mobile */}
@@ -209,7 +230,32 @@ export function ChaptersGrid({
               </option>
             ))}
           </select>
-          <SortToggle value={sortOrder} onChange={onSortOrderChange} />
+        </div>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <label htmlFor="select-sort-field-mob" style={{ display: 'none' }}>
+            Sort field
+          </label>
+          <select
+            name="sortField-mob"
+            id="select-sort-field-mob"
+            value={sortField}
+            onChange={(e) => onSortFieldChange(e.target.value as 'name' | 'members')}
+            style={{
+              ...fieldStyle,
+              flex: 1,
+              appearance: 'none' as const,
+              fontSize: 12,
+              height: 36,
+            }}
+          >
+            <option value="name">Sort: Name</option>
+            <option value="members">Sort: Members</option>
+          </select>
+          <SortToggle
+            value={sortOrder}
+            onChange={onSortOrderChange}
+            label={sortField === 'members' ? 'Members' : 'A–Z'}
+          />
         </div>
       </div>
 
