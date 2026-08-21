@@ -2495,7 +2495,10 @@ class AdminService {
   async createFieldEvent(event: Omit<FieldEvent, 'id'>): Promise<boolean> {
     const success = await intelligenceService.createFieldEvent(event)
     if (success) {
-      await this.logAction('FIELD_EVENT_CREATE', `EVENTS/${event.title}`, 'Success', { title: event.title, date: event.date })
+      await this.logAction('FIELD_EVENT_CREATE', `EVENTS/${event.title}`, 'Success', {
+        title: event.title,
+        date: event.date,
+      })
     }
     return success
   }
@@ -2662,13 +2665,16 @@ class AdminService {
       region: string | null
       chapter: string | null
       polling_station_id: string | null
+      polling_station_code: string | null
       registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
     }>
   > {
     const [{ data: members }, { data: voterRows }] = await Promise.all([
       supabase
         .from('users')
-        .select('id, full_name, registration_number, constituency, region, chapter')
+        .select(
+          'id, full_name, registration_number, constituency, region, chapter, polling_station_code'
+        )
         .not('constituency', 'is', null)
         .neq('constituency', '')
         .neq('constituency', 'Constituency pending'),
@@ -2694,6 +2700,7 @@ class AdminService {
       region: (m.region as string | null) || null,
       chapter: (m.chapter as string | null) || null,
       polling_station_id: (voterMap[m.id as string]?.polling_station_id as string | null) ?? null,
+      polling_station_code: (m.polling_station_code as string | null) || null,
       registration_status:
         (voterMap[m.id as string]?.registration_status as
           | 'UNVERIFIED'
