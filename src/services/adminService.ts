@@ -3063,7 +3063,9 @@ class AdminService {
       .maybeSingle()
     const payload = {
       polling_station_id: pollingStationCode.trim().toUpperCase(),
-      registration_status: 'IN_PROGRESS',
+      // Submitting a code is the whole verification event here — there's no
+      // separate manual review step, so don't leave members stuck "in progress."
+      registration_status: 'VERIFIED_VOTER',
     }
     if (existing) {
       const { error } = await supabase

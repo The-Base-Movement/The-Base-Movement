@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { RegionalImpactStats } from '@/components/admin/RegionalImpactStats'
+import { isChapterVerified } from '@/lib/leadStatus'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
 import { PollManagementModal } from './chapters/PollManagementModal'
 import { PollCreateEditModal } from './chapters/PollCreateEditModal'
@@ -67,7 +68,7 @@ export default function ChaptersManagement() {
           c.name.toLowerCase().includes(search.toLowerCase()) ||
           c.city_or_region.toLowerCase().includes(search.toLowerCase()) ||
           (c.country || '').toLowerCase().includes(search.toLowerCase())
-        const normalized = c.status === 'Active' ? 'Active' : 'Pending'
+        const normalized = isChapterVerified(c) ? 'Active' : 'Pending'
         let matchesRegion = true
         if (regionFilter) {
           matchesRegion =
@@ -97,12 +98,9 @@ export default function ChaptersManagement() {
     () => chapters.reduce((s, c) => s + (c.member_count || 0), 0),
     [chapters]
   )
-  const activeCount = useMemo(
-    () => chapters.filter((c) => c.status === 'Active').length,
-    [chapters]
-  )
+  const activeCount = useMemo(() => chapters.filter(isChapterVerified).length, [chapters])
   const pendingCount = useMemo(
-    () => chapters.filter((c) => c.status !== 'Active').length,
+    () => chapters.filter((c) => !isChapterVerified(c)).length,
     [chapters]
   )
 
@@ -259,7 +257,6 @@ export default function ChaptersManagement() {
         onOpenAddModal={chapterForm.openAddModal}
         onOpenEditModal={chapterForm.openEditModal}
         onOpenPollManageModal={pollMgmt.openPollManageModal}
-        onVerifyChapter={chapterForm.handleVerifyChapter}
         onDeleteChapter={chapterForm.handleDeleteChapter}
       />
 

@@ -32,7 +32,6 @@ interface ChapterDetailModalProps {
     city_or_region: string
     country: string
     description: string
-    status: string
     leader_name: string
   }
   modalMembers: { id: string; name: string; region: string }[]
@@ -165,58 +164,38 @@ export function ChapterDetailModal({
                 />
               </div>
             </div>
-            <div
-              className="chapters-modal-grid"
-              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}
-            >
-              <div>
-                <label htmlFor="select-country" style={labelStyle}>
-                  Country <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
-                </label>
-                <select
-                  aria-label="Select country"
-                  name="country"
-                  id="select-country"
-                  required
-                  style={{ ...fieldStyle, appearance: 'none' }}
-                  value={formData.country}
-                  onChange={(e) => onFormChange('country', e.target.value)}
-                >
-                  <option value="">Select country...</option>
-                  {/* Chapters are Diaspora-only, so Ghana is never an option. */}
-                  {countries
-                    .filter((c) => c.name.trim().toLowerCase() !== 'ghana')
-                    .map((c) => (
-                      <option key={c.id || c.name} value={c.name}>
-                        {c.flag_url ? `${getCountryFlag(c.flag_url, true)} ` : ''}
-                        {c.name}
-                      </option>
-                    ))}
-                  {formData.country &&
-                    formData.country.trim().toLowerCase() !== 'ghana' &&
-                    !countries.some((c) => c.name === formData.country) && (
-                      <option value={formData.country}>{formData.country}</option>
-                    )}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="select-9716c5" style={labelStyle}>
-                  Hub status
-                </label>
-                <select
-                  name="name-9716c5"
-                  id="select-9716c5"
-                  style={{ ...fieldStyle, appearance: 'none' as const }}
-                  value={formData.status}
-                  onChange={(e) => onFormChange('status', e.target.value)}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Active">Active</option>
-                </select>
-              </div>
+            <div>
+              <label htmlFor="select-country" style={labelStyle}>
+                Country <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
+              </label>
+              <select
+                aria-label="Select country"
+                name="country"
+                id="select-country"
+                required
+                style={{ ...fieldStyle, appearance: 'none' }}
+                value={formData.country}
+                onChange={(e) => onFormChange('country', e.target.value)}
+              >
+                <option value="">Select country...</option>
+                {/* Chapters are Diaspora-only, so Ghana is never an option. */}
+                {countries
+                  .filter((c) => c.name.trim().toLowerCase() !== 'ghana')
+                  .map((c) => (
+                    <option key={c.id || c.name} value={c.name}>
+                      {c.flag_url ? `${getCountryFlag(c.flag_url, true)} ` : ''}
+                      {c.name}
+                    </option>
+                  ))}
+                {formData.country &&
+                  formData.country.trim().toLowerCase() !== 'ghana' &&
+                  !countries.some((c) => c.name === formData.country) && (
+                    <option value={formData.country}>{formData.country}</option>
+                  )}
+              </select>
             </div>
 
-            {/* Leader picker */}
+            {/* Leader picker — appointing a leader is what verifies the chapter; there's no separate status toggle. */}
             <div style={{ position: 'relative' }}>
               <label htmlFor="input-014d9d" style={labelStyle}>
                 Chapter leader

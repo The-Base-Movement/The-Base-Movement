@@ -122,22 +122,15 @@ export function ConstituencyCoverageTable({
           >
             <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
               <table
-                style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}
+                style={{
+                  width: '100%',
+                  borderCollapse: 'separate',
+                  borderSpacing: 0,
+                  fontFamily: "'Public Sans'",
+                }}
               >
-                <thead
-                  style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                    background: 'hsl(var(--container-low))',
-                  }}
-                >
-                  <tr
-                    style={{
-                      background: 'hsl(var(--container-low))',
-                      borderBottom: '1px solid hsl(var(--border))',
-                    }}
-                  >
+                <thead>
+                  <tr>
                     {[
                       'Constituency',
                       'Region',
@@ -149,6 +142,9 @@ export function ConstituencyCoverageTable({
                       <th
                         key={h}
                         style={{
+                          position: 'sticky',
+                          top: 0,
+                          zIndex: 1,
                           padding: '8px 16px',
                           textAlign: 'left',
                           fontWeight: 'var(--font-weight-medium, 500)',
@@ -157,6 +153,8 @@ export function ConstituencyCoverageTable({
                           textTransform: 'uppercase',
                           color: 'hsl(var(--on-surface-muted))',
                           whiteSpace: 'nowrap',
+                          background: 'hsl(var(--container-low))',
+                          borderBottom: '1px solid hsl(var(--border))',
                         }}
                       >
                         {h}

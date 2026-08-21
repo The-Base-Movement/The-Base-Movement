@@ -11,6 +11,7 @@ import { Modal } from './regions/Modal'
 import { DeleteModal } from './regions/DeleteModal'
 import { inputSt } from './regions/utils'
 import { RegionalImpactStats } from '@/components/admin/RegionalImpactStats'
+import { isConstituencyVerified } from '@/lib/leadStatus'
 import { ConstituenciesGrid } from './constituencies/ConstituenciesGrid'
 
 const GHANA_REGIONS = [
@@ -74,7 +75,6 @@ export default function AdminConstituencies() {
   // Advanced edit fields
   const [editName, setEditName] = useState('')
   const [editRegionId, setEditRegionId] = useState<number | ''>('')
-  const [editStatus, setEditStatus] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editMeetingSchedule, setEditMeetingSchedule] = useState('')
   const [editLocalFocus, setEditLocalFocus] = useState('')
@@ -122,7 +122,6 @@ export default function AdminConstituencies() {
     setEditConstituency(c)
     setEditName(c.name)
     setEditRegionId(c.regionId)
-    setEditStatus(c.status)
     setEditDescription(c.description || '')
     setEditMeetingSchedule(c.meetingSchedule || '')
     setEditLocalFocus(c.localFocus || '')
@@ -136,7 +135,6 @@ export default function AdminConstituencies() {
     const ok = await constituencyService.updateConstituency(editConstituency.id, {
       name: editName.trim(),
       regionId: Number(editRegionId),
-      status: editStatus,
       description: editDescription || undefined,
       meetingSchedule: editMeetingSchedule || undefined,
       localFocus: editLocalFocus || undefined,
@@ -193,7 +191,7 @@ export default function AdminConstituencies() {
   }, [filtered, currentPage])
 
   const total = constituencies.length
-  const activeCount = constituencies.filter((c) => c.status === 'Active').length
+  const activeCount = constituencies.filter(isConstituencyVerified).length
   const unledCount = constituencies.filter((c) => !c.leaderId).length
   const totalMembers = useMemo(
     () => constituencies.reduce((s, c) => s + (c.memberCount || 0), 0),
@@ -719,31 +717,6 @@ export default function AdminConstituencies() {
                     {r.name}
                   </option>
                 ))}
-              </select>
-            </div>
-
-            <div>
-              <label
-                htmlFor="edit-con-status"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 'var(--font-weight-medium, 500)',
-                  color: 'hsl(var(--on-surface-muted))',
-                  display: 'block',
-                  marginBottom: 6,
-                }}
-              >
-                Status
-              </label>
-              <select
-                id="edit-con-status"
-                value={editStatus}
-                onChange={(e) => setEditStatus(e.target.value)}
-                style={inputSt}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Pending">Pending</option>
               </select>
             </div>
 

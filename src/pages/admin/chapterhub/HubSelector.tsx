@@ -4,6 +4,7 @@ import type { Chapter } from '@/types/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Pagination } from '@/components/Pagination'
 import { SortToggle } from '@/components/ui/SortToggle'
+import { isChapterVerified } from '@/lib/leadStatus'
 
 const selectStyle: React.CSSProperties = {
   height: 40,
@@ -35,7 +36,7 @@ export function HubSelector({ chapters }: HubSelectorProps) {
       const q = hubSearch.toLowerCase()
       const matchesSearch =
         !q || c.name.toLowerCase().includes(q) || c.city_or_region.toLowerCase().includes(q)
-      const normalized = c.status === 'Active' ? 'Active' : 'Pending'
+      const normalized = isChapterVerified(c) ? 'Active' : 'Pending'
       const matchesStatus = statusFilter === 'All' || normalized === statusFilter
       return matchesSearch && matchesStatus
     })
@@ -273,10 +274,10 @@ export function HubSelector({ chapters }: HubSelectorProps) {
                     Status
                   </p>
                   <span
-                    className={`pill ${h.status === 'Active' ? 'pill-ok' : 'pill-warn'}`}
+                    className={`pill ${isChapterVerified(h) ? 'pill-ok' : 'pill-warn'}`}
                     style={{ marginTop: 2 }}
                   >
-                    {h.status}
+                    {isChapterVerified(h) ? 'Verified' : 'Pending'}
                   </span>
                 </div>
               </div>
