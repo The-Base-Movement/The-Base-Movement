@@ -8,6 +8,7 @@ interface ConstituencyMember {
   region: string | null
   chapter: string | null
   polling_station_id: string | null
+  polling_station_code: string | null
   registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
 }
 

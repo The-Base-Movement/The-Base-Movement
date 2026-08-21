@@ -46,6 +46,7 @@ type ConstituencyMember = {
   region: string | null
   chapter: string | null
   polling_station_id: string | null
+  polling_station_code: string | null
   registration_status: 'UNVERIFIED' | 'IN_PROGRESS' | 'VERIFIED_VOTER' | null
 }
 
@@ -212,17 +213,31 @@ export default function GroundGameCommand() {
             verified: 0,
           }
         map[key].members++
-        if (m.polling_station_id) map[key].submitted++
+        // "Submitted" means the member has a polling station on record — either via a
+        // canvassing voter_registrations row, or set directly on their own profile.
+        if (m.polling_station_id || m.polling_station_code) map[key].submitted++
         if (m.registration_status === 'VERIFIED_VOTER') map[key].verified++
       })
     return Object.values(map).sort((a, b) => b.members - a.members)
   }, [constituencyMembers, selectedRegion])
 
-  // Member readiness derived stats
-  const verifiedCount = voterRegs.filter((r) => r.registration_status === 'VERIFIED_VOTER').length
-  const inProgressCount = voterRegs.filter((r) => r.registration_status === 'IN_PROGRESS').length
-  const unverifiedCount = voterRegs.filter((r) => r.registration_status === 'UNVERIFIED').length
-  const submittedCount = voterRegs.filter((r) => r.polling_station_id).length
+  // Member readiness derived stats — scoped to the selected region, same as constituencyStats,
+  // so the KPI tiles never disagree with the table rows shown beneath them.
+  const regionScopedVoterRegs = useMemo(
+    () =>
+      selectedRegion === 'ALL' ? voterRegs : voterRegs.filter((r) => r.region === selectedRegion),
+    [voterRegs, selectedRegion]
+  )
+  const verifiedCount = regionScopedVoterRegs.filter(
+    (r) => r.registration_status === 'VERIFIED_VOTER'
+  ).length
+  const inProgressCount = regionScopedVoterRegs.filter(
+    (r) => r.registration_status === 'IN_PROGRESS'
+  ).length
+  const unverifiedCount = regionScopedVoterRegs.filter(
+    (r) => r.registration_status === 'UNVERIFIED'
+  ).length
+  const submittedCount = regionScopedVoterRegs.filter((r) => r.polling_station_id).length
 
   const filteredVoterRegs = useMemo(() => {
     let rows = voterRegs
