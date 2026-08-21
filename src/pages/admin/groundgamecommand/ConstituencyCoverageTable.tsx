@@ -124,7 +124,14 @@ export function ConstituencyCoverageTable({
               <table
                 style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Public Sans'" }}
               >
-                <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
+                <thead
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    background: 'hsl(var(--container-low))',
+                  }}
+                >
                   <tr
                     style={{
                       background: 'hsl(var(--container-low))',

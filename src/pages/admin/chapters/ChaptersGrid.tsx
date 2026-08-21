@@ -27,7 +27,7 @@ interface ChaptersGridProps {
   search: string
   statusFilter: 'All' | 'Active' | 'Pending'
   regionFilter: string
-  availableRegions: string[]
+  availableCountries: string[]
   sortField: 'name' | 'members'
   sortOrder: 'asc' | 'desc'
   onSearchChange: (val: string) => void
@@ -52,7 +52,7 @@ export function ChaptersGrid({
   search,
   statusFilter,
   regionFilter,
-  availableRegions,
+  availableCountries,
   sortField,
   sortOrder,
   onSearchChange,
@@ -90,11 +90,11 @@ export function ChaptersGrid({
             search
           </span>
           <input
-            aria-label="Search chapters by name or region"
+            aria-label="Search chapters by name or country"
             name="search"
             id="input-f2d090"
             type="text"
-            placeholder="Search chapters by name or region..."
+            placeholder="Search chapters by name or country..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             style={{ ...fieldStyle, paddingLeft: 34 }}
@@ -115,7 +115,7 @@ export function ChaptersGrid({
           <option value="Pending">Pending</option>
         </select>
         <label htmlFor="select-region" style={{ display: 'none' }}>
-          Filter by region
+          Filter by country
         </label>
         <select
           name="regionFilter"
@@ -124,8 +124,8 @@ export function ChaptersGrid({
           onChange={(e) => onRegionFilterChange(e.target.value)}
           style={{ ...fieldStyle, width: 175, appearance: 'none' as const }}
         >
-          <option value="">All regions</option>
-          {availableRegions.map((r) => (
+          <option value="">All countries</option>
+          {availableCountries.map((r) => (
             <option key={r} value={r}>
               {r}
             </option>
@@ -208,7 +208,7 @@ export function ChaptersGrid({
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           <label htmlFor="select-region-mob" style={{ display: 'none' }}>
-            Filter by region
+            Filter by country
           </label>
           <select
             name="regionFilter-mob"
@@ -223,8 +223,8 @@ export function ChaptersGrid({
               height: 36,
             }}
           >
-            <option value="">All regions</option>
-            {availableRegions.map((r) => (
+            <option value="">All countries</option>
+            {availableCountries.map((r) => (
               <option key={r} value={r}>
                 {r}
               </option>

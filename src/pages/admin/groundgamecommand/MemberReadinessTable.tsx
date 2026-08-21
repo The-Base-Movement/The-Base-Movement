@@ -252,7 +252,7 @@ export function MemberReadinessTable({
                 {[
                   'Member',
                   'Reg #',
-                  'Diaspora',
+                  'Ghana / Diaspora',
                   'Constituency',
                   'Polling station code',
                   'Status',
@@ -334,7 +334,7 @@ export function MemberReadinessTable({
                         }}
                       >
                         {r.chapter || (
-                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>—</span>
+                          <span style={{ color: 'hsl(var(--on-surface-muted))' }}>Ghana</span>
                         )}
                       </td>
                       <td
