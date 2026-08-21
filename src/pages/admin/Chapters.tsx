@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { TacticalKPI } from '@/components/admin/TacticalKPI'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { RegionalImpactStats } from '@/components/admin/RegionalImpactStats'
-import { impactColorForCount } from '@/lib/impactColor'
 import { ChaptersGrid } from './chapters/ChaptersGrid'
 import { PollManagementModal } from './chapters/PollManagementModal'
 import { PollCreateEditModal } from './chapters/PollCreateEditModal'
@@ -20,6 +19,7 @@ export default function ChaptersManagement() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
   const [regionFilter, setRegionFilter] = useState('')
+  const [sortField, setSortField] = useState<'name' | 'members'>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
   const [countries, setCountries] = useState<Country[]>([])
@@ -78,11 +78,15 @@ export default function ChaptersManagement() {
 
   const sortedChapters = useMemo(() => {
     return [...filteredChapters].sort((a, b) => {
+      if (sortField === 'members') {
+        const diff = (a.member_count || 0) - (b.member_count || 0)
+        return sortOrder === 'asc' ? diff : -diff
+      }
       const nameA = a.name || ''
       const nameB = b.name || ''
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
     })
-  }, [filteredChapters, sortOrder])
+  }, [filteredChapters, sortField, sortOrder])
 
   const totalMembers = useMemo(
     () => chapters.reduce((s, c) => s + (c.member_count || 0), 0),
@@ -120,7 +124,6 @@ export default function ChaptersManagement() {
       label,
       memberCount,
       unitCount,
-      color: impactColorForCount(memberCount),
     }))
   }, [chapters])
 
@@ -217,6 +220,7 @@ export default function ChaptersManagement() {
         unitLabel="chapter"
         correlationSubtitle="Mobilization strength by country"
         footprintSubtitle="Diaspora resource distribution by country"
+        maxBars={11}
       />
 
       <ChaptersMap
@@ -236,6 +240,7 @@ export default function ChaptersManagement() {
         statusFilter={statusFilter}
         regionFilter={regionFilter}
         availableRegions={availableRegions}
+        sortField={sortField}
         sortOrder={sortOrder}
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
@@ -243,6 +248,7 @@ export default function ChaptersManagement() {
           setRegionFilter(val)
           setCurrentPage(1)
         }}
+        onSortFieldChange={setSortField}
         onSortOrderChange={setSortOrder}
         onPageChange={setCurrentPage}
         onOpenAddModal={chapterForm.openAddModal}
