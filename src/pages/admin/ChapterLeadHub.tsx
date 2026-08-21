@@ -127,6 +127,7 @@ export default function AdminChapterLeadHub() {
 
       {activeTab === 'members' && (
         <HubMembersList
+          key={chapter.id}
           members={members}
           searchQuery={memberSearch}
           setSearchQuery={setMemberSearch}
@@ -136,7 +137,12 @@ export default function AdminChapterLeadHub() {
       )}
 
       {activeTab === 'donations' && (
-        <HubDonationsList donations={verifiedDonations} canSeePhone={canSeePhone} />
+        <HubDonationsList
+          key={chapter.id}
+          donations={verifiedDonations}
+          canSeePhone={canSeePhone}
+          chapterName={chapter.name}
+        />
       )}
 
       {activeTab === 'helpdesk' && <Helpdesk departmentId="chapter" />}

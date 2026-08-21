@@ -1,8 +1,22 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { Chapter } from '@/types/admin'
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader'
 import { Pagination } from '@/components/Pagination'
+import { SortToggle } from '@/components/ui/SortToggle'
+
+const selectStyle: React.CSSProperties = {
+  height: 40,
+  padding: '0 12px',
+  border: '1px solid hsl(var(--border))',
+  borderRadius: 'var(--radius-sm)',
+  fontSize: 13,
+  fontFamily: "'Public Sans', sans-serif",
+  fontWeight: 'var(--font-weight-medium, 500)',
+  background: 'hsl(var(--container-low))',
+  color: 'hsl(var(--on-surface))',
+  flexShrink: 0,
+}
 
 interface HubSelectorProps {
   chapters: Chapter[]
@@ -10,13 +24,32 @@ interface HubSelectorProps {
 
 export function HubSelector({ chapters }: HubSelectorProps) {
   const [hubSearch, setHubSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending'>('All')
+  const [sortField, setSortField] = useState<'name' | 'members'>('name')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 16
 
-  const filteredHubs = chapters.filter((c) => {
-    const q = hubSearch.toLowerCase()
-    return !q || c.name.toLowerCase().includes(q) || c.city_or_region.toLowerCase().includes(q)
-  })
+  const filteredHubs = useMemo(() => {
+    const list = chapters.filter((c) => {
+      const q = hubSearch.toLowerCase()
+      const matchesSearch =
+        !q || c.name.toLowerCase().includes(q) || c.city_or_region.toLowerCase().includes(q)
+      const normalized = c.status === 'Active' ? 'Active' : 'Pending'
+      const matchesStatus = statusFilter === 'All' || normalized === statusFilter
+      return matchesSearch && matchesStatus
+    })
+    return list.sort((a, b) => {
+      if (sortField === 'members') {
+        const diff = (a.member_count || 0) - (b.member_count || 0)
+        return sortOrder === 'asc' ? diff : -diff
+      }
+      const nameA = a.name || ''
+      const nameB = b.name || ''
+      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA)
+    })
+  }, [chapters, hubSearch, statusFilter, sortField, sortOrder])
+
   const totalPages = Math.ceil(filteredHubs.length / itemsPerPage)
   const currentHubs = filteredHubs.slice(
     (currentPage - 1) * itemsPerPage,
@@ -31,49 +64,94 @@ export function HubSelector({ chapters }: HubSelectorProps) {
         description="Select a chapter to view its members, donations, and operational status."
       />
 
-      {/* Search */}
+      {/* Search + filter */}
       <div className="panel" style={{ marginBottom: 20 }}>
-        <div style={{ padding: '14px 18px', position: 'relative' }}>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              position: 'absolute',
-              left: 30,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              fontSize: 16,
-              color: 'hsl(var(--on-surface-muted))',
-              opacity: 0.4,
-              pointerEvents: 'none',
-            }}
-          >
-            search
-          </span>
-          <input
-            id="hub-search"
-            name="hubSearch"
-            type="text"
-            placeholder="Search hubs by name or region..."
-            value={hubSearch}
+        <div
+          style={{
+            padding: '14px 18px',
+            display: 'flex',
+            gap: 10,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ position: 'relative', flex: '1 1 220px' }}>
+            <span
+              className="material-symbols-outlined"
+              style={{
+                position: 'absolute',
+                left: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: 16,
+                color: 'hsl(var(--on-surface-muted))',
+                opacity: 0.4,
+                pointerEvents: 'none',
+              }}
+            >
+              search
+            </span>
+            <input
+              id="hub-search"
+              name="hubSearch"
+              type="text"
+              placeholder="Search hubs by name or region..."
+              value={hubSearch}
+              onChange={(e) => {
+                setHubSearch(e.target.value)
+                setCurrentPage(1)
+              }}
+              style={{
+                width: '100%',
+                height: 40,
+                paddingLeft: 38,
+                paddingRight: 12,
+                background: 'hsl(var(--container-low))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: 13,
+                fontFamily: "'Public Sans', sans-serif",
+                fontWeight: 'var(--font-weight-medium, 500)',
+                color: 'hsl(var(--on-surface))',
+                outline: 'none',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <label htmlFor="hub-status-filter" style={{ display: 'none' }}>
+            Filter by status
+          </label>
+          <select
+            id="hub-status-filter"
+            name="statusFilter"
+            value={statusFilter}
             onChange={(e) => {
-              setHubSearch(e.target.value)
+              setStatusFilter(e.target.value as 'All' | 'Active' | 'Pending')
               setCurrentPage(1)
             }}
-            style={{
-              width: '100%',
-              height: 40,
-              paddingLeft: 40,
-              paddingRight: 12,
-              background: 'hsl(var(--container-low))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: 13,
-              fontFamily: "'Public Sans', sans-serif",
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-              outline: 'none',
-              boxSizing: 'border-box',
-            }}
+            style={selectStyle}
+          >
+            <option value="All">All statuses</option>
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+          </select>
+          <label htmlFor="hub-sort-field" style={{ display: 'none' }}>
+            Sort field
+          </label>
+          <select
+            id="hub-sort-field"
+            name="sortField"
+            value={sortField}
+            onChange={(e) => setSortField(e.target.value as 'name' | 'members')}
+            style={selectStyle}
+          >
+            <option value="name">Name</option>
+            <option value="members">Members</option>
+          </select>
+          <SortToggle
+            value={sortOrder}
+            onChange={setSortOrder}
+            label={sortField === 'members' ? 'Members' : 'A–Z'}
           />
         </div>
       </div>

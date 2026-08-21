@@ -26,6 +26,7 @@ export const chapterOpsService = {
       constituency: u.constituency || 'N/A',
       status: u.status,
       joined: u.joined_at ? new Date(u.joined_at).toLocaleDateString('en-GB') : 'N/A',
+      joinedAt: u.joined_at || null,
       avatarUrl: u.avatar_url || undefined,
     }))
 
