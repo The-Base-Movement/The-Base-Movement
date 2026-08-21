@@ -180,14 +180,11 @@ export function ConstituenciesGrid({
                 <div
                   style={{
                     padding: '12px 14px',
+                    borderBottom: '1px solid hsl(var(--border))',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
                     gap: 8,
-                    background: hasLead ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
-                    borderTopLeftRadius: 6,
-                    borderTopRightRadius: 6,
-                    boxShadow: 'inset 0 -2px 10px rgba(0,0,0,0.05)',
                   }}
                 >
                   <div style={{ minWidth: 0 }}>
@@ -195,7 +192,7 @@ export function ConstituenciesGrid({
                       style={{
                         fontSize: 10,
                         fontWeight: 'var(--font-weight-normal, 400)',
-                        color: hasLead ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                        color: 'hsl(var(--on-surface-muted))',
                         fontFamily: "'Public Sans', sans-serif",
                         marginBottom: 3,
                       }}
@@ -208,7 +205,7 @@ export function ConstituenciesGrid({
                         fontSize: 13,
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontFamily: "'Public Sans', sans-serif",
-                        color: hasLead ? '#fff' : '#000',
+                        color: 'hsl(var(--on-surface))',
                         lineHeight: 1.25,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -224,8 +221,14 @@ export function ConstituenciesGrid({
                       flexShrink: 0,
                       fontWeight: 'var(--font-weight-medium, 500)',
                       fontSize: 9,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 3,
                     }}
                   >
+                    <span className="material-symbols-outlined" style={{ fontSize: 11 }}>
+                      {hasLead ? 'verified' : 'pending'}
+                    </span>
                     {hasLead ? 'Verified' : 'Pending'}
                   </span>
                 </div>
