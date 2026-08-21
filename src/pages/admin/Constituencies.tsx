@@ -186,7 +186,7 @@ export default function AdminConstituencies() {
     })
   }, [constituencies, search, regionFilter, sortField, sortOrder])
 
-  const ITEMS_PER_PAGE = 10
+  const ITEMS_PER_PAGE = 17
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
   const paginated = useMemo(() => {
     return filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
@@ -443,12 +443,16 @@ export default function AdminConstituencies() {
                   paginatedIssues.map((issue) => (
                     <tr key={issue.id}>
                       <td>
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={() => navigate('/admin/members/' + issue.id)}
-                        >
-                          {issue.fullName}
-                        </button>
+                        {issue.registrationNumber ? (
+                          <button
+                            className="btn btn-outline btn-sm"
+                            onClick={() => navigate('/admin/members/' + issue.registrationNumber)}
+                          >
+                            {issue.fullName}
+                          </button>
+                        ) : (
+                          issue.fullName
+                        )}
                       </td>
                       <td>{issue.platform}</td>
                       <td>

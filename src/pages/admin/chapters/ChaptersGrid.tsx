@@ -434,7 +434,7 @@ export function ChaptersGrid({
                         textDecoration: 'none',
                       }}
                     >
-                      Hub
+                      View
                     </Link>
                     {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                       <>

@@ -319,7 +319,7 @@ export function ConstituenciesGrid({
                   style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
                   onClick={() => navigate(`/admin/constituencies/${c.id}`)}
                 >
-                  Hub
+                  View
                 </button>
                 {canManage && (
                   <>
