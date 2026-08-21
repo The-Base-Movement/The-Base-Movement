@@ -102,6 +102,9 @@ export default function GroundGameCommand() {
     'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED'
   >('ALL')
   const [readinessSortOrder, setReadinessSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [readinessPage, setReadinessPage] = useState(1)
+  const [coverageSearch, setCoverageSearch] = useState('')
+  const [coveragePage, setCoveragePage] = useState(1)
 
   const rightColRef = useRef<HTMLDivElement>(null)
   const [rightColHeight, setRightColHeight] = useState<number | undefined>(undefined)
@@ -262,6 +265,53 @@ export default function GroundGameCommand() {
     })
   }, [voterRegs, selectedRegion, readinessFilter, readinessSearch, readinessSortOrder])
 
+  const READINESS_PAGE_SIZE = 15
+  const readinessTotalPages = Math.ceil(filteredVoterRegs.length / READINESS_PAGE_SIZE)
+  const paginatedVoterRegs = useMemo(
+    () =>
+      filteredVoterRegs.slice(
+        (readinessPage - 1) * READINESS_PAGE_SIZE,
+        readinessPage * READINESS_PAGE_SIZE
+      ),
+    [filteredVoterRegs, readinessPage]
+  )
+  const handleReadinessSearchChange = (val: string) => {
+    setReadinessSearch(val)
+    setReadinessPage(1)
+  }
+  const handleReadinessFilterChange = (
+    val: 'ALL' | 'VERIFIED_VOTER' | 'IN_PROGRESS' | 'UNVERIFIED'
+  ) => {
+    setReadinessFilter(val)
+    setReadinessPage(1)
+  }
+  const handleReadinessSortOrderChange = (val: 'asc' | 'desc') => {
+    setReadinessSortOrder(val)
+    setReadinessPage(1)
+  }
+
+  const COVERAGE_PAGE_SIZE = 15
+  const filteredCoverageStats = useMemo(() => {
+    const q = coverageSearch.trim().toLowerCase()
+    if (!q) return constituencyStats
+    return constituencyStats.filter(
+      (s) => s.constituency.toLowerCase().includes(q) || s.region.toLowerCase().includes(q)
+    )
+  }, [constituencyStats, coverageSearch])
+  const coverageTotalPages = Math.ceil(filteredCoverageStats.length / COVERAGE_PAGE_SIZE)
+  const paginatedCoverageStats = useMemo(
+    () =>
+      filteredCoverageStats.slice(
+        (coveragePage - 1) * COVERAGE_PAGE_SIZE,
+        coveragePage * COVERAGE_PAGE_SIZE
+      ),
+    [filteredCoverageStats, coveragePage]
+  )
+  const handleCoverageSearchChange = (val: string) => {
+    setCoverageSearch(val)
+    setCoveragePage(1)
+  }
+
   const pollingAgentMemberIds = useMemo(
     () => new Set(pollingAgents.map((a) => a.member_id)),
     [pollingAgents]
@@ -389,7 +439,11 @@ export default function GroundGameCommand() {
                 name="region-filter-desktop"
                 aria-label="Filter by region"
                 value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
+                onChange={(e) => {
+                  setSelectedRegion(e.target.value)
+                  setReadinessPage(1)
+                  setCoveragePage(1)
+                }}
                 style={{
                   paddingLeft: 30,
                   paddingRight: 28,
@@ -579,7 +633,16 @@ export default function GroundGameCommand() {
             }}
           >
             <div style={{ flex: '1 1 300px', minWidth: 0 }}>
-              <ConstituencyCoverageTable constituencyStats={constituencyStats} />
+              <ConstituencyCoverageTable
+                constituencyStats={paginatedCoverageStats}
+                totalStats={filteredCoverageStats.length}
+                search={coverageSearch}
+                onSearchChange={handleCoverageSearchChange}
+                currentPage={coveragePage}
+                totalPages={coverageTotalPages}
+                onPageChange={setCoveragePage}
+                pageSize={COVERAGE_PAGE_SIZE}
+              />
             </div>
             <div style={{ flex: '0 1 340px', minWidth: 0 }}>
               <LeaderboardPanel
@@ -644,19 +707,24 @@ export default function GroundGameCommand() {
           {/* Member Readiness */}
           <MemberReadinessTable
             voterRegs={voterRegs}
-            filteredVoterRegs={filteredVoterRegs}
+            filteredVoterRegs={paginatedVoterRegs}
+            totalFiltered={filteredVoterRegs.length}
             submittedCount={submittedCount}
             verifiedCount={verifiedCount}
             inProgressCount={inProgressCount}
             unverifiedCount={unverifiedCount}
             readinessSearch={readinessSearch}
-            setReadinessSearch={setReadinessSearch}
+            setReadinessSearch={handleReadinessSearchChange}
             readinessFilter={readinessFilter}
-            setReadinessFilter={setReadinessFilter}
+            setReadinessFilter={handleReadinessFilterChange}
             readinessSortOrder={readinessSortOrder}
-            setReadinessSortOrder={setReadinessSortOrder}
+            setReadinessSortOrder={handleReadinessSortOrderChange}
             pollingAgentMemberIds={pollingAgentMemberIds}
             openStationModal={openStationModal}
+            currentPage={readinessPage}
+            totalPages={readinessTotalPages}
+            onPageChange={setReadinessPage}
+            pageSize={READINESS_PAGE_SIZE}
           />
         </>
       )}

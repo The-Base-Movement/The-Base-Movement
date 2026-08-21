@@ -1,4 +1,5 @@
 import { SortToggle } from '@/components/ui/SortToggle'
+import { Pagination } from '@/components/Pagination'
 
 type VoterRow = {
   id: string
@@ -15,7 +16,10 @@ type VoterRow = {
 
 interface MemberReadinessTableProps {
   voterRegs: VoterRow[]
+  /** Already-paginated page slice to render. */
   filteredVoterRegs: VoterRow[]
+  /** Total count across all pages of the filtered/searched result, for the "Showing" caption. */
+  totalFiltered: number
   submittedCount: number
   verifiedCount: number
   inProgressCount: number
@@ -28,11 +32,16 @@ interface MemberReadinessTableProps {
   setReadinessSortOrder: (val: 'asc' | 'desc') => void
   pollingAgentMemberIds: Set<string>
   openStationModal: (row: VoterRow) => void
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  pageSize: number
 }
 
 export function MemberReadinessTable({
   voterRegs,
   filteredVoterRegs,
+  totalFiltered,
   submittedCount,
   verifiedCount,
   inProgressCount,
@@ -45,6 +54,10 @@ export function MemberReadinessTable({
   setReadinessSortOrder,
   pollingAgentMemberIds,
   openStationModal,
+  currentPage,
+  totalPages,
+  onPageChange,
+  pageSize,
 }: MemberReadinessTableProps) {
   return (
     <div className="panel" style={{ marginTop: 14 }}>
@@ -264,7 +277,7 @@ export function MemberReadinessTable({
               </tr>
             </thead>
             <tbody>
-              {filteredVoterRegs.length === 0 ? (
+              {totalFiltered === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
@@ -407,7 +420,7 @@ export function MemberReadinessTable({
           </table>
         </div>
 
-        {filteredVoterRegs.length > 0 && (
+        {totalFiltered > 0 && (
           <div
             style={{
               padding: '12px 18px',
@@ -418,14 +431,27 @@ export function MemberReadinessTable({
               color: 'hsl(var(--on-surface-muted))',
             }}
           >
-            Showing {filteredVoterRegs.length} of {voterRegs.length} records
+            Showing {filteredVoterRegs.length} of {totalFiltered} records
+            {totalFiltered !== voterRegs.length ? ` (${voterRegs.length} total)` : ''}
+          </div>
+        )}
+
+        {totalFiltered > 0 && (
+          <div style={{ padding: '0 18px 14px' }}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              totalItems={totalFiltered}
+              pageSize={pageSize}
+            />
           </div>
         )}
       </div>
 
       {/* Card list — mobile */}
       <div className="mobile-only">
-        {filteredVoterRegs.length === 0 ? (
+        {totalFiltered === 0 ? (
           <p
             style={{
               padding: '32px 16px',
@@ -563,6 +589,17 @@ export function MemberReadinessTable({
               </div>
             )
           })
+        )}
+        {totalFiltered > 0 && (
+          <div style={{ padding: '14px 16px' }}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              totalItems={totalFiltered}
+              pageSize={pageSize}
+            />
+          </div>
         )}
       </div>
     </div>
