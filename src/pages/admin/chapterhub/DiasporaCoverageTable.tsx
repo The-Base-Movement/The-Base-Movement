@@ -112,148 +112,152 @@ export function DiasporaCoverageTable({ stats }: DiasporaCoverageTableProps) {
         </p>
       ) : (
         <>
-          {/* Table — desktop */}
+          {/* Grid "table" — desktop. Deliberately not a real <table>: sticky
+              positioning on <thead>/<th> is unreliable in Chrome once
+              border-collapse or table layout is involved (rows painting over
+              the header on scroll). A plain grid with matching column
+              templates on the header row and each body row sidesteps that
+              entirely — sticky just works on ordinary block elements. */}
           <div
             className="desktop-only"
             style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}
           >
-            <div style={{ overflowX: 'auto', overflowY: 'auto', flex: 1 }}>
-              <table
-                style={{
-                  width: '100%',
-                  borderCollapse: 'separate',
-                  borderSpacing: 0,
-                  fontFamily: "'Public Sans'",
-                }}
-              >
-                <thead>
-                  <tr>
-                    {['Country', 'Chapters', 'Members', 'Verified', 'Coverage'].map((h) => (
-                      <th
-                        key={h}
+            <div style={{ overflow: 'auto', flex: 1 }}>
+              <div style={{ minWidth: 560, fontFamily: "'Public Sans'" }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1.6fr 0.9fr 0.9fr 0.9fr 1.3fr',
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 2,
+                    background: 'hsl(var(--container-low))',
+                    borderBottom: '1px solid hsl(var(--border))',
+                  }}
+                >
+                  {['Country', 'Chapters', 'Members', 'Verified', 'Coverage'].map((h) => (
+                    <div
+                      key={h}
+                      style={{
+                        padding: '8px 16px',
+                        textAlign: 'left',
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontSize: 9.5,
+                        letterSpacing: '.06em',
+                        textTransform: 'uppercase',
+                        color: 'hsl(var(--on-surface-muted))',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {h}
+                    </div>
+                  ))}
+                </div>
+                {paginated.map((row, i) => {
+                  const coveragePct =
+                    row.members > 0 ? Math.round((row.verified / row.members) * 100) : 0
+                  const coverageColor =
+                    coveragePct >= 70
+                      ? 'hsl(var(--primary))'
+                      : coveragePct >= 40
+                        ? 'hsl(var(--accent))'
+                        : 'hsl(var(--destructive))'
+                  return (
+                    <div
+                      key={row.country}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1.6fr 0.9fr 0.9fr 0.9fr 1.3fr',
+                        background: 'hsl(var(--card))',
+                        borderBottom:
+                          i < paginated.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                      }}
+                    >
+                      <div
                         style={{
-                          position: 'sticky',
-                          top: 0,
-                          zIndex: 1,
-                          padding: '8px 16px',
-                          textAlign: 'left',
+                          padding: '10px 16px',
                           fontWeight: 'var(--font-weight-medium, 500)',
-                          fontSize: 9.5,
-                          letterSpacing: '.06em',
-                          textTransform: 'uppercase',
-                          color: 'hsl(var(--on-surface-muted))',
+                          fontSize: 12.5,
                           whiteSpace: 'nowrap',
-                          background: 'hsl(var(--container-low))',
-                          borderBottom: '1px solid hsl(var(--border))',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
                         }}
                       >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginated.map((row, i) => {
-                    const coveragePct =
-                      row.members > 0 ? Math.round((row.verified / row.members) * 100) : 0
-                    const coverageColor =
-                      coveragePct >= 70
-                        ? 'hsl(var(--primary))'
-                        : coveragePct >= 40
-                          ? 'hsl(var(--accent))'
-                          : 'hsl(var(--destructive))'
-                    return (
-                      <tr
-                        key={row.country}
+                        {row.country}
+                      </div>
+                      <div
                         style={{
-                          borderBottom:
-                            i < paginated.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                          padding: '10px 16px',
+                          fontSize: 11,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 'var(--font-weight-normal, 400)',
                         }}
                       >
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 12.5,
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {row.country}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            fontSize: 11,
-                            color: 'hsl(var(--on-surface-muted))',
-                            fontWeight: 'var(--font-weight-normal, 400)',
-                          }}
-                        >
-                          {row.chapters}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            fontWeight: 'var(--font-weight-medium, 500)',
-                            fontSize: 13,
-                            fontVariantNumeric: 'tabular-nums',
-                          }}
-                        >
-                          {row.members}
-                        </td>
-                        <td
-                          style={{
-                            padding: '10px 16px',
-                            fontWeight: 'var(--font-weight-normal, 400)',
-                            fontSize: 12,
-                            fontVariantNumeric: 'tabular-nums',
-                            color:
-                              row.verified > 0
-                                ? 'hsl(var(--primary))'
-                                : 'hsl(var(--on-surface-muted))',
-                          }}
-                        >
-                          {row.verified}
-                        </td>
-                        <td style={{ padding: '10px 16px', minWidth: 120 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {row.chapters}
+                      </div>
+                      <div
+                        style={{
+                          padding: '10px 16px',
+                          fontWeight: 'var(--font-weight-medium, 500)',
+                          fontSize: 13,
+                          fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        {row.members}
+                      </div>
+                      <div
+                        style={{
+                          padding: '10px 16px',
+                          fontWeight: 'var(--font-weight-normal, 400)',
+                          fontSize: 12,
+                          fontVariantNumeric: 'tabular-nums',
+                          color:
+                            row.verified > 0
+                              ? 'hsl(var(--primary))'
+                              : 'hsl(var(--on-surface-muted))',
+                        }}
+                      >
+                        {row.verified}
+                      </div>
+                      <div style={{ padding: '10px 16px', minWidth: 120 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div
+                            style={{
+                              flex: 1,
+                              height: 5,
+                              background: 'hsl(var(--border))',
+                              borderRadius: 'var(--radius-pill)',
+                              overflow: 'hidden',
+                            }}
+                          >
                             <div
                               style={{
-                                flex: 1,
-                                height: 5,
-                                background: 'hsl(var(--border))',
+                                width: `${coveragePct}%`,
+                                height: '100%',
+                                background: coverageColor,
                                 borderRadius: 'var(--radius-pill)',
-                                overflow: 'hidden',
+                                transition: 'width .3s',
                               }}
-                            >
-                              <div
-                                style={{
-                                  width: `${coveragePct}%`,
-                                  height: '100%',
-                                  background: coverageColor,
-                                  borderRadius: 'var(--radius-pill)',
-                                  transition: 'width .3s',
-                                }}
-                              />
-                            </div>
-                            <span
-                              style={{
-                                fontSize: 10.5,
-                                fontWeight: 'var(--font-weight-medium, 500)',
-                                color: coverageColor,
-                                minWidth: 30,
-                                textAlign: 'right',
-                                fontVariantNumeric: 'tabular-nums',
-                              }}
-                            >
-                              {coveragePct}%
-                            </span>
+                            />
                           </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+                          <span
+                            style={{
+                              fontSize: 10.5,
+                              fontWeight: 'var(--font-weight-medium, 500)',
+                              color: coverageColor,
+                              minWidth: 30,
+                              textAlign: 'right',
+                              fontVariantNumeric: 'tabular-nums',
+                            }}
+                          >
+                            {coveragePct}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
