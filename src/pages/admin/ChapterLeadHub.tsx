@@ -46,12 +46,19 @@ export default function AdminChapterLeadHub() {
       setChapters(allChapters)
 
       if (!chapterId) {
+        // Navigating back to the hub selector (e.g. via breadcrumb) — clear any
+        // previously-selected chapter so we don't keep rendering its detail view.
+        setChapter(null)
+        setMembers([])
+        setDonations([])
+        setCurrentLabel('')
         setIsLoading(false)
         return
       }
 
       const found = allChapters.find((c) => c.id === chapterId)
       if (!found) {
+        setChapter(null)
         setIsLoading(false)
         return
       }
