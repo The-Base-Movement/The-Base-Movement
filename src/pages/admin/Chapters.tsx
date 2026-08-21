@@ -51,8 +51,12 @@ export default function ChaptersManagement() {
     }
   }, [chapters, chapterForm])
 
-  const availableRegions = useMemo(() => {
-    const set = new Set(chapters.filter((c) => c.region).map((c) => c.region!))
+  const availableCountries = useMemo(() => {
+    const set = new Set(
+      chapters
+        .filter((c) => c.country || c.city_or_region)
+        .map((c) => c.country || c.city_or_region)
+    )
     return Array.from(set).sort()
   }, [chapters])
 
@@ -61,7 +65,8 @@ export default function ChaptersManagement() {
       chapters.filter((c) => {
         const matchesSearch =
           c.name.toLowerCase().includes(search.toLowerCase()) ||
-          c.city_or_region.toLowerCase().includes(search.toLowerCase())
+          c.city_or_region.toLowerCase().includes(search.toLowerCase()) ||
+          (c.country || '').toLowerCase().includes(search.toLowerCase())
         const normalized = c.status === 'Active' ? 'Active' : 'Pending'
         let matchesRegion = true
         if (regionFilter) {
@@ -239,7 +244,7 @@ export default function ChaptersManagement() {
         search={search}
         statusFilter={statusFilter}
         regionFilter={regionFilter}
-        availableRegions={availableRegions}
+        availableCountries={availableCountries}
         sortField={sortField}
         sortOrder={sortOrder}
         onSearchChange={setSearch}
