@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import type { Constituency } from '@/types/admin'
 import { SortToggle } from '@/components/ui/SortToggle'
 import { Pagination } from '@/components/Pagination'
+import { isConstituencyVerified } from '@/lib/leadStatus'
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
@@ -172,176 +173,175 @@ export function ConstituenciesGrid({
             No constituencies found.
           </div>
         ) : (
-          currentConstituencies.map((c) => (
-            <div key={c.id} className="panel">
-              <div
-                style={{
-                  padding: '12px 14px',
-                  borderBottom: c.status === 'Active' ? 'none' : '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  gap: 8,
-                  background: c.status === 'Active' ? 'hsl(var(--accent))' : 'transparent',
-                  borderTopLeftRadius: 6,
-                  borderTopRightRadius: 6,
-                  boxShadow: c.status === 'Active' ? 'inset 0 -2px 10px rgba(0,0,0,0.05)' : 'none',
-                }}
-              >
-                <div style={{ minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 'var(--font-weight-normal, 400)',
-                      color:
-                        c.status === 'Active' ? 'rgba(0,0,0,0.6)' : 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      marginBottom: 3,
-                    }}
-                  >
-                    ID: {String(c.id).slice(0, 8)}
-                  </div>
-                  <h4
-                    style={{
-                      margin: 0,
-                      fontSize: 13,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: c.status === 'Active' ? '#000' : 'hsl(var(--on-surface))',
-                      lineHeight: 1.25,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {c.name}
-                  </h4>
-                </div>
-                <span
-                  className={`pill ${c.status === 'Active' ? 'pill-primary' : 'pill-mute'}`}
+          currentConstituencies.map((c) => {
+            const hasLead = isConstituencyVerified(c)
+            return (
+              <div key={c.id} className="panel">
+                <div
                   style={{
-                    flexShrink: 0,
-                    background: c.status === 'Active' ? '#000' : undefined,
-                    color: c.status === 'Active' ? '#fff' : undefined,
-                    fontWeight: 'var(--font-weight-medium, 500)',
-                    fontSize: 9,
+                    padding: '12px 14px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: 8,
+                    background: hasLead ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
+                    borderTopLeftRadius: 6,
+                    borderTopRightRadius: 6,
+                    boxShadow: 'inset 0 -2px 10px rgba(0,0,0,0.05)',
                   }}
                 >
-                  {c.status}
-                </span>
-              </div>
-              <div
-                style={{
-                  padding: '10px 14px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: 8,
-                }}
-              >
-                <div>
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      marginBottom: 3,
-                    }}
-                  >
-                    Region
-                  </div>
-                  <b
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: 'hsl(var(--on-surface))',
-                    }}
-                  >
-                    {c.regionName}
-                  </b>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      color: 'hsl(var(--on-surface-muted))',
-                      fontFamily: "'Public Sans', sans-serif",
-                      marginBottom: 3,
-                    }}
-                  >
-                    Members
-                  </div>
-                  <b
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 'var(--font-weight-medium, 500)',
-                      fontFamily: "'Public Sans', sans-serif",
-                      color: 'hsl(var(--on-surface))',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      justifyContent: 'flex-end',
-                    }}
-                  >
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ fontSize: 13, color: 'hsl(var(--primary))' }}
+                  <div style={{ minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-normal, 400)',
+                        color: hasLead ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        marginBottom: 3,
+                      }}
                     >
-                      group
-                    </span>
-                    {(c.memberCount || 0).toLocaleString()}
-                  </b>
+                      ID: {String(c.id).slice(0, 8)}
+                    </div>
+                    <h4
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        color: hasLead ? '#fff' : '#000',
+                        lineHeight: 1.25,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {c.name}
+                    </h4>
+                  </div>
+                  <span
+                    className={`pill ${hasLead ? 'pill-ok' : 'pill-warn'}`}
+                    style={{
+                      flexShrink: 0,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      fontSize: 9,
+                    }}
+                  >
+                    {hasLead ? 'Verified' : 'Pending'}
+                  </span>
                 </div>
-              </div>
-              <div
-                style={{
-                  padding: '6px 14px 10px',
-                  fontSize: 11,
-                  fontFamily: "'Public Sans', sans-serif",
-                  color: 'hsl(var(--on-surface-muted))',
-                }}
-              >
-                {c.leaderName ?? <span style={{ fontStyle: 'italic' }}>No coordinator</span>}
-              </div>
-              <div
-                style={{
-                  padding: '8px 14px',
-                  borderTop: '1px solid hsl(var(--border))',
-                  display: 'flex',
-                  gap: 6,
-                  flexWrap: 'wrap',
-                }}
-              >
-                <button
-                  className="btn btn-outline btn-sm"
-                  style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
-                  onClick={() => navigate(`/admin/constituencies/${c.id}`)}
+                <div
+                  style={{
+                    padding: '10px 14px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 8,
+                  }}
                 >
-                  View
-                </button>
-                {canManage && (
-                  <>
-                    <button
-                      className="btn btn-outline btn-sm"
-                      style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
-                      onClick={() => onEditConstituency(c)}
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontFamily: "'Public Sans', sans-serif",
+                        marginBottom: 3,
+                      }}
                     >
-                      Configure
-                    </button>
-                    <button
-                      className="btn btn-dest btn-sm"
-                      style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
-                      onClick={() => onDeleteConstituency(c)}
+                      Region
+                    </div>
+                    <b
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        color: 'hsl(var(--on-surface))',
+                      }}
                     >
-                      Decommission
-                    </button>
-                  </>
-                )}
+                      {c.regionName}
+                    </b>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        color: 'hsl(var(--on-surface-muted))',
+                        fontFamily: "'Public Sans', sans-serif",
+                        marginBottom: 3,
+                      }}
+                    >
+                      Members
+                    </div>
+                    <b
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 'var(--font-weight-medium, 500)',
+                        fontFamily: "'Public Sans', sans-serif",
+                        color: 'hsl(var(--on-surface))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 13, color: 'hsl(var(--primary))' }}
+                      >
+                        group
+                      </span>
+                      {(c.memberCount || 0).toLocaleString()}
+                    </b>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: '6px 14px 10px',
+                    fontSize: 11,
+                    fontFamily: "'Public Sans', sans-serif",
+                    color: 'hsl(var(--on-surface-muted))',
+                  }}
+                >
+                  {c.leaderName ?? <span style={{ fontStyle: 'italic' }}>No coordinator</span>}
+                </div>
+                <div
+                  style={{
+                    padding: '8px 14px',
+                    borderTop: '1px solid hsl(var(--border))',
+                    display: 'flex',
+                    gap: 6,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    className="btn btn-outline btn-sm"
+                    style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
+                    onClick={() => navigate(`/admin/constituencies/${c.id}`)}
+                  >
+                    View
+                  </button>
+                  {canManage && (
+                    <>
+                      <button
+                        className="btn btn-outline btn-sm"
+                        style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
+                        onClick={() => onEditConstituency(c)}
+                      >
+                        Configure
+                      </button>
+                      <button
+                        className="btn btn-dest btn-sm"
+                        style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
+                        onClick={() => onDeleteConstituency(c)}
+                      >
+                        Decommission
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            )
+          })
         )}
 
         {/* Add new constituency card */}

@@ -5,6 +5,7 @@ import Map, { Marker, NavigationControl, ScaleControl, Source, Layer } from 'rea
 import type { MapMouseEvent, MapRef } from 'react-map-gl/mapbox'
 import type { FillPaint, LinePaint } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { isChapterVerified } from '@/lib/leadStatus'
 
 interface ChaptersMapProps {
   chapters: Chapter[]
@@ -253,11 +254,12 @@ export function ChaptersMap({
                     >
                       <div
                         style={{
-                          width: m!.status === 'Active' ? 10 : 8,
-                          height: m!.status === 'Active' ? 10 : 8,
+                          width: isChapterVerified(m!) ? 10 : 8,
+                          height: isChapterVerified(m!) ? 10 : 8,
                           borderRadius: '50%',
-                          background:
-                            m!.status === 'Active' ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
+                          background: isChapterVerified(m!)
+                            ? 'hsl(var(--primary))'
+                            : 'hsl(var(--accent))',
                           border: '2px solid #fff',
                           boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
                         }}
@@ -371,8 +373,8 @@ export function ChaptersMap({
               }
               return false
             })
-            const activeCount = regionChapters.filter((c) => c.status === 'Active').length
-            const pendingCount = regionChapters.filter((c) => c.status === 'Pending').length
+            const activeCount = regionChapters.filter(isChapterVerified).length
+            const pendingCount = regionChapters.filter((c) => !isChapterVerified(c)).length
             const hasActive = activeCount > 0
             const hasPending = pendingCount > 0
             const dotColor = hasActive

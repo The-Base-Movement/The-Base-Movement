@@ -10,7 +10,6 @@ export interface ChapterFormData {
   city_or_region: string
   country: string
   description: string
-  status: string
   leader_name: string
 }
 
@@ -24,7 +23,6 @@ export function useChapterForm() {
     city_or_region: '',
     country: '',
     description: '',
-    status: 'Pending',
     leader_name: '',
   })
   const [modalMembers, setModalMembers] = useState<{ id: string; name: string; region: string }[]>(
@@ -50,7 +48,6 @@ export function useChapterForm() {
       city_or_region: '',
       country: '',
       description: '',
-      status: 'Pending',
       leader_name: '',
     })
     setLeaderSearch('')
@@ -65,7 +62,6 @@ export function useChapterForm() {
       city_or_region: chapter.city_or_region,
       country: chapter.country || '',
       description: '',
-      status: chapter.status,
       leader_name: chapter.leader_name || '',
     })
     setLeaderSearch(chapter.leader_name || '')
@@ -88,13 +84,17 @@ export function useChapterForm() {
       toast.error('Chapters are Diaspora-only. Pick a country other than Ghana.')
       return
     }
+    const leaderName = formData.leader_name.trim()
     const chapterData = {
       name: formData.name,
       city_or_region: formData.city_or_region,
       country,
-      leader_name: formData.leader_name || 'Unassigned',
+      leader_name: leaderName || 'Unassigned',
       member_count: 0,
-      status: formData.status as Chapter['status'],
+      // Status is automated, not admin-set: appointing a lead is what verifies a chapter.
+      status: (leaderName && leaderName !== 'Unassigned'
+        ? 'Active'
+        : 'Pending') as Chapter['status'],
     }
     if (editingChapterId) {
       const success = await updateChapter(editingChapterId, chapterData)
@@ -121,16 +121,6 @@ export function useChapterForm() {
     setShowLeaderList(false)
   }
 
-  const handleVerifyChapter = async (id: string, name: string) => {
-    const success = await adminService.updateChapter(id, { status: 'Active' })
-    if (success) {
-      updateChapter(id, { status: 'Active' })
-      toast.success(`"${name}" verified and activated.`)
-    } else {
-      toast.error('Verification failed.')
-    }
-  }
-
   return {
     isModalOpen,
     editingChapterId,
@@ -146,7 +136,6 @@ export function useChapterForm() {
     closeModal,
     handleSaveChapter,
     handleDeleteChapter,
-    handleVerifyChapter,
     handleLeaderSelect,
   }
 }

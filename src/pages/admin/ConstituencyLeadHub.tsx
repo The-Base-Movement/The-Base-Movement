@@ -163,10 +163,12 @@ export default function AdminConstituencyLeadHub() {
     const ok = await constituencyService.updateConstituency(constituency.id, {
       leaderId: u.id,
       leaderName: u.full_name,
+      // Appointing a coordinator is what verifies a constituency — not a manual toggle.
+      status: 'Active',
     })
     if (ok) {
       setConstituency((prev) =>
-        prev ? { ...prev, leaderId: u.id, leaderName: u.full_name } : prev
+        prev ? { ...prev, leaderId: u.id, leaderName: u.full_name, status: 'Active' } : prev
       )
       setModal(null)
       setLeaderSearch('')

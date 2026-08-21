@@ -39,7 +39,6 @@ interface ChaptersGridProps {
   onOpenAddModal: () => void
   onOpenEditModal: (chapter: Chapter) => void
   onOpenPollManageModal: (chapter: Chapter) => void
-  onVerifyChapter: (id: string, name: string) => void
   onDeleteChapter: (id: string, name: string) => void
 }
 
@@ -64,7 +63,6 @@ export function ChaptersGrid({
   onOpenAddModal,
   onOpenEditModal,
   onOpenPollManageModal,
-  onVerifyChapter,
   onDeleteChapter,
 }: ChaptersGridProps) {
   return (
@@ -271,23 +269,20 @@ export function ChaptersGrid({
         {currentChapters.length > 0
           ? currentChapters.map((chapter) => {
               if (!chapter || !chapter.id) return null
+              const hasLead = !!(chapter.leader_id || chapter.leader_name)
               return (
                 <div key={chapter.id} className="panel">
                   <div
                     style={{
                       padding: '12px 14px',
-                      borderBottom:
-                        chapter.status === 'Active' ? 'none' : '1px solid hsl(var(--border))',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
                       gap: 8,
-                      background:
-                        chapter.status === 'Active' ? 'hsl(var(--accent))' : 'transparent',
+                      background: hasLead ? 'hsl(var(--primary))' : 'hsl(var(--accent))',
                       borderTopLeftRadius: 6,
                       borderTopRightRadius: 6,
-                      boxShadow:
-                        chapter.status === 'Active' ? 'inset 0 -2px 10px rgba(0,0,0,0.05)' : 'none',
+                      boxShadow: 'inset 0 -2px 10px rgba(0,0,0,0.05)',
                     }}
                   >
                     <div style={{ minWidth: 0 }}>
@@ -295,10 +290,7 @@ export function ChaptersGrid({
                         style={{
                           fontSize: 10,
                           fontWeight: 'var(--font-weight-normal, 400)',
-                          color:
-                            chapter.status === 'Active'
-                              ? 'rgba(0,0,0,0.6)'
-                              : 'hsl(var(--on-surface-muted))',
+                          color: hasLead ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
                           fontFamily: "'Public Sans', sans-serif",
                           marginBottom: 3,
                         }}
@@ -311,7 +303,7 @@ export function ChaptersGrid({
                           fontSize: 13,
                           fontWeight: 'var(--font-weight-medium, 500)',
                           fontFamily: "'Public Sans', sans-serif",
-                          color: chapter.status === 'Active' ? '#000' : 'hsl(var(--on-surface))',
+                          color: hasLead ? '#fff' : '#000',
                           lineHeight: 1.25,
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -338,16 +330,14 @@ export function ChaptersGrid({
                       </h4>
                     </div>
                     <span
-                      className={`pill ${chapter.status === 'Active' ? 'pill-primary' : 'pill-mute'}`}
+                      className={`pill ${hasLead ? 'pill-ok' : 'pill-warn'}`}
                       style={{
                         flexShrink: 0,
-                        background: chapter.status === 'Active' ? '#000' : undefined,
-                        color: chapter.status === 'Active' ? '#fff' : undefined,
                         fontWeight: 'var(--font-weight-medium, 500)',
                         fontSize: 9,
                       }}
                     >
-                      {chapter.status}
+                      {hasLead ? 'Verified' : 'Pending'}
                     </span>
                   </div>
                   <div
@@ -438,18 +428,6 @@ export function ChaptersGrid({
                     </Link>
                     {adminService.can('MANAGE_CHAPTER', 'CHAPTERS') && (
                       <>
-                        {chapter.status !== 'Active' && (
-                          <button
-                            className="btn btn-primary btn-sm"
-                            style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
-                            onClick={() => onVerifyChapter(chapter.id, chapter.name)}
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
-                              verified
-                            </span>
-                            Verify
-                          </button>
-                        )}
                         <button
                           className="btn btn-outline btn-sm"
                           style={{ flex: 1, justifyContent: 'center', fontSize: 11 }}
