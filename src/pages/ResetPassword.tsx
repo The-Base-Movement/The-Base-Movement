@@ -5,7 +5,11 @@ import { beginIntentionalSignOut, endIntentionalSignOut } from '@/lib/forcedLogo
 import { toast } from 'sonner'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
-import PasswordField, { PasswordMatchHint } from '@/components/PasswordField'
+import PasswordField, {
+  PasswordMatchHint,
+  PasswordRequirementsChecklist,
+} from '@/components/PasswordField'
+import { isPasswordValid } from '@/components/passwordCriteria'
 import { matchTone } from '@/components/passwordMatch'
 
 /**
@@ -235,8 +239,10 @@ export default function ResetPassword() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters.')
+    if (!isPasswordValid(password)) {
+      toast.error(
+        'Password must be at least 8 characters and include uppercase, lowercase, a number, and a special symbol.'
+      )
       return
     }
     if (password !== confirmPassword) {
@@ -542,10 +548,11 @@ export default function ResetPassword() {
                     label="New Password"
                     value={password}
                     onChange={setPassword}
-                    placeholder="Min. 6 characters"
+                    placeholder="Min. 8 characters"
                     labelStyle={labelStyle}
                     inputStyle={inputStyle}
                   />
+                  <PasswordRequirementsChecklist password={password} />
                   <PasswordField
                     id="confirm-pass"
                     label="Confirm New Password"
