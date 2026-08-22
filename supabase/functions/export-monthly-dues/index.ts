@@ -57,7 +57,8 @@ export function sanitizeCsvCell(value: string): string {
 
 function modeLabel(mode: string): string {
   if (mode === 'offline') return 'Offline'
-  if (mode === 'recurring_hubtel') return 'Recurring'
+  if (mode === 'recurring_hubtel' || mode === 'recurring_paystack') return 'Recurring'
+  if (mode === 'manual_paystack') return 'Paystack'
   return 'Hubtel'
 }
 

@@ -464,7 +464,11 @@ if (import.meta.main)
               month: duesPayment?.dues_month ?? undefined,
               amountGhs: duesPayment ? Number(duesPayment.amount_ghs) : undefined,
               currency: 'GHS',
-              mode: duesPayment?.payment_mode === 'recurring_hubtel' ? 'recurring' : 'manual',
+              mode:
+                duesPayment?.payment_mode === 'recurring_hubtel' ||
+                duesPayment?.payment_mode === 'recurring_paystack'
+                  ? 'recurring'
+                  : 'manual',
             })
           } else {
             // Failed dues payment. Dues are recurring obligations, so a silent
