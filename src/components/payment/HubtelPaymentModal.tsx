@@ -50,6 +50,18 @@ export function HubtelPaymentModal({
     }
   }
 
+  // Paystack's checkout page refuses to render inside an iframe (it sends
+  // X-Frame-Options/CSP frame-ancestors headers to block clickjacking) —
+  // Hubtel's doesn't, which is why the iframe below works for it. Paystack
+  // gets a full top-level redirect instead; PaymentComplete.tsx already
+  // handles the "plain redirect" return trip (reads ?reference=, shows a
+  // status screen, auto-navigates back).
+  useEffect(() => {
+    if (isOpen && checkoutUrl && provider === 'Paystack') {
+      window.location.href = checkoutUrl
+    }
+  }, [isOpen, checkoutUrl, provider])
+
   // Real-time listener for database state updates
   useEffect(() => {
     if (!isOpen || !referenceId) return
@@ -255,9 +267,9 @@ export function HubtelPaymentModal({
           </button>
         </div>
 
-        {/* Content Area with Iframe */}
+        {/* Content Area */}
         <div style={{ flex: 1, position: 'relative', background: 'hsl(var(--card))' }}>
-          {iframeLoading && (
+          {provider === 'Paystack' ? (
             <div
               style={{
                 position: 'absolute',
@@ -289,22 +301,61 @@ export function HubtelPaymentModal({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                Connecting to {provider} Secure Servers...
+                Redirecting to Paystack Secure Checkout...
               </p>
             </div>
+          ) : (
+            <>
+              {iframeLoading && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: 'hsl(var(--card))',
+                    gap: 16,
+                  }}
+                >
+                  <div
+                    className="spinner"
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderWidth: 3,
+                      borderStyle: 'solid',
+                      borderColor: 'hsl(var(--primary)) transparent transparent transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                    }}
+                  ></div>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: 'hsl(var(--on-surface-muted))',
+                      fontFamily: "'Public Sans', sans-serif",
+                    }}
+                  >
+                    Connecting to {provider} Secure Servers...
+                  </p>
+                </div>
+              )}
+              <iframe
+                src={checkoutUrl || ''}
+                title={`${provider} Payment`}
+                onLoad={() => setIframeLoading(false)}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  display: iframeLoading ? 'none' : 'block',
+                }}
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation"
+              />
+            </>
           )}
-          <iframe
-            src={checkoutUrl || ''}
-            title={`${provider} Payment`}
-            onLoad={() => setIframeLoading(false)}
-            style={{
-              width: '100%',
-              height: '100%',
-              border: 'none',
-              display: iframeLoading ? 'none' : 'block',
-            }}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation-by-user-activation"
-          />
         </div>
       </div>
     </div>

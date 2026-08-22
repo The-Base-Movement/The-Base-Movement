@@ -90,7 +90,7 @@ const SECTIONS = [
                 ],
                 [
                   'Payment data',
-                  'Transaction reference via Hubtel',
+                  'Transaction reference via Paystack or Hubtel',
                   'Dues & donations processing',
                   'Contract / Consent',
                 ],

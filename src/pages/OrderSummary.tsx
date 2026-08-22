@@ -632,7 +632,7 @@ export default function OrderSummary() {
                         <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                           open_in_new
                         </span>
-                        Reopen Hubtel checkout
+                        Reopen {checkoutProvider} checkout
                       </button>
                     )}
                   </div>

@@ -21,7 +21,7 @@ const steps = [
   {
     num: '03',
     title: 'Payment',
-    text: 'Hubtel checkout supports mobile money, bank card, wallets, and GhQR.',
+    text: 'Paystack checkout supports mobile money, bank card, and Apple Pay.',
     color: 'var(--charcoal)',
   },
   {
