@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
-import PasswordField, { PasswordMatchHint } from '@/components/PasswordField'
+import PasswordField, {
+  PasswordMatchHint,
+  PasswordRequirementsChecklist,
+} from '@/components/PasswordField'
+import { isPasswordValid } from '@/components/passwordCriteria'
 import { matchTone } from '@/components/passwordMatch'
 
 const cpLabelStyle: React.CSSProperties = {
@@ -50,8 +54,10 @@ export default function ChangePassword() {
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters.')
+    if (!isPasswordValid(password)) {
+      toast.error(
+        'Password must be at least 8 characters and include uppercase, lowercase, a number, and a special symbol.'
+      )
       return
     }
     if (password !== confirmPassword) {
@@ -158,10 +164,12 @@ export default function ChangePassword() {
             label="New Permanent Password"
             value={password}
             onChange={setPassword}
-            placeholder="Min. 6 characters"
+            placeholder="Min. 8 characters"
             labelStyle={cpLabelStyle}
             inputStyle={cpInputStyle}
           />
+
+          <PasswordRequirementsChecklist password={password} />
 
           <PasswordField
             id="confirm-pass"

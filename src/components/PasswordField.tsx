@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { MatchTone } from './passwordMatch'
+import { evaluatePassword } from './passwordCriteria'
 
 /**
  * Password input with a show/hide eye toggle and an optional match tone that
@@ -75,6 +76,106 @@ export default function PasswordField({
             {show ? 'visibility_off' : 'visibility'}
           </span>
         </button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Same requirements checklist shown on the registration form, extracted so
+ * the reset / change-password forms enforce and display the identical
+ * policy Supabase Auth actually checks server-side.
+ */
+export function PasswordRequirementsChecklist({ password }: { password: string }) {
+  const { hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSymbol } =
+    evaluatePassword(password)
+  const criteriaMetCount = [hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSymbol].filter(
+    Boolean
+  ).length
+
+  const items: { met: boolean; label: string; wide?: boolean }[] = [
+    { met: hasMinLength, label: 'At least 8 characters' },
+    { met: hasUppercase, label: 'One uppercase letter (A-Z)' },
+    { met: hasLowercase, label: 'One lowercase letter (a-z)' },
+    { met: hasNumber, label: 'One number (0-9)' },
+    { met: hasSymbol, label: 'One special symbol (!@#$%^&*)', wide: true },
+  ]
+
+  const barThresholds = [1, 2, 4, 5]
+  const barColors = [
+    'hsl(var(--destructive))',
+    'hsl(var(--accent))',
+    'hsl(var(--primary))',
+    'hsl(var(--primary))',
+  ]
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 4, marginTop: 6 }}>
+        {barThresholds.map((threshold, i) => (
+          <div
+            key={threshold}
+            style={{
+              flex: 1,
+              height: 3,
+              borderRadius: 999,
+              background: criteriaMetCount >= threshold ? barColors[i] : 'hsl(var(--border))',
+              transition: 'background 0.2s',
+            }}
+          />
+        ))}
+      </div>
+      <p
+        style={{
+          margin: '6px 0 0',
+          fontSize: 10.5,
+          fontWeight: 'var(--font-weight-medium, 500)',
+          color:
+            criteriaMetCount === 5
+              ? 'hsl(var(--primary))'
+              : criteriaMetCount >= 3
+                ? 'hsl(var(--accent))'
+                : 'hsl(var(--on-surface-muted))',
+        }}
+      >
+        {criteriaMetCount === 5
+          ? 'Strong password — excellent security for your account'
+          : criteriaMetCount >= 3
+            ? `Moderate password strength (${criteriaMetCount}/5 requirements met)`
+            : `Password requirements (${criteriaMetCount}/5 met):`}
+      </p>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 6,
+          marginTop: 8,
+          padding: 10,
+          borderRadius: 'var(--radius-sm)',
+          background: 'hsl(var(--container-low))',
+          border: '1px solid hsl(var(--border))',
+          fontSize: 11,
+        }}
+      >
+        {items.map((item) => (
+          <div
+            key={item.label}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              gridColumn: item.wide ? 'span 2' : undefined,
+              color: item.met ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+              fontWeight: item.met ? 'var(--font-weight-medium, 500)' : 'normal',
+              transition: 'color 0.2s',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+              {item.met ? 'check_circle' : 'radio_button_unchecked'}
+            </span>
+            {item.label}
+          </div>
+        ))}
       </div>
     </div>
   )
