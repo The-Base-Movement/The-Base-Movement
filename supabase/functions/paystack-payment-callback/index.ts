@@ -272,7 +272,7 @@ Deno.serve(async (req: Request) => {
 
       const { data: duesPayment } = await supabaseAdmin
         .from('monthly_dues_payments')
-        .select('dues_month, amount_ghs, member_id')
+        .select('dues_month, amount_ghs, payment_mode, member_id')
         .eq('id', reference)
         .maybeSingle()
       let payer: { full_name: string | null; registration_number: string | null } | null = null
@@ -292,7 +292,11 @@ Deno.serve(async (req: Request) => {
         month: duesPayment?.dues_month ?? undefined,
         amountGhs: duesPayment ? Number(duesPayment.amount_ghs) : undefined,
         currency: 'GHS',
-        mode: 'manual',
+        mode:
+          duesPayment?.payment_mode === 'recurring_hubtel' ||
+          duesPayment?.payment_mode === 'recurring_paystack'
+            ? 'recurring'
+            : 'manual',
       })
       return json({ success: true, paid, reference })
     }
