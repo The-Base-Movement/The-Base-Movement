@@ -21,7 +21,7 @@ import { MobilizationProtocol } from './donate/components/MobilizationProtocol'
 import { VictoriesSection } from './donate/components/VictoriesSection'
 import { DonateSuccessPanel } from './donate/components/DonateSuccessPanel'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
-import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateCheckout, type CheckoutProvider } from '@/components/payment/paystackCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import { GroupDonatePanel } from './donate/components/GroupDonatePanel'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
@@ -39,6 +39,7 @@ export default function PublicDonate() {
   const [submitted, setSubmitted] = useState(false)
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [checkoutProvider, setCheckoutProvider] = useState<CheckoutProvider>('Paystack')
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [paymentState, setPaymentState] = useState<
     'idle' | 'starting' | 'checkout' | 'failed' | 'processing'
@@ -226,7 +227,7 @@ export default function PublicDonate() {
         showOnDashboard: formData.showOnDashboard,
       })
       setActiveDonationId(donationId)
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl: url, provider: usedProvider } = await initiateCheckout({
         reference: donationId,
         amount,
         currency: selectedCurrency.code,
@@ -247,6 +248,7 @@ export default function PublicDonate() {
         },
       })
 
+      setCheckoutProvider(usedProvider)
       setCheckoutUrl(url)
       setPaymentState('checkout')
       setIsPaymentModalOpen(true)
@@ -451,6 +453,7 @@ export default function PublicDonate() {
         checkoutUrl={checkoutUrl}
         referenceId={activeDonationId}
         type="donation"
+        provider={checkoutProvider}
         onClose={() => setIsPaymentModalOpen(false)}
         onSuccess={() => {
           setSubmitted(true)

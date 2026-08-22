@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import HubtelButton from './HubtelButton'
 import { useAuth } from '@/context/AuthContext'
-import { openHubtelCheckout } from './hubtelCheckout'
+import { openCheckout } from './paystackCheckout'
 import { adminService, type Country } from '@/services/adminService'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
 import { donationService } from '@/services/donationService'
@@ -488,7 +488,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                     type="button"
                     className="btn btn-outline btn-sm"
                     style={{ width: '100%', justifyContent: 'center', marginTop: 14 }}
-                    onClick={() => openHubtelCheckout(checkoutUrl)}
+                    onClick={() => openCheckout(checkoutUrl)}
                   >
                     Reopen secure checkout
                   </button>

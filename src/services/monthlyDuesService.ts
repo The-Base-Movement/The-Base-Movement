@@ -47,7 +47,12 @@ export interface MonthlyDuesPayment {
   display_amount: number
   display_currency: string
   exchange_rate_to_ghs: number
-  payment_mode: 'manual_hubtel' | 'recurring_hubtel' | 'offline'
+  payment_mode:
+    | 'manual_hubtel'
+    | 'recurring_hubtel'
+    | 'manual_paystack'
+    | 'recurring_paystack'
+    | 'offline'
   status: 'due' | 'pending' | 'paid' | 'failed' | 'overdue' | 'waived' | 'cancelled'
   hubtel_reference: string | null
   provider_transaction_id: string | null

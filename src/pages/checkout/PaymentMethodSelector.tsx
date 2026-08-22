@@ -6,7 +6,7 @@ const hubtelMethods = [
   },
   {
     label: 'Bank Card',
-    detail: 'Visa and Mastercard',
+    detail: 'Visa, Mastercard and Apple Pay',
     icon: 'credit_card',
   },
   {
@@ -71,7 +71,7 @@ export function PaymentMethodSelector() {
               letterSpacing: '-0.005em',
             }}
           >
-            Hubtel opens a protected checkout where you choose the payment channel.
+            Paystack opens a protected checkout where you choose the payment channel.
           </p>
         </div>
       </div>

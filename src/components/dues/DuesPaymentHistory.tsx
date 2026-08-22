@@ -118,9 +118,12 @@ export default function DuesPaymentHistory({ payments, onRetry }: DuesPaymentHis
                 <td style={{ ...td, color: 'hsl(var(--on-surface-muted))' }}>
                   {p.payment_mode === 'offline'
                     ? 'Offline'
-                    : p.payment_mode === 'recurring_hubtel'
+                    : p.payment_mode === 'recurring_hubtel' ||
+                        p.payment_mode === 'recurring_paystack'
                       ? 'Recurring'
-                      : 'Hubtel'}
+                      : p.payment_mode === 'manual_paystack'
+                        ? 'Paystack'
+                        : 'Hubtel'}
                 </td>
                 <td style={{ padding: '12px 18px' }}>
                   <span className={`pill ${statusPill(p.status)}`}>{p.status}</span>

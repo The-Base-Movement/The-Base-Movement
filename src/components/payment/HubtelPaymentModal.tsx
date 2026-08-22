@@ -18,18 +18,23 @@ interface HubtelPaymentModalProps {
   checkoutUrl: string | null
   referenceId: string | null
   type: 'donation' | 'group_donation' | 'order' | 'monthly_dues'
+  provider?: 'Hubtel' | 'Paystack'
   onClose: () => void
   onSuccess: () => void
 }
 
 /**
- * HubtelPaymentModal component definition.
+ * HubtelPaymentModal component definition. Renders the checkout iframe for
+ * whichever provider actually initiated the transaction (Paystack primary,
+ * Hubtel fallback) — the realtime/polling logic below is provider-agnostic,
+ * it only watches the target table's row.
  */
 export function HubtelPaymentModal({
   isOpen,
   checkoutUrl,
   referenceId,
   type,
+  provider = 'Hubtel',
   onClose,
   onSuccess,
 }: HubtelPaymentModalProps) {
@@ -217,7 +222,7 @@ export function HubtelPaymentModal({
                   margin: 0,
                 }}
               >
-                Powered by Hubtel Checkout
+                Powered by {provider} Checkout
               </p>
             </div>
           </div>
@@ -284,13 +289,13 @@ export function HubtelPaymentModal({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                Connecting to Hubtel Secure Servers...
+                Connecting to {provider} Secure Servers...
               </p>
             </div>
           )}
           <iframe
             src={checkoutUrl || ''}
-            title="Hubtel Payment"
+            title={`${provider} Payment`}
             onLoad={() => setIframeLoading(false)}
             style={{
               width: '100%',

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { donationService, type GroupDonationResult } from '@/services/donationService'
-import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateCheckout, type CheckoutProvider } from '@/components/payment/paystackCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import { normalizeDonationPhone } from '@/lib/donationPhone'
 import { convertToGhs, getCurrencyForCountry } from '@/lib/currency'
@@ -38,6 +38,7 @@ export function GroupDonatePanel({
   const [busy, setBusy] = useState(false)
   const [groupId, setGroupId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [checkoutProvider, setCheckoutProvider] = useState<CheckoutProvider>('Paystack')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
@@ -154,7 +155,7 @@ export function GroupDonatePanel({
         return
       }
       setGroupId(result.group_id)
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl: url, provider: usedProvider } = await initiateCheckout({
         reference: result.group_id,
         // The charge is always the stored GHS total; the entered currency is
         // metadata only, so the sum check on the server is exact.
@@ -171,6 +172,7 @@ export function GroupDonatePanel({
           sourceCurrency: currency.code,
         },
       })
+      setCheckoutProvider(usedProvider)
       setCheckoutUrl(url)
       setIsModalOpen(true)
     } catch (err: unknown) {
@@ -438,6 +440,7 @@ export function GroupDonatePanel({
         checkoutUrl={checkoutUrl}
         referenceId={groupId}
         type="group_donation"
+        provider={checkoutProvider}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {
           setIsModalOpen(false)

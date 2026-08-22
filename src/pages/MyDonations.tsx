@@ -9,7 +9,7 @@ import SEO from '@/components/SEO'
 import DonationReceiptModal from '@/components/donations/DonationReceiptModal'
 import MonthlyDuesTab from '@/components/dues/MonthlyDuesTab'
 import { toast } from 'sonner'
-import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateCheckout, type CheckoutProvider } from '@/components/payment/paystackCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 
 function isRetryable(d: DonationDetail) {
@@ -83,13 +83,14 @@ export default function MyDonations() {
   const [tab, setTab] = useState<'donations' | 'dues'>('donations')
   const [activeDonationId, setActiveDonationId] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const [checkoutProvider, setCheckoutProvider] = useState<CheckoutProvider>('Paystack')
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [isRetrying, setIsRetrying] = useState<string | null>(null)
 
   const handleRetryPayment = async (d: DonationDetail) => {
     setIsRetrying(d.id)
     try {
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl: url, provider: usedProvider } = await initiateCheckout({
         reference: d.id,
         amount: parseFloat(d.amount),
         currency: 'GHS',
@@ -101,6 +102,7 @@ export default function MyDonations() {
           campaignId: d.campaignId,
         },
       })
+      setCheckoutProvider(usedProvider)
       setCheckoutUrl(url)
       setActiveDonationId(d.id)
       setIsPaymentModalOpen(true)
@@ -843,6 +845,7 @@ export default function MyDonations() {
         checkoutUrl={checkoutUrl}
         referenceId={activeDonationId}
         type="donation"
+        provider={checkoutProvider}
         onClose={() => {
           setIsPaymentModalOpen(false)
           setCheckoutUrl(null)
