@@ -665,7 +665,7 @@ export function MobilizationProtocol({
                     lineHeight: 1.45,
                   }}
                 >
-                  Hubtel checkout will charge {formatGhsAmount(ghsAmount)} in Ghana cedis.
+                  Checkout will charge {formatGhsAmount(ghsAmount)} in Ghana cedis.
                 </p>
               )}
             </div>
