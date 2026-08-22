@@ -12,7 +12,7 @@ import SEO from '@/components/SEO'
 import { discordService } from '@/services/discordService'
 import { DeliveryForm } from './checkout/DeliveryForm'
 import { PaymentMethodSelector } from './checkout/PaymentMethodSelector'
-import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateCheckout } from '@/components/payment/paystackCheckout'
 
 export default function Checkout() {
   const navigate = useNavigate()
@@ -112,7 +112,7 @@ export default function Checkout() {
           city: formData.city,
           country: formData.country,
           region_or_state: isDiaspora ? formData.stateProvince : formData.region,
-          payment_method: 'Hubtel',
+          payment_method: 'Paystack',
           subtotal,
           shipping_fee: shipping,
           total_amount: total,
@@ -150,7 +150,7 @@ export default function Checkout() {
 
       const summaryPath = isDashboard ? '/dashboard/store/summary' : '/store/summary'
       const summaryUrl = `${window.location.origin}${summaryPath}?orderId=${order.id}`
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl: url, provider } = await initiateCheckout({
         reference: order.id,
         amount: total,
         currency: 'GHS',
@@ -176,13 +176,18 @@ export default function Checkout() {
         formData.fullName,
         total,
         cart.length,
-        'Hubtel secure checkout',
+        `${provider} secure checkout`,
         isDiaspora ? formData.stateProvince : formData.region
       )
       toast.success('Secure checkout initiated. Complete payment to confirm your order.')
       clearCart()
       navigate(summaryPath, {
-        state: { orderId: order.id, checkoutUrl: url, awaitingPayment: true },
+        state: {
+          orderId: order.id,
+          checkoutUrl: url,
+          checkoutProvider: provider,
+          awaitingPayment: true,
+        },
       })
     } catch (err: unknown) {
       console.error('Checkout failed:', err)

@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { initiateHubtelCheckout } from './hubtelCheckout'
+import { initiateCheckout, type CheckoutProvider } from './paystackCheckout'
 import { HubtelPaymentModal } from './HubtelPaymentModal'
 
 interface HubtelButtonProps {
@@ -54,6 +54,7 @@ export default function HubtelButton({
   const [loading, setLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [checkoutUrlState, setCheckoutUrlState] = useState<string | null>(null)
+  const [provider, setProvider] = useState<CheckoutProvider>('Paystack')
 
   /**
    * Contacts backend checkout endpoint to generate a secure checkout url,
@@ -64,7 +65,7 @@ export default function HubtelButton({
     setLoading(true)
 
     try {
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl, provider: usedProvider } = await initiateCheckout({
         reference,
         amount,
         name,
@@ -73,10 +74,11 @@ export default function HubtelButton({
         metadata,
       })
 
-      setCheckoutUrlState(url)
+      setProvider(usedProvider)
+      setCheckoutUrlState(checkoutUrl)
       setIsModalOpen(true)
       onStarted?.()
-      onCheckoutReady?.(url)
+      onCheckoutReady?.(checkoutUrl)
     } catch (err: unknown) {
       console.error('[HubtelButton] payment initiation failed:', err)
       const msg =
@@ -126,6 +128,7 @@ export default function HubtelButton({
         checkoutUrl={checkoutUrlState}
         referenceId={reference}
         type={metadata?.orderId ? 'order' : 'donation'}
+        provider={provider}
         onClose={() => {
           setIsModalOpen(false)
           setLoading(false)

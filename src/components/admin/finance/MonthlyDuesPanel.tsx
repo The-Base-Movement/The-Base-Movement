@@ -55,7 +55,6 @@ export default function MonthlyDuesPanel() {
   }, [])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load()
   }, [load])
 
@@ -333,9 +332,12 @@ export default function MonthlyDuesPanel() {
                   <td style={{ ...td, color: 'hsl(var(--on-surface-muted))' }}>
                     {p.payment_mode === 'offline'
                       ? 'Offline'
-                      : p.payment_mode === 'recurring_hubtel'
+                      : p.payment_mode === 'recurring_hubtel' ||
+                          p.payment_mode === 'recurring_paystack'
                         ? 'Recurring'
-                        : 'Hubtel'}
+                        : p.payment_mode === 'manual_paystack'
+                          ? 'Paystack'
+                          : 'Hubtel'}
                   </td>
                   <td style={{ padding: '10px 14px' }}>
                     <span className={`pill ${statusPill(p.status)}`}>{p.status}</span>

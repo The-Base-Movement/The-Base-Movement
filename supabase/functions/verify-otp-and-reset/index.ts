@@ -17,15 +17,12 @@ function clientIp(req: Request) {
   )
 }
 
-function delayedJson(body: unknown, status: number) {
+function delayedJson(body: unknown, status: number, cors: Record<string, string>) {
   return new Promise<Response>((resolve) => {
     setTimeout(() => {
       resolve(
         new Response(JSON.stringify(body), {
-          headers: {
-            ...getCorsHeaders(new Request('http://localhost')),
-            'Content-Type': 'application/json',
-          },
+          headers: { ...cors, 'Content-Type': 'application/json' },
           status,
         })
       )
@@ -142,7 +139,7 @@ serve(async (req: Request) => {
       } catch (whErr) {
         console.warn('[VERIFY-OTP] Webhook dispatch warning:', whErr)
       }
-      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
+      return delayedJson({ error: 'Invalid or expired verification code.' }, 400, cors)
     }
 
     // Flexible multi-format user lookup
@@ -183,7 +180,7 @@ serve(async (req: Request) => {
     }
 
     if (!user) {
-      return delayedJson({ error: 'Invalid or expired verification code.' }, 400)
+      return delayedJson({ error: 'Invalid or expired verification code.' }, 400, cors)
     }
 
     let authUserId = user.id
@@ -200,7 +197,8 @@ serve(async (req: Request) => {
             error:
               'Password is too weak. Use at least 8 characters including an uppercase letter, a lowercase letter, and a number.',
           },
-          400
+          400,
+          cors
         )
       }
       if (authError.status !== 404) {

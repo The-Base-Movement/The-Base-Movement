@@ -11,7 +11,7 @@ import {
 } from '@/services/monthlyDuesService'
 import { getDuesMonth } from '@/lib/monthlyDues'
 import { getCurrencyForCountry } from '@/lib/currency'
-import { initiateHubtelCheckout } from '@/components/payment/hubtelCheckout'
+import { initiateCheckout, type CheckoutProvider } from '@/components/payment/paystackCheckout'
 import { HubtelPaymentModal } from '@/components/payment/HubtelPaymentModal'
 import DuesPaymentHistory from '@/components/dues/DuesPaymentHistory'
 import { monthlyDuesExportService } from '@/services/monthlyDuesExportService'
@@ -36,6 +36,7 @@ export default function MonthlyDuesTab() {
   const [busy, setBusy] = useState(false)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
   const [checkoutRef, setCheckoutRef] = useState<string | null>(null)
+  const [checkoutProvider, setCheckoutProvider] = useState<CheckoutProvider>('Paystack')
 
   const currentMonth = getDuesMonth(new Date())
 
@@ -73,7 +74,6 @@ export default function MonthlyDuesTab() {
   }, [session, currentMonth])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load()
   }, [load])
 
@@ -96,7 +96,7 @@ export default function MonthlyDuesTab() {
     try {
       // The server reloads the obligation and validates amount, member, and
       // status — the browser only supplies the obligation reference.
-      const url = await initiateHubtelCheckout({
+      const { checkoutUrl: url, provider: usedProvider } = await initiateCheckout({
         amount: payment.display_amount,
         currency: payment.display_currency,
         name: profile.name || 'Member',
@@ -105,6 +105,7 @@ export default function MonthlyDuesTab() {
         reference: payment.id,
         metadata: { monthlyDuesPaymentId: payment.id },
       })
+      setCheckoutProvider(usedProvider)
       setCheckoutRef(payment.id)
       setCheckoutUrl(url)
     } catch (err) {
@@ -567,6 +568,7 @@ export default function MonthlyDuesTab() {
         checkoutUrl={checkoutUrl}
         referenceId={checkoutRef}
         type="monthly_dues"
+        provider={checkoutProvider}
         onClose={() => {
           setCheckoutUrl(null)
           void load()

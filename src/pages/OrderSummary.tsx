@@ -16,6 +16,8 @@ export default function OrderSummary() {
   const queryOrderId = new URLSearchParams(location.search).get('orderId')
   const orderId = location.state?.orderId ?? queryOrderId
   const checkoutUrl = location.state?.checkoutUrl as string | undefined
+  const checkoutProvider =
+    (location.state?.checkoutProvider as 'Hubtel' | 'Paystack' | undefined) ?? 'Paystack'
   const awaitingPayment = Boolean(location.state?.awaitingPayment)
   const [order, setOrder] = useState<Order | null>(null)
   const [loading, setLoading] = useState(true)
@@ -617,8 +619,8 @@ export default function OrderSummary() {
                         lineHeight: 1.5,
                       }}
                     >
-                      Complete the Hubtel checkout window. This order will update after Hubtel
-                      confirms payment.
+                      Complete the {checkoutProvider} checkout window. This order will update after{' '}
+                      {checkoutProvider} confirms payment.
                     </p>
                     {checkoutUrlState && (
                       <button
@@ -770,6 +772,7 @@ export default function OrderSummary() {
         checkoutUrl={checkoutUrlState}
         referenceId={orderId}
         type="order"
+        provider={checkoutProvider}
         onClose={() => setIsPaymentModalOpen(false)}
         onSuccess={async () => {
           setIsPaymentModalOpen(false)
