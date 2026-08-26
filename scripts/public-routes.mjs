@@ -12,6 +12,8 @@ export const STATIC_ROUTES = [
   { path: '/app', changefreq: 'weekly', priority: '0.8' },
   { path: '/about', changefreq: 'monthly', priority: '0.9' },
   { path: '/register', changefreq: 'monthly', priority: '0.9' },
+  { path: '/login', changefreq: 'monthly', priority: '0.6' },
+  { path: '/forgot-password', changefreq: 'yearly', priority: '0.3' },
   { path: '/our-agenda', changefreq: 'weekly', priority: '0.8' },
   { path: '/officers', changefreq: 'weekly', priority: '0.8' },
   { path: '/chapters', changefreq: 'weekly', priority: '0.8' },
