@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 import { RecentActivityPanel } from './dashboard/components/RecentActivityPanel'
 import { StatCards } from './dashboard/components/StatCards'
 import MembershipCard from '@/components/MembershipCard'
+import { MembershipCardActions } from '@/components/MembershipCardActions'
 import { QuickActions } from './dashboard/components/QuickActions'
 import { ProfileCompletion } from './dashboard/components/ProfileCompletion'
 import { ActivityFeed } from './dashboard/components/ActivityFeed'
@@ -173,19 +174,38 @@ export default function Dashboard() {
         <div className="dash-hero">
           <div className="dash-card-membership">
             {member && (
-              <MembershipCard
-                userName={member.full_name}
-                userRegNo={member.registration_number}
-                region={member.region}
-                constituency={member.constituency}
-                chapter={member.chapter}
-                joinedDate={member.joined_date}
-                status={member.status}
-                avatarUrl={member.avatar_url}
-                gender={member.gender}
-                country={member.country || 'Ghana'}
-                city={member.city}
-              />
+              <>
+                <MembershipCard
+                  userName={member.full_name}
+                  userRegNo={member.registration_number}
+                  region={member.region}
+                  constituency={member.constituency}
+                  chapter={member.chapter}
+                  joinedDate={member.joined_date}
+                  status={member.status}
+                  avatarUrl={member.avatar_url}
+                  gender={member.gender}
+                  country={member.country || 'Ghana'}
+                  city={member.city}
+                />
+                <MembershipCardActions
+                  regNo={member.registration_number}
+                  style={{ marginTop: 12 }}
+                  cardProps={{
+                    userName: member.full_name,
+                    userRegNo: member.registration_number,
+                    region: member.region,
+                    constituency: member.constituency,
+                    chapter: member.chapter,
+                    joinedDate: member.joined_date,
+                    status: member.status,
+                    avatarUrl: member.avatar_url,
+                    gender: member.gender,
+                    country: member.country || 'Ghana',
+                    city: member.city,
+                  }}
+                />
+              </>
             )}
           </div>
           <div className="dash-card-actions">
