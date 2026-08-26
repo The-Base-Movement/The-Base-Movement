@@ -30,6 +30,9 @@ function getCallbackSecret(secret?: string) {
   const envSecret = Deno.env.get('HUBTEL_CALLBACK_SECRET')?.trim()
   if (envSecret) return envSecret
 
+  const apiKey = Deno.env.get('HUBTEL_API_KEY')?.trim()
+  if (apiKey) return apiKey
+
   throw new Error('Hubtel callback secret is not configured')
 }
 
