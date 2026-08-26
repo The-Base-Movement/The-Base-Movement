@@ -6,6 +6,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { passwordResetEmail } from '../_shared/email-templates.ts'
+import { checkPersistentRateLimit } from '../_shared/persistent-rate-limit.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,6 +18,15 @@ function json(body: unknown, status = 200) {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     status,
   })
+}
+
+function clientIp(req: Request) {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('x-real-ip') ||
+    req.headers.get('cf-connecting-ip') ||
+    'unknown'
+  )
 }
 
 Deno.serve(async (req: Request) => {
@@ -37,6 +47,23 @@ Deno.serve(async (req: Request) => {
     const admin = createClient(supabaseUrl, serviceKey)
     const cleanEmail = String(email).trim()
 
+    // Unauthenticated by design (forgot-password flow), so this is the only
+    // thing standing between it and being a mail-bombing oracle against any
+    // address — same per-IP+target pattern as send-otp / verify-admin-gate.
+    const ip = clientIp(req)
+    const rateCheck = await checkPersistentRateLimit(
+      admin,
+      `send-recovery-email::${ip}::${cleanEmail.toLowerCase()}`,
+      5,
+      3600
+    )
+    if (!rateCheck.allowed) {
+      return json(
+        { error: `Too many reset requests. Please wait ${rateCheck.retry_after_sec} seconds.` },
+        429
+      )
+    }
+
     // Lookup user in public.users to get their name
     const { data: profile } = await admin
       .from('users')
@@ -56,11 +83,17 @@ Deno.serve(async (req: Request) => {
     if (linkErr) {
       console.warn('[send-recovery-email] generateLink error:', linkErr.message)
       // Return success to prevent email enumeration
-      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
+      return json({
+        success: true,
+        message: 'If the details match a member record, a password reset link has been dispatched.',
+      })
     }
 
     if (!linkData?.properties) {
-      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
+      return json({
+        success: true,
+        message: 'If the details match a member record, a password reset link has been dispatched.',
+      })
     }
 
     const properties = linkData.properties as Record<string, unknown>
@@ -69,7 +102,10 @@ Deno.serve(async (req: Request) => {
 
     if (!resendApiKey) {
       console.warn('[send-recovery-email] RESEND_API_KEY secret is not set in Supabase.')
-      return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
+      return json({
+        success: true,
+        message: 'If the details match a member record, a password reset link has been dispatched.',
+      })
     }
 
     const html = passwordResetEmail({
@@ -97,7 +133,10 @@ Deno.serve(async (req: Request) => {
       console.error('[send-recovery-email] Resend error:', res.status, errText)
     }
 
-    return json({ success: true, message: 'If the details match a member record, a password reset link has been dispatched.' })
+    return json({
+      success: true,
+      message: 'If the details match a member record, a password reset link has been dispatched.',
+    })
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[send-recovery-email] ${msg}`)
