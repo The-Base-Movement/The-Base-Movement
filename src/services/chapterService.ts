@@ -82,12 +82,13 @@ class ChapterService {
     }
 
     const chapterNames = (data || []).map((c) => c.name as string).filter(Boolean)
+    const leaderIds = [...new Set((data || []).map((c) => c.leader_id).filter(Boolean))] as string[]
 
     // Fetch countries flags, live member counts (direct per-chapter DB count),
     // and leader avatars in parallel.
     const [{ data: countriesData }, directoryRows, liveCountRows] = await Promise.all([
       supabase.from('countries').select('name, flag_url'),
-      getPublicDirectoryProfiles(), // used for leader avatar lookup only
+      getPublicDirectoryProfiles(leaderIds), // avatar lookup, scoped to this page's chapter leaders only
       // Count members per chapter directly in the DB — no row-level cap.
       // Paginate past the PostgREST 1000-row default.
       chapterNames.length > 0
@@ -114,15 +115,9 @@ class ChapterService {
     ])
 
     const leaderAvatarMap: Record<string, string> = {}
-    const leaderChapterMap: Record<string, string> = {}
-    directoryRows.forEach(
-      (u: { id: string; avatar_url: string | null; chapter: string | null }) => {
-        if (u.id) {
-          if (u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
-          if (u.chapter) leaderChapterMap[u.id] = u.chapter
-        }
-      }
-    )
+    directoryRows.forEach((u: { id: string; avatar_url: string | null }) => {
+      if (u.id && u.avatar_url) leaderAvatarMap[u.id] = u.avatar_url
+    })
 
     const countryFlagsMap = (countriesData || []).reduce((acc: Record<string, string>, curr) => {
       if (curr.name && curr.flag_url) acc[curr.name.toLowerCase()] = curr.flag_url
@@ -209,18 +204,22 @@ class ChapterService {
       .eq('name', data.country)
       .single()
 
-    // Fetch live member count from users table manually
-    const directoryRows = await getPublicDirectoryProfiles()
-    const liveCount = directoryRows.filter(
-      (u) => u.chapter?.toLowerCase() === data.name.toLowerCase()
-    ).length
+    // Live member count via a direct DB count (no need to pull every member's
+    // name/avatar just to count chapter matches).
+    const { count: liveCount } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('chapter', data.name)
+      .eq('status', 'Active')
+      .is('deleted_at', null)
+
     let leaderAvatarUrl: string | undefined = undefined
     let leaderRegisteredChapter: string | undefined = undefined
     if (data.leader_id) {
-      const userData = directoryRows.find((u) => u.id === data.leader_id)
-      if (userData) {
-        if (userData.avatar_url) leaderAvatarUrl = userData.avatar_url
-        if (userData.chapter) leaderRegisteredChapter = userData.chapter
+      const [leaderProfile] = await getPublicDirectoryProfiles([data.leader_id])
+      if (leaderProfile) {
+        if (leaderProfile.avatar_url) leaderAvatarUrl = leaderProfile.avatar_url
+        if (leaderProfile.chapter) leaderRegisteredChapter = leaderProfile.chapter
       }
     }
 
