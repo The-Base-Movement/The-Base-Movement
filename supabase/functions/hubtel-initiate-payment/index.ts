@@ -341,10 +341,16 @@ Deno.serve(async (req: Request) => {
     const checkoutUrl = getCheckoutUrl(payload)
     if (!checkoutUrl) {
       console.error('[HUBTEL] Missing checkout URL', payload)
-      return json({ error: 'Hubtel did not return a checkout URL', details: payload }, 400)
+      return json({ error: 'Hubtel did not return a checkout URL' }, 400)
     }
 
-    return json({ checkoutUrl, data: payload })
+    // Only the checkout URL is ever needed client-side. Hubtel's own API
+    // docs confirm their response never echoes the signed callbackUrl we
+    // send them, but forwarding their raw response verbatim is needless
+    // exposure that would silently become a payment-forgery risk if that
+    // ever changed -- the signed ref+sig would let anyone replay a fake
+    // "payment succeeded" webhook. No reason to carry that risk implicitly.
+    return json({ checkoutUrl })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[HUBTEL-INIT-ERROR] ${message}`)
