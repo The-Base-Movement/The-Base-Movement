@@ -139,8 +139,15 @@ Deno.serve(async (req: Request) => {
         : null
     const type = typeof metadata.type === 'string' ? metadata.type : null
 
-    if (!reference || !transactionId)
-      throw new Error('Missing dbReference/transaction id in callback')
+    // No dbReference means this charge wasn't initiated through our own
+    // paystack-initiate-payment flow (e.g. a "Send test webhook" from the
+    // Paystack dashboard, or a stray manual transaction) -- it will never
+    // resolve on retry. Acknowledge with 200 so Paystack stops retrying and
+    // re-alerting on it, instead of throwing into the 400 path below.
+    if (!reference || !transactionId) {
+      console.warn('[PAYSTACK-CALLBACK] Ignored charge.success with no dbReference/transaction id')
+      return json({ success: true, ignored: 'no_db_reference' })
+    }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
