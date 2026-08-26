@@ -30,6 +30,14 @@
         {
           "key": "Permissions-Policy",
           "value": "camera=(), microphone=(self), geolocation=()"
+        },
+        {
+          "key": "X-Vercel-Id",
+          "value": "REMOVED"
+        },
+        {
+          "key": "X-Vercel-Cache",
+          "value": "REMOVED"
         }
       ]
     },
