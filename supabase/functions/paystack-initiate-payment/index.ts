@@ -250,7 +250,7 @@ Deno.serve(async (req: Request) => {
         .eq('id', reference)
     }
 
-    return json({ checkoutUrl: authorizationUrl, reference: paystackReference, data: payload })
+    return json({ checkoutUrl: authorizationUrl, reference: paystackReference })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err)
     console.error(`[PAYSTACK-INIT-ERROR] ${message}`)
