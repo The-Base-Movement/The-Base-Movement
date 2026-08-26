@@ -61,9 +61,19 @@ serve(async (req: Request) => {
     const normalizedPhone = normalizeRecoveryPhone(rawPhone)
     const digitsOnly = rawPhone.replace(/\D/g, '')
 
+    // Two independent limits: per-IP+phone (existing) catches a single attacker
+    // hammering one target, and a phone-only limit (IP-independent) closes the
+    // gap that combined key leaves -- an attacker rotating IPs would otherwise
+    // get a fresh 8-attempt budget against the same phone from every new IP,
+    // against a 6-digit (900,000 value) OTP space.
     const throttleKey = `verify-otp::${clientIp(req)}::${normalizedPhone}`
+    const phoneThrottleKey = `verify-otp-phone::${normalizedPhone}`
     const rateCheck = await peekRateLimit(supabaseAdmin, throttleKey, 8, 900)
-    if (!rateCheck.allowed) {
+    const phoneRateCheck = rateCheck.allowed
+      ? await peekRateLimit(supabaseAdmin, phoneThrottleKey, 20, 900)
+      : rateCheck
+    if (!rateCheck.allowed || !phoneRateCheck.allowed) {
+      const limiting = rateCheck.allowed ? phoneRateCheck : rateCheck
       try {
         await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
           method: 'POST',
@@ -84,7 +94,7 @@ serve(async (req: Request) => {
       }
       return json(
         {
-          error: `Too many verification attempts. Please wait ${rateCheck.retry_after_sec} seconds.`,
+          error: `Too many verification attempts. Please wait ${limiting.retry_after_sec} seconds.`,
         },
         429
       )
@@ -121,6 +131,7 @@ serve(async (req: Request) => {
 
     if (!approved) {
       await recordFailedAttempt(supabaseAdmin, throttleKey, 900)
+      await recordFailedAttempt(supabaseAdmin, phoneThrottleKey, 900)
       try {
         await fetch(`${supabaseUrl}/functions/v1/password-reset-webhook`, {
           method: 'POST',
