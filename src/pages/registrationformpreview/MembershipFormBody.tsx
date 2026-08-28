@@ -412,7 +412,7 @@ export function MembershipFormBody({
             >
               Age Range <span style={{ color: '#dc2626' }}>*</span>
             </p>
-            <CheckboxGroup items={['18–25', '26–35', '36–45', '46–60', '60+']} />
+            <CheckboxGroup items={['16–25', '26–35', '36–45', '46–60', '60+']} />
           </div>
         </div>
 

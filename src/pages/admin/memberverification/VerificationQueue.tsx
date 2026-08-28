@@ -7,7 +7,7 @@ import { Pagination } from '@/components/Pagination'
 import { religions } from '@/components/admin/RegistrationForm.constants'
 import { usePoliticalParties } from '@/hooks/usePoliticalParties'
 
-const AGE_RANGES = ['18-25', '26-35', '36-45', '46-60', '60+']
+const AGE_RANGES = ['16-25', '26-35', '36-45', '46-60', '60+']
 
 interface VerificationQueueProps {
   loading: boolean
