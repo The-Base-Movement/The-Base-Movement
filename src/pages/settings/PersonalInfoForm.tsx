@@ -14,7 +14,7 @@ function deriveAgeRange(birthYear: string): string {
   const y = Number(birthYear)
   if (!y) return ''
   const age = new Date().getFullYear() - y
-  if (age <= 25) return '18-25'
+  if (age <= 25) return '16-25'
   if (age <= 35) return '26-35'
   if (age <= 45) return '36-45'
   if (age <= 60) return '46-60'
@@ -278,12 +278,12 @@ export function PersonalInfoForm({
                 onChange={(e) => onChange('gender', e.target.value)}
                 style={selectStyle}
               >
-                <option value="Male / 18-25">Male / 18-25</option>
+                <option value="Male / 16-25">Male / 16-25</option>
                 <option value="Male / 26-35">Male / 26-35</option>
                 <option value="Male / 36-45">Male / 36-45</option>
                 <option value="Male / 46-60">Male / 46-60</option>
                 <option value="Male / 60+">Male / 60+</option>
-                <option value="Female / 18-25">Female / 18-25</option>
+                <option value="Female / 16-25">Female / 16-25</option>
                 <option value="Female / 26-35">Female / 26-35</option>
                 <option value="Female / 36-45">Female / 36-45</option>
                 <option value="Female / 46-60">Female / 46-60</option>

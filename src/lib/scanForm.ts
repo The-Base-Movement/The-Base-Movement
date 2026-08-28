@@ -124,14 +124,23 @@ function extractGender(text: string): string | null {
 }
 
 function extractAgeRange(text: string): string | null {
-  const ranges = ['18-25', '26-35', '36-45', '46-60', '60+']
-  for (const r of ranges) {
+  // Match both the current printed range and the older '18-25' stock still in
+  // circulation on previously-printed physical forms; both map to '16-25'.
+  const ranges: [string, string][] = [
+    ['16-25', '16-25'],
+    ['18-25', '16-25'],
+    ['26-35', '26-35'],
+    ['36-45', '36-45'],
+    ['46-60', '46-60'],
+    ['60+', '60+'],
+  ]
+  for (const [printed, canonical] of ranges) {
     // Check if the range appears near a checkmark or 'x'
     const pattern = new RegExp(
-      `(x|✓|✗|\\[x\\])\\s*${r.replace('+', '\\+')}|${r.replace('+', '\\+')}\\s*(x|✓|✗|\\[x\\])`,
+      `(x|✓|✗|\\[x\\])\\s*${printed.replace('+', '\\+')}|${printed.replace('+', '\\+')}\\s*(x|✓|✗|\\[x\\])`,
       'i'
     )
-    if (pattern.test(text)) return r
+    if (pattern.test(text)) return canonical
   }
   // Fall back to just finding a range mentioned near "age"
   const m = text.match(/age\s*range[:\s]+(\d{2}-\d{2}|\d{2}\+)/i)
