@@ -35,39 +35,26 @@ export function duplicateRegistrationMessage(
   return `An account with the phone number "${countryCode} ${contactNumber}" already exists. Please sign in with your phone number and password instead.`
 }
 
-async function findDuplicateRegistration(
-  phoneNumber: string,
-  authEmail: string | null
-): Promise<'email' | 'phone' | null> {
-  const [phoneRes, emailRes] = await Promise.all([
-    phoneNumber
-      ? supabase.from('users').select('phone_number').eq('phone_number', phoneNumber).limit(1)
-      : Promise.resolve({ data: [], error: null }),
-    authEmail
-      ? supabase.from('users').select('email').ilike('email', authEmail).limit(1)
-      : Promise.resolve({ data: [], error: null }),
-  ])
-
-  if (phoneRes.error) throw phoneRes.error
-  if (emailRes.error) throw emailRes.error
-  if (emailRes.data?.length) return 'email'
-  if (phoneRes.data?.length) return 'phone'
-  return null
+/** Live single-field checks for the registration form (called on blur, before
+ * the user reaches final submit). public.users has no anon SELECT policy, so
+ * this must go through the service-role-backed edge function rather than a
+ * direct table query -- a direct query from the browser always returns empty. */
+async function checkRegistrationContact(
+  email: string,
+  phone: string
+): Promise<{ emailTaken: boolean; phoneTaken: boolean }> {
+  const { data, error } = await supabase.functions.invoke('check-registration-contact', {
+    body: { email, phone },
+  })
+  if (error) throw error
+  return data as { emailTaken: boolean; phoneTaken: boolean }
 }
 
-/** Live single-field checks for the registration form (called on blur, before
- * the user reaches final submit). Same query pattern as findDuplicateRegistration
- * above, just scoped to one field so each input's check state is independent. */
 export async function checkEmailTaken(email: string): Promise<boolean> {
   const clean = email.trim()
   if (!clean) return false
-  const { data, error } = await supabase
-    .from('users')
-    .select('email')
-    .ilike('email', clean)
-    .limit(1)
-  if (error) throw error
-  return !!data?.length
+  const { emailTaken } = await checkRegistrationContact(clean, '')
+  return emailTaken
 }
 
 export async function checkPhoneTaken(
@@ -76,13 +63,8 @@ export async function checkPhoneTaken(
 ): Promise<boolean> {
   const phone = normalizeRegistrationPhone(countryCode, contactNumber)
   if (!phone) return false
-  const { data, error } = await supabase
-    .from('users')
-    .select('phone_number')
-    .eq('phone_number', phone)
-    .limit(1)
-  if (error) throw error
-  return !!data?.length
+  const { phoneTaken } = await checkRegistrationContact('', phone)
+  return phoneTaken
 }
 
 export interface SubmitConfig {
@@ -110,11 +92,14 @@ export const registrationService = {
     const emailError = getMemberEmailValidationError(authEmail)
     if (emailError) throw new Error(emailError)
     const cleanPhone = normalizeRegistrationPhone(formData.countryCode, formData.contactNumber)
-    const duplicate = await findDuplicateRegistration(cleanPhone, authEmail)
-    if (duplicate) {
+    // Final safety net in case the per-field blur checks were skipped (e.g.
+    // autofill that never fires blur) -- the authoritative check still lives
+    // server-side in register-member below.
+    const { emailTaken, phoneTaken } = await checkRegistrationContact(authEmail || '', cleanPhone)
+    if (emailTaken || phoneTaken) {
       throw new Error(
         duplicateRegistrationMessage(
-          duplicate,
+          emailTaken ? 'email' : 'phone',
           authEmail,
           formData.countryCode,
           formData.contactNumber

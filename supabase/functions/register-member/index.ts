@@ -208,8 +208,18 @@ serve(async (req: Request) => {
     }
 
     if (emailRes.data?.length || phoneRes.data?.length) {
-      // Prevent member enumeration by returning uniform success message
-      return json(genericSuccess, 200)
+      // Honest duplicate response -- the frontend already has a dedicated
+      // "sign in instead" message for this exact shape (registrationService.ts).
+      // Previously this returned a fake generic-success, which had no regNo and
+      // surfaced downstream as a confusing "Registration number was not
+      // created" error instead of telling the member they already have an
+      // account. Registered-email/phone existence is standard signup UX
+      // (matches virtually every consumer signup form), not a meaningful
+      // enumeration risk worth the broken UX.
+      return json(
+        { success: false, error: 'duplicate', field: emailRes.data?.length ? 'email' : 'phone' },
+        200
+      )
     }
 
     // Create auth user
