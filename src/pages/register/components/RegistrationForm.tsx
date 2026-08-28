@@ -20,6 +20,23 @@ import {
 } from '@/components/admin/RegistrationForm.constants'
 import { EmailSuggestion } from '@/components/EmailSuggestion'
 import { TrustSignals, SIGNUP_TRUST } from '@/components/ui/TrustSignals'
+import { checkEmailTaken, checkPhoneTaken } from '@/services/registrationService'
+
+type DuplicateStatus = 'idle' | 'checking' | 'taken'
+
+function DuplicateWarning({ label }: { label: string }) {
+  return (
+    <p className="text-[11px] font-medium text-destructive mt-1 flex items-center gap-1 animate-in fade-in duration-200">
+      <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
+        error
+      </span>
+      An account with this {label} already exists.{' '}
+      <Link to="/login" className="underline">
+        Sign in instead →
+      </Link>
+    </p>
+  )
+}
 
 interface RegistrationFormProps {
   platform: string
@@ -95,6 +112,38 @@ export function RegistrationForm(props: RegistrationFormProps) {
   const [psCode, setPsCode] = useState(() => formData.pollingStationCode || '')
   const [codeStation, setCodeStation] = useState<string | null>(null)
   const [codeError, setCodeError] = useState(false)
+  const [emailStatus, setEmailStatus] = useState<DuplicateStatus>('idle')
+  const [phoneStatus, setPhoneStatus] = useState<DuplicateStatus>('idle')
+
+  async function handleEmailBlur() {
+    const email = (formData.email || '').trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailStatus('idle')
+      return
+    }
+    setEmailStatus('checking')
+    try {
+      const taken = await checkEmailTaken(email)
+      setEmailStatus(taken ? 'taken' : 'idle')
+    } catch {
+      setEmailStatus('idle')
+    }
+  }
+
+  async function handlePhoneBlur() {
+    const digits = formData.contactNumber.replace(/\D/g, '')
+    if (digits.length < 6) {
+      setPhoneStatus('idle')
+      return
+    }
+    setPhoneStatus('checking')
+    try {
+      const taken = await checkPhoneTaken(formData.countryCode, formData.contactNumber)
+      setPhoneStatus(taken ? 'taken' : 'idle')
+    } catch {
+      setPhoneStatus('idle')
+    }
+  }
 
   const derivedBucket = formData.birthYear ? ageBucket(formData.birthYear) : ''
 
@@ -318,11 +367,15 @@ export function RegistrationForm(props: RegistrationFormProps) {
                     id="input-b6d09f"
                     type="email"
                     value={formData.email || ''}
-                    onChange={(e) => onInputChange('email', e.target.value)}
+                    onChange={(e) => {
+                      onInputChange('email', e.target.value)
+                      setEmailStatus('idle')
+                    }}
+                    onBlur={handleEmailBlur}
                     autoComplete="email"
                     className={cn(
                       'w-full h-[46px] bg-transparent border px-4 text-sm font-medium transition-colors outline-none',
-                      formErrors.email
+                      formErrors.email || emailStatus === 'taken'
                         ? 'border-destructive focus:border-destructive'
                         : 'border-border focus:border-primary'
                     )}
@@ -336,6 +389,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       {formErrors.email}
                     </p>
                   )}
+                  {emailStatus === 'checking' && (
+                    <p className="text-[11px] text-on-surface-muted mt-1">Checking…</p>
+                  )}
+                  {emailStatus === 'taken' && <DuplicateWarning label="email" />}
                   <EmailSuggestion
                     email={formData.email || ''}
                     onAccept={(v) => onInputChange('email', v)}
@@ -779,10 +836,14 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       id="input-fbfe65"
                       required
                       value={formData.contactNumber}
-                      onChange={(e) => onInputChange('contactNumber', e.target.value)}
+                      onChange={(e) => {
+                        onInputChange('contactNumber', e.target.value)
+                        setPhoneStatus('idle')
+                      }}
+                      onBlur={handlePhoneBlur}
                       className={cn(
                         'flex-1 h-[46px] bg-transparent border px-3 text-sm font-medium transition-colors outline-none',
-                        formErrors.contactNumber
+                        formErrors.contactNumber || phoneStatus === 'taken'
                           ? 'border-destructive focus:border-destructive'
                           : 'border-border focus:border-primary'
                       )}
@@ -798,6 +859,10 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       {formErrors.contactNumber}
                     </p>
                   )}
+                  {phoneStatus === 'checking' && (
+                    <p className="text-[11px] text-on-surface-muted mt-1">Checking…</p>
+                  )}
+                  {phoneStatus === 'taken' && <DuplicateWarning label="phone number" />}
                 </div>
 
                 <div className="space-y-1.5">
@@ -1359,6 +1424,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
                 disabled={
                   (formStep === 3 && !agreed) ||
                   (formStep === 4 && !photoUrl) ||
+                  emailStatus === 'taken' ||
+                  phoneStatus === 'taken' ||
                   isLoading ||
                   cooldown > 0
                 }
