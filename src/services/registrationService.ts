@@ -55,6 +55,36 @@ async function findDuplicateRegistration(
   return null
 }
 
+/** Live single-field checks for the registration form (called on blur, before
+ * the user reaches final submit). Same query pattern as findDuplicateRegistration
+ * above, just scoped to one field so each input's check state is independent. */
+export async function checkEmailTaken(email: string): Promise<boolean> {
+  const clean = email.trim()
+  if (!clean) return false
+  const { data, error } = await supabase
+    .from('users')
+    .select('email')
+    .ilike('email', clean)
+    .limit(1)
+  if (error) throw error
+  return !!data?.length
+}
+
+export async function checkPhoneTaken(
+  countryCode: string,
+  contactNumber: string
+): Promise<boolean> {
+  const phone = normalizeRegistrationPhone(countryCode, contactNumber)
+  if (!phone) return false
+  const { data, error } = await supabase
+    .from('users')
+    .select('phone_number')
+    .eq('phone_number', phone)
+    .limit(1)
+  if (error) throw error
+  return !!data?.length
+}
+
 export interface SubmitConfig {
   platform: string
   formData: RegistrationFormData
