@@ -97,6 +97,7 @@ export default function Login() {
     const trimmed = email.trim()
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
     const isPhone = /^\+?[\d\s()-]+$/.test(trimmed) && trimmed.replace(/\D/g, '').length >= 7
+    const isRegNo = /^TBM-[A-Z]{2}-\d+$/i.test(trimmed)
     if (!isEmail && isPhone) {
       const phoneErr = validatePhone(trimmed)
       if (phoneErr) {
@@ -104,8 +105,8 @@ export default function Login() {
         return
       }
     }
-    if (!isEmail && !isPhone) {
-      toast.error('Please enter a valid email or phone number.')
+    if (!isEmail && !isPhone && !isRegNo) {
+      toast.error('Please enter a valid email, phone number, or registration number.')
       return
     }
     setIsLoading(true)
