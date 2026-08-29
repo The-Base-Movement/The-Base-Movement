@@ -24,7 +24,8 @@ function ageBucketForBirthYear(birthYear?: string): string {
   const y = parseInt(birthYear || '', 10)
   if (!y) return ''
   const age = new Date().getFullYear() - y
-  if (age <= 25) return '16-25'
+  if (age <= 17) return '14-17'
+  if (age <= 25) return '18-25'
   if (age <= 35) return '26-35'
   if (age <= 45) return '36-45'
   if (age <= 60) return '46-60'

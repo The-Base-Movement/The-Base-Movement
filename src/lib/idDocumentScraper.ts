@@ -377,9 +377,9 @@ export function validateScrapedData(data: ScrapedIDData): {
     errors.push('ID document has expired')
   }
 
-  // Validate age (registrants should be 16+)
-  if (data.age && data.age < 16) {
-    errors.push('Applicant must be 16 years or older')
+  // Validate age (registrants should be 14+)
+  if (data.age && data.age < 14) {
+    errors.push('Applicant must be 14 years or older')
   }
 
   return {

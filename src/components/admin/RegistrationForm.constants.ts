@@ -5,7 +5,7 @@
  * and formal educational levels, matching dropdown options in the membership form.
  */
 
-export const ageRanges = ['16-25', '26-35', '36-45', '46-60', '60+']
+export const ageRanges = ['14-17', '18-25', '26-35', '36-45', '46-60', '60+']
 
 // Optional dropdown; free-form intentionally avoided to keep the data clean.
 export const religions = ['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']
