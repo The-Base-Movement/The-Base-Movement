@@ -124,11 +124,12 @@ function extractGender(text: string): string | null {
 }
 
 function extractAgeRange(text: string): string | null {
-  // Match both the current printed range and the older '18-25' stock still in
-  // circulation on previously-printed physical forms; both map to '16-25'.
+  // Match both the current printed ranges and the older '16-25' stock still in
+  // circulation on previously-printed physical forms; the legacy bucket maps to '18-25'.
   const ranges: [string, string][] = [
-    ['16-25', '16-25'],
-    ['18-25', '16-25'],
+    ['14-17', '14-17'],
+    ['18-25', '18-25'],
+    ['16-25', '18-25'],
     ['26-35', '26-35'],
     ['36-45', '36-45'],
     ['46-60', '46-60'],

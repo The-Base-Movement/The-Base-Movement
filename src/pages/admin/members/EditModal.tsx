@@ -74,10 +74,11 @@ const sectionHeadingStyle: CSSProperties = {
 }
 
 // display-only bucket; DB trigger is the source of truth on save.
-// Buckets per contract: <=25→16-25, <=35→26-35, <=45→36-45, <=60→46-60, else 60+.
+// Buckets per contract: <=17→14-17, <=25→18-25, <=35→26-35, <=45→36-45, <=60→46-60, else 60+.
 function ageBucket(birthYear: number): string {
   const age = new Date().getFullYear() - birthYear
-  if (age <= 25) return '16-25'
+  if (age <= 17) return '14-17'
+  if (age <= 25) return '18-25'
   if (age <= 35) return '26-35'
   if (age <= 45) return '36-45'
   if (age <= 60) return '46-60'

@@ -60,7 +60,7 @@ Extract every legible field value and return a single JSON object.
 Rules:
 - Use null for any field that is blank, illegible, or not present on this form type.
 - For gender: use exactly one of "Male", "Female", "Other".
-- For ageRange: use exactly one of "16-25", "26-35", "36-45", "46-60", "60+".
+- For ageRange: use exactly one of "14-17", "18-25", "26-35", "36-45", "46-60", "60+".
 - For region (Ghana forms): match to one of these 16 regions exactly — Greater Accra, Ashanti, Western, Central, Eastern, Volta, Northern, Upper East, Upper West, Brong-Ahafo, Savannah, Bono East, Ahafo, Western North, Oti, North East.
 - For educationLevel: use one of "Basic", "Secondary", "Tertiary", "Postgraduate".
 - For platform: "GHANA" or "DIASPORA".

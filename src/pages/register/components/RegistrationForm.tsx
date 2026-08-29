@@ -70,7 +70,8 @@ function ageBucket(birthYear: string): string {
   const y = parseInt(birthYear, 10)
   if (!y) return ''
   const age = new Date().getFullYear() - y
-  if (age <= 25) return '16-25'
+  if (age <= 17) return '14-17'
+  if (age <= 25) return '18-25'
   if (age <= 35) return '26-35'
   if (age <= 45) return '36-45'
   if (age <= 60) return '46-60'
@@ -946,7 +947,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       id="input-birth-year"
                       type="number"
                       min={1900}
-                      max={new Date().getFullYear() - 16}
+                      max={new Date().getFullYear() - 14}
                       value={formData.birthYear || ''}
                       onChange={(e) => onInputChange('birthYear', e.target.value)}
                       autoComplete="bday-year"
@@ -979,7 +980,8 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       )}
                     >
                       <option value="">Select</option>
-                      <option value="16-25">16 – 25</option>
+                      <option value="14-17">14 – 17</option>
+                      <option value="18-25">18 – 25</option>
                       <option value="26-35">26 – 35</option>
                       <option value="36-45">36 – 45</option>
                       <option value="46-60">46 – 60</option>
