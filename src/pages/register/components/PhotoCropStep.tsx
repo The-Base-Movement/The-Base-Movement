@@ -77,7 +77,7 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
               add_a_photo
             </span>
             <span className="text-[11px] text-center px-4">
-              Add a clear photo of your face — take a selfie now or upload one
+              Add a clear photo of your face, take a selfie now or upload one
             </span>
           </div>
           <div className="flex w-full gap-2">
@@ -201,7 +201,7 @@ export function PhotoCropStep({ photoUrl, onPhotoChange, onCropComplete }: Photo
       )}
 
       <p className="text-[11px] text-on-surface-muted leading-relaxed m-0">
-        Drag to position and pinch or use the slider to zoom — the framed area is exactly what
+        Drag to position and pinch or use the slider to zoom, the framed area is exactly what
         appears on your official membership card. A photo is required to print your card.
       </p>
     </div>

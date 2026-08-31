@@ -13,21 +13,21 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)+/g, '')
 
-/** Location extracted from a stored name, e.g. 'TBM Belgium Chapter' or 'Base Diaspora — Belgium' → 'Belgium'. */
+/** Location extracted from a stored name, e.g. 'TBM Belgium Chapter' or 'Base Diaspora, Belgium' → 'Belgium'. */
 export function diasporaLocation(rawName: string): string {
   return (
     rawName
-      .replace(/^Base Diaspora\s*[—–-]\s*/i, '')
+      .replace(/^Base Diaspora\s*[—–,-]\s*/i, '')
       .replace(/^TBM\s+/i, '')
       .replace(/\s+Chapter$/i, '')
       .trim() || rawName
   )
 }
 
-/** Formal branded label: 'TBM Belgium Chapter' → 'Base Diaspora — Belgium'. */
+/** Formal branded label: 'TBM Belgium Chapter' → 'Base Diaspora, Belgium'. */
 export function diasporaName(rawName: string): string {
   if (/base diaspora/i.test(rawName)) return rawName
-  return `Base Diaspora — ${diasporaLocation(rawName)}`
+  return `Base Diaspora, ${diasporaLocation(rawName)}`
 }
 
 /** Compact label for tight spaces: 'TBM Belgium Chapter' → 'Belgium Diaspora'. */

@@ -193,7 +193,7 @@ export default function FinancialAudit() {
     )
     if (success) {
       toast.success(
-        action === 'Verified' ? `${name} — contribution approved.` : `${name} — flagged for review.`
+        action === 'Verified' ? `${name}, contribution approved.` : `${name}, flagged for review.`
       )
       if (action === 'Verified') {
         donationService.sendReceipt(donationId)
@@ -216,7 +216,7 @@ export default function FinancialAudit() {
         await donationService.updateVerificationNotes(donationId, internalNote)
       }
       await donationService.markRefunded(donationId)
-      toast.success(`${name} — refund initiated.`)
+      toast.success(`${name}, refund initiated.`)
       setSelectedDonation(null)
       fetchData(true)
     } catch {
@@ -870,7 +870,7 @@ export default function FinancialAudit() {
               fontFamily: "'Public Sans', sans-serif",
             }}
           >
-            — {filteredDonations.length} result{filteredDonations.length !== 1 ? 's' : ''}
+            {filteredDonations.length} result{filteredDonations.length !== 1 ? 's' : ''}
           </span>
         </div>
       )}

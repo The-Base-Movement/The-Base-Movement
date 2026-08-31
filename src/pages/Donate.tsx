@@ -360,7 +360,7 @@ export default function PublicDonate() {
           <DonateNotice
             icon="pause_circle"
             title="Donations are paused"
-            message="We are not accepting contributions at the moment. Please check back soon — thank you for your support."
+            message="We are not accepting contributions at the moment. Please check back soon, thank you for your support."
           />
         ) : !isLoggedIn && !donationFlags.guest ? (
           <DonateNotice

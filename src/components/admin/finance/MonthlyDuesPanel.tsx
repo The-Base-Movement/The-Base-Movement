@@ -55,6 +55,7 @@ export default function MonthlyDuesPanel() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
     void load()
   }, [load])
 
@@ -457,7 +458,7 @@ export default function MonthlyDuesPanel() {
             onClick={(e) => e.stopPropagation()}
           >
             <h3 style={{ margin: '0 0 10px', fontSize: 13, fontFamily: FONT }}>
-              Consent history — {consentMemberName}
+              Consent history, {consentMemberName}
             </h3>
             {consentHistory.length === 0 ? (
               <p

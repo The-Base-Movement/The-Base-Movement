@@ -352,7 +352,7 @@ export default function DonateModal({ isOpen, onClose, context }: DonateModalPro
                     required: true,
                   },
                   email: {
-                    label: 'Email (optional — receipt)',
+                    label: 'Email (optional, receipt)',
                     type: 'email',
                     placeholder: 'you@example.com',
                     required: false,

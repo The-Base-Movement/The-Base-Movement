@@ -680,7 +680,7 @@ export default function DepartmentDashboard() {
                 marginBottom: 18,
               }}
             >
-              <option value="">— No lead —</option>
+              <option value="">No lead</option>
               {adminOptions.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.full_name} ({a.role})
@@ -759,7 +759,7 @@ export default function DepartmentDashboard() {
                 marginBottom: 18,
               }}
             >
-              <option value="">— Select administrator —</option>
+              <option value="">Select administrator</option>
               {adminOptions.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.full_name} ({a.role})

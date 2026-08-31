@@ -29,7 +29,7 @@ export default function CharitableWorks() {
     <main style={{ background: 'hsl(var(--background))', minHeight: '100vh' }}>
       <SEO
         title="Our Charitable Work"
-        description="The community and charitable work of The Base Movement across Ghana and the diaspora — projects, outreach, and the people we serve."
+        description="The community and charitable work of The Base Movement across Ghana and the diaspora, projects, outreach, and the people we serve."
         canonical="/impact"
       />
 

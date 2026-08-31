@@ -506,7 +506,7 @@ export function MembershipFormBody({
               <FieldLine label="District" hint="e.g. Ayawaso West Municipal" />
               <FieldLine
                 label="Polling Station Code / Name"
-                hint="e.g. C090201 — Bawaleshie Primary School"
+                hint="e.g. C090201, Bawaleshie Primary School"
               />
             </div>
           </>

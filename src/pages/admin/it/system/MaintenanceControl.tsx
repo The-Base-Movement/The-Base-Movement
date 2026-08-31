@@ -46,8 +46,8 @@ export function MaintenanceControl() {
       window.dispatchEvent(new Event('site_settings_updated'))
       toast.success(
         next.enabled
-          ? 'Maintenance mode is ON — the public site is now offline'
-          : 'Maintenance mode is OFF — the public site is live'
+          ? 'Maintenance mode is ON, the public site is now offline'
+          : 'Maintenance mode is OFF, the public site is live'
       )
     } catch {
       toast.error('Failed to update maintenance mode')

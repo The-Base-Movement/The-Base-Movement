@@ -168,7 +168,7 @@ export default function FinanceRequests() {
   const chapter = useMemo(() => {
     if (scope === 'chapter') return selectedChapter
     if (!selectedRegion) return ''
-    if (selectedConstituency) return `${selectedRegion} — ${selectedConstituency}`
+    if (selectedConstituency) return `${selectedRegion}, ${selectedConstituency}`
     return selectedRegion
   }, [scope, selectedRegion, selectedConstituency, selectedChapter])
 

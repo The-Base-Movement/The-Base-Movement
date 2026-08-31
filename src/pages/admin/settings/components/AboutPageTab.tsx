@@ -62,12 +62,12 @@ const sectionHeadSt: React.CSSProperties = {
 }
 
 const PILLARS = [
-  { key: 'about_pillar_mission', label: 'Our Mission', hint: 'Left column — pillar 1' },
-  { key: 'about_pillar_vision', label: 'Our Vision', hint: 'Left column — pillar 2' },
-  { key: 'about_pillar_values', label: 'Our Values', hint: 'Left column — pillar 3' },
-  { key: 'about_pillar_leadership', label: 'Leadership', hint: 'Right column — pillar 1' },
-  { key: 'about_pillar_ghana_network', label: 'Ghana Network', hint: 'Right column — pillar 2' },
-  { key: 'about_pillar_diaspora', label: 'Diaspora Network', hint: 'Right column — pillar 3' },
+  { key: 'about_pillar_mission', label: 'Our Mission', hint: 'Left column, pillar 1' },
+  { key: 'about_pillar_vision', label: 'Our Vision', hint: 'Left column, pillar 2' },
+  { key: 'about_pillar_values', label: 'Our Values', hint: 'Left column, pillar 3' },
+  { key: 'about_pillar_leadership', label: 'Leadership', hint: 'Right column, pillar 1' },
+  { key: 'about_pillar_ghana_network', label: 'Ghana Network', hint: 'Right column, pillar 2' },
+  { key: 'about_pillar_diaspora', label: 'Diaspora Network', hint: 'Right column, pillar 3' },
 ]
 
 export function AboutPageTab({

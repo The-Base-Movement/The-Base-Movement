@@ -43,7 +43,7 @@ export function CardTab({ member, cardRef, onPrint, onDownload }: CardTabProps) 
           onClick={onPrint}
           disabled={!member.avatarUrl}
           title={
-            !member.avatarUrl ? 'Member has no profile photo — card cannot be printed' : undefined
+            !member.avatarUrl ? 'Member has no profile photo, card cannot be printed' : undefined
           }
           style={{
             opacity: member.avatarUrl ? 1 : 0.4,
@@ -60,9 +60,7 @@ export function CardTab({ member, cardRef, onPrint, onDownload }: CardTabProps) 
           onClick={onDownload}
           disabled={!member.avatarUrl}
           title={
-            !member.avatarUrl
-              ? 'Member has no profile photo — card cannot be downloaded'
-              : undefined
+            !member.avatarUrl ? 'Member has no profile photo, card cannot be downloaded' : undefined
           }
           style={{
             opacity: member.avatarUrl ? 1 : 0.4,

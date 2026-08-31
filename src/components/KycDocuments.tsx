@@ -25,8 +25,8 @@ interface KycDocumentsProps {
 }
 
 const DOCS: { kind: KycDocKind; label: string }[] = [
-  { kind: 'front', label: 'Ghana Card — front' },
-  { kind: 'back', label: 'Ghana Card — back' },
+  { kind: 'front', label: 'Ghana Card, front' },
+  { kind: 'back', label: 'Ghana Card, back' },
   { kind: 'selfie', label: 'Selfie' },
 ]
 

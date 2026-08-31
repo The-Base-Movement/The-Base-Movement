@@ -203,7 +203,7 @@ export default function ImportSync() {
             >
               sync
             </span>
-            No sync runs yet — they appear here after the next bulk import
+            No sync runs yet, they appear here after the next bulk import
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -312,7 +312,7 @@ export default function ImportSync() {
                 Duplicate Members
               </h2>
               <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-                High-confidence — members sharing the same phone or email
+                High-confidence, members sharing the same phone or email
               </p>
             </div>
           </div>

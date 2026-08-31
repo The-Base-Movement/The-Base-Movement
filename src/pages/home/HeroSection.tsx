@@ -32,10 +32,7 @@ function HeroUpdatesSlider({ latestPosts }: { latestPosts: BlogPost[] }) {
   const post = updates[currentIndex]
 
   return (
-    <div
-      className="w-full max-w-[320px] md:max-w-[360px]"
-      aria-label="Latest movement updates"
-    >
+    <div className="w-full max-w-[320px] md:max-w-[360px]" aria-label="Latest movement updates">
       {updates.length === 0 || !post ? (
         <Link
           to="/blog"
@@ -235,7 +232,7 @@ export function HeroSection({
             A grassroots movement for youth jobs, accountable leadership, and national development.
           </p>
           <p className="text-white/70 text-xs md:text-sm font-meta font-medium tracking-tight max-w-xl mb-3">
-            Where you live decides how you join — by constituency in Ghana, or by country abroad.
+            Where you live decides how you join, by constituency in Ghana, or by country abroad.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center md:justify-start">
             <Link

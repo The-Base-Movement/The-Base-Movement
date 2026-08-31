@@ -518,7 +518,7 @@ export default function JobDetail() {
   return (
     <div className={isDashboard ? 'main' : undefined} style={wrapStyle}>
       <SEO
-        title={`${job.title} — ${job.organization}`}
+        title={`${job.title}, ${job.organization}`}
         description={`${job.title} at ${job.organization}. ${job.description.slice(0, 150)}...`}
         keywords={`${job.title}, ${job.organization}, jobs in ghana, ${job.category} jobs ghana, youth employment ghana, ${job.location || 'Accra'} jobs`}
         jsonLd={{

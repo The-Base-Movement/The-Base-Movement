@@ -203,7 +203,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
       onInputChange('constituency', found.constituency)
       onInputChange('district', found.district)
       onInputChange('pollingStationCode', found.code)
-      setPsSearch(`${found.code} — ${found.name}`)
+      setPsSearch(`${found.code}, ${found.name}`)
       setCodeStation(found.name)
       setCodeError(false)
     } else {
@@ -679,7 +679,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                                 type="button"
                                 onClick={() => {
                                   onInputChange('pollingStationCode', s.code)
-                                  setPsSearch(`${s.code} — ${s.name}`)
+                                  setPsSearch(`${s.code}, ${s.name}`)
                                 }}
                                 className="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-border/50 transition-colors block text-xs"
                                 style={{
@@ -1148,7 +1148,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                               <span className="material-symbols-outlined" style={{ fontSize: 13 }}>
                                 check_circle
                               </span>
-                              Strong password — excellent security for your account
+                              Strong password, excellent security for your account
                             </span>
                           ) : criteriaMetCount >= 3 ? (
                             <span className="text-brand-gold">

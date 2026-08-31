@@ -10,8 +10,8 @@ const FONT = "'Public Sans', sans-serif"
 const PAGE_SIZE = 20
 
 const SOURCE_LABELS: Record<RoyaltyPointsSource, string> = {
-  referral_registration: 'Referral — registration',
-  referral_verification: 'Referral — verification',
+  referral_registration: 'Referral, registration',
+  referral_verification: 'Referral, verification',
   store_purchase: 'Store purchase',
   monthly_dues: 'Monthly dues',
   donation: 'Donation',

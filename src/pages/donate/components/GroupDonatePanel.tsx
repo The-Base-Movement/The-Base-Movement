@@ -245,7 +245,7 @@ export function GroupDonatePanel({
       </div>
 
       <label style={labelStyle}>
-        Member list — one line per member: registration number, then amount in {currency.code}
+        Member list, one line per member: registration number, then amount in {currency.code}
       </label>
       <textarea
         value={pasteText}

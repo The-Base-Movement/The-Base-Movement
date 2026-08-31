@@ -40,7 +40,7 @@ export function AchievementsAndLeaderboard({
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
               emoji_events
             </span>
-            Regional compatriots — {region || 'National'}
+            Regional compatriots, {region || 'National'}
           </h3>
           <span
             style={{

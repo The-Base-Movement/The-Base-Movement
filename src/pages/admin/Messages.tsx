@@ -141,7 +141,7 @@ export default function AdminMessages() {
       setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]))
     } else {
       const { toast } = await import('sonner')
-      toast.error('Message not sent — try again')
+      toast.error('Message not sent, try again')
     }
     setSending(false)
   }

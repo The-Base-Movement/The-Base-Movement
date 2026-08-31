@@ -340,7 +340,7 @@ export function ChatBubble({
                 key={r.emoji}
                 onClick={onViewReactions}
                 disabled={!onViewReactions}
-                aria-label={`${r.emoji} ${r.count} — see who reacted`}
+                aria-label={`${r.emoji} ${r.count}, see who reacted`}
                 title="See who reacted"
                 style={{
                   display: 'inline-flex',

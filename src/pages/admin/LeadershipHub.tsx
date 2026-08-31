@@ -232,7 +232,7 @@ export default function LeadershipHub() {
         fetchApplications(true)
         fetchAllLeaders()
       } else {
-        toast.error('Appointment failed — chapter may not have write permission')
+        toast.error('Appointment failed, chapter may not have write permission')
       }
     } catch (err) {
       console.error('[APPOINT] Error:', err)

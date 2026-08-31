@@ -154,7 +154,7 @@ export function EngagementBanner({ onOpenAnalytics, onOpenFeedback }: Engagement
                   margin: 0,
                 }}
               >
-                — {quote.category} feedback
+                {quote.category} feedback
               </p>
             </>
           ) : (

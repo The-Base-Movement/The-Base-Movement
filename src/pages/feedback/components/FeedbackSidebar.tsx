@@ -256,7 +256,7 @@ export function FeedbackSidebar({ sentiment }: FeedbackSidebarProps) {
         </div>
         <div style={{ padding: '4px 0 10px' }}>
           {[
-            'Be specific — vague feedback is hard to action',
+            'Be specific, vague feedback is hard to action',
             'Focus on one issue per submission',
             'Avoid personal attacks on individuals',
             'Include your constituency context where relevant',

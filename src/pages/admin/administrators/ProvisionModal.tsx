@@ -364,7 +364,7 @@ export function ProvisionModal({
                   fontFamily: "'Public Sans', sans-serif",
                 }}
               >
-                This member registered with a phone number. Admin sign-in requires an email — it
+                This member registered with a phone number. Admin sign-in requires an email, it
                 becomes their login for the admin panel (password unchanged). Phone login keeps
                 working on the member side.
               </p>
@@ -441,7 +441,7 @@ export function ProvisionModal({
                 onChange={(e) => setProvisionRegion(e.target.value)}
                 style={selectSt}
               >
-                <option value="">— Select region —</option>
+                <option value="">Select region</option>
                 {regions.map((r) => (
                   <option key={r} value={r}>
                     {r}

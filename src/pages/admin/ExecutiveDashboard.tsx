@@ -65,7 +65,7 @@ export default function ExecutiveDashboard() {
       <AdminPageHeader
         title="Executive Dashboard"
         icon="corporate_fare"
-        description="Senior party oversight — fund requests, approvals and key operational access."
+        description="Senior party oversight, fund requests, approvals and key operational access."
       />
 
       {/* Fund request KPIs */}

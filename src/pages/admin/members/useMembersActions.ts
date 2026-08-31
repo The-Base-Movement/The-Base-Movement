@@ -76,7 +76,7 @@ export function useMembersActions(
     if (member) {
       const missing = getMissingRequiredFields(member)
       if (missing.length > 0) {
-        toast.error(`Cannot approve — missing: ${missing.join(', ')}`)
+        toast.error(`Cannot approve, missing: ${missing.join(', ')}`)
         return
       }
       setVerifyingMembers([member])
@@ -187,7 +187,7 @@ export function useMembersActions(
           phone: data.contactNumber,
         })
         if (acct.created > 0) {
-          toast.success(`${data.fullName} added — login created and credentials sent.`)
+          toast.success(`${data.fullName} added, login created and credentials sent.`)
         } else if (acct.skipped > 0) {
           toast.success(`${data.fullName} added. A login for this email/phone already existed.`)
         } else {

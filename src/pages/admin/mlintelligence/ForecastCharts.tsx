@@ -56,7 +56,7 @@ export default function ForecastCharts({ forecast }: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 20 }}>
       <div className="panel" style={{ padding: '16px 18px' }}>
-        <p style={labelStyle}>Membership Growth Projection — Top 6 Regions</p>
+        <p style={labelStyle}>Membership Growth Projection, Top 6 Regions</p>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={chartData} margin={{ left: 10, right: 20, top: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />

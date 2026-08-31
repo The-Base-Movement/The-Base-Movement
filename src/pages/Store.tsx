@@ -271,7 +271,7 @@ export default function Store() {
               <EmptyState
                 icon="storefront"
                 title="Our store is launching soon"
-                body="We're preparing official movement gear — 100% of proceeds go to youth jobs programs. Check back shortly, or join the movement to be first to know."
+                body="We're preparing official movement gear, 100% of proceeds go to youth jobs programs. Check back shortly, or join the movement to be first to know."
                 bordered
                 action={
                   <Link to="/register" className="btn btn-primary btn-sm">

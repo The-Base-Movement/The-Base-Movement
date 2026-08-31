@@ -177,7 +177,7 @@ export default function LeadersAuth() {
               Registered devices
             </h3>
             <p style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              Three device slots per leader — laptop, tablet and mobile.
+              Three device slots per leader, laptop, tablet and mobile.
             </p>
           </div>
         </div>
@@ -292,7 +292,7 @@ export default function LeadersAuth() {
                               color: 'hsl(var(--on-surface-muted))',
                             }}
                           >
-                            Empty — captured on first login from this device type.
+                            Empty, captured on first login from this device type.
                           </p>
                         )}
                       </div>

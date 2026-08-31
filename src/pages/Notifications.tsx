@@ -374,7 +374,7 @@ export default function Notifications() {
                 <p
                   style={{ margin: '2px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}
                 >
-                  {openItem.type} — {formatDate(openItem.created_at)}
+                  {openItem.type}, {formatDate(openItem.created_at)}
                 </p>
               </div>
               <button

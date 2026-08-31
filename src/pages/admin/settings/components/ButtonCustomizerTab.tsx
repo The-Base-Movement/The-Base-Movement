@@ -333,7 +333,7 @@ export function ButtonCustomizerTab({
                 margin: 0,
               }}
             >
-              Always white — ensures readable contrast on any active tab background color.
+              Always white, ensures readable contrast on any active tab background color.
             </p>
           </div>
 

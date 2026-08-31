@@ -139,7 +139,7 @@ export function PasswordRequirementsChecklist({ password }: { password: string }
         }}
       >
         {criteriaMetCount === 5
-          ? 'Strong password — excellent security for your account'
+          ? 'Strong password, excellent security for your account'
           : criteriaMetCount >= 3
             ? `Moderate password strength (${criteriaMetCount}/5 requirements met)`
             : `Password requirements (${criteriaMetCount}/5 met):`}

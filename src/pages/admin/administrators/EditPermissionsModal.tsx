@@ -256,7 +256,7 @@ export function EditPermissionsModal({
                 onChange={(e) => setEditRegion(e.target.value)}
                 style={selectSt}
               >
-                <option value="">— None —</option>
+                <option value="">None</option>
                 {regions.map((r) => (
                   <option key={r} value={r}>
                     {r}

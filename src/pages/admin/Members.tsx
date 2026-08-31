@@ -27,7 +27,7 @@ export default function MembersList() {
     try {
       const { total } = await memberService.syncResendBulk()
       setSyncResult(
-        `✓ ${(total ?? 0).toLocaleString()} contacts sent to Resend. The import runs on their side — check Resend for progress.`
+        `✓ ${(total ?? 0).toLocaleString()} contacts sent to Resend. The import runs on their side, check Resend for progress.`
       )
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)

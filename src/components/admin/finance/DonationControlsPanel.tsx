@@ -19,7 +19,7 @@ const FLAGS: { key: FlagKey; label: string; desc: string; master?: boolean }[] =
   {
     key: 'donations_enabled',
     label: 'All donations',
-    desc: 'Master switch — when off, the public donate page is paused entirely.',
+    desc: 'Master switch, when off, the public donate page is paused entirely.',
     master: true,
   },
   {
@@ -121,7 +121,7 @@ export function DonationControlsPanel() {
           <p style={{ margin: 0, fontSize: 11, color: 'rgba(255,255,255,0.8)' }}>
             {canEdit
               ? 'Control what the public donate page accepts'
-              : 'View only — you cannot change these'}
+              : 'View only, you cannot change these'}
           </p>
         </div>
       </div>
@@ -147,7 +147,7 @@ export function DonationControlsPanel() {
               pause_circle
             </span>
             <span style={{ fontSize: 12, color: 'hsl(var(--destructive))' }}>
-              Donations are paused — the public donate page is closed to all contributions.
+              Donations are paused, the public donate page is closed to all contributions.
             </span>
           </div>
         )}

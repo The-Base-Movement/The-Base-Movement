@@ -28,6 +28,7 @@ export default function AppDownload() {
   useEffect(() => {
     // Detect if already running in standalone mode (installed PWA)
     if (window.matchMedia('(display-mode: standalone)').matches) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reading a platform API on mount, not derived state
       setIsInstalled(true)
     }
 
@@ -82,7 +83,15 @@ export default function AppDownload() {
       <div style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 40px' }}>
         <span
           className="pill pill-ok"
-          style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 12 }}
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            padding: '4px 12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            marginBottom: 12,
+          }}
         >
           <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
             phonelink
@@ -104,8 +113,16 @@ export default function AppDownload() {
         <div style={{ display: 'flex', justifyContent: 'center', margin: '0 auto 16px' }}>
           <BrandLine />
         </div>
-        <p style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, margin: 0 }}>
-          Access your digital membership card, youth job listings, constituency networks, and movement updates instantly — no App Store or Play Store account required.
+        <p
+          style={{
+            fontSize: 15,
+            color: 'hsl(var(--on-surface-muted))',
+            lineHeight: 1.6,
+            margin: 0,
+          }}
+        >
+          Access your digital membership card, youth job listings, constituency networks, and
+          movement updates instantly, no App Store or Play Store account required.
         </p>
 
         {/* Native Install Action Button if browser supports beforeinstallprompt */}
@@ -206,22 +223,50 @@ export default function AppDownload() {
         {/* Tab Content: Android Instructions */}
         {activeTab === 'android' && (
           <div className="panel" style={{ padding: '24px 28px' }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: 'hsl(var(--on-surface))' }}>
+            <h3
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                margin: '0 0 16px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               How to Install on Android Devices
             </h3>
 
-            <ol style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 16, fontSize: 14, color: 'hsl(var(--on-surface))', lineHeight: 1.6 }}>
+            <ol
+              style={{
+                paddingLeft: 20,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+                lineHeight: 1.6,
+              }}
+            >
               <li>
-                Open <strong>Google Chrome</strong> or <strong>Samsung Internet</strong> on your Android phone or tablet.
+                Open <strong>Google Chrome</strong> or <strong>Samsung Internet</strong> on your
+                Android phone or tablet.
               </li>
               <li>
-                Navigate to <strong>thebasemovement.org.gh</strong> (or tap the 3 dots menu <span className="material-symbols-outlined" style={{ fontSize: 16, verticalAlign: 'middle' }}>more_vert</span> at the top right).
+                Navigate to <strong>thebasemovement.org.gh</strong> (or tap the 3 dots menu{' '}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 16, verticalAlign: 'middle' }}
+                >
+                  more_vert
+                </span>{' '}
+                at the top right).
               </li>
               <li>
-                Select <strong>&quot;Install app&quot;</strong> or <strong>&quot;Add to Home screen&quot;</strong>.
+                Select <strong>&quot;Install app&quot;</strong> or{' '}
+                <strong>&quot;Add to Home screen&quot;</strong>.
               </li>
               <li>
-                Tap <strong>&quot;Install&quot;</strong> in the pop-up prompt. The Base Movement icon will appear directly on your app drawer and home screen.
+                Tap <strong>&quot;Install&quot;</strong> in the pop-up prompt. The Base Movement
+                icon will appear directly on your app drawer and home screen.
               </li>
             </ol>
 
@@ -235,7 +280,8 @@ export default function AppDownload() {
                 color: 'hsl(var(--on-surface-muted))',
               }}
             >
-              💡 <strong>Tip:</strong> The app takes zero storage space and updates automatically whenever new features or jobs are posted.
+              💡 <strong>Tip:</strong> The app takes zero storage space and updates automatically
+              whenever new features or jobs are posted.
             </div>
           </div>
         )}
@@ -243,22 +289,56 @@ export default function AppDownload() {
         {/* Tab Content: iOS Safari Instructions */}
         {activeTab === 'ios' && (
           <div className="panel" style={{ padding: '24px 28px' }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: 'hsl(var(--on-surface))' }}>
+            <h3
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                margin: '0 0 16px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               How to Install on iPhone &amp; iPad (iOS)
             </h3>
 
-            <ol style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 16, fontSize: 14, color: 'hsl(var(--on-surface))', lineHeight: 1.6 }}>
+            <ol
+              style={{
+                paddingLeft: 20,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+                lineHeight: 1.6,
+              }}
+            >
               <li>
-                Open <strong>Safari Browser</strong> on your iPhone or iPad (must use Safari for iOS installation).
+                Open <strong>Safari Browser</strong> on your iPhone or iPad (must use Safari for iOS
+                installation).
               </li>
               <li>
-                Tap the <strong>Share button</strong> <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle', color: 'hsl(var(--primary))' }}>ios_share</span> in the bottom toolbar.
+                Tap the <strong>Share button</strong>{' '}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, verticalAlign: 'middle', color: 'hsl(var(--primary))' }}
+                >
+                  ios_share
+                </span>{' '}
+                in the bottom toolbar.
               </li>
               <li>
-                Scroll down the action list and tap <strong>&quot;Add to Home Screen&quot;</strong> <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>add_box</span>.
+                Scroll down the action list and tap <strong>&quot;Add to Home Screen&quot;</strong>{' '}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, verticalAlign: 'middle' }}
+                >
+                  add_box
+                </span>
+                .
               </li>
               <li>
-                Tap <strong>&quot;Add&quot;</strong> in the top right corner. You can now launch The Base Movement directly from your home screen like any native app.
+                Tap <strong>&quot;Add&quot;</strong> in the top right corner. You can now launch The
+                Base Movement directly from your home screen like any native app.
               </li>
             </ol>
 
@@ -276,7 +356,8 @@ export default function AppDownload() {
                 <AppleIcon size={16} />
                 <strong style={{ color: 'hsl(var(--on-surface))' }}>Note for iOS users:</strong>
               </div>
-              Safari is required to create the home screen shortcut on iOS. Once installed, it launches full-screen without address bars.
+              Safari is required to create the home screen shortcut on iOS. Once installed, it
+              launches full-screen without address bars.
             </div>
           </div>
         )}
@@ -284,22 +365,51 @@ export default function AppDownload() {
         {/* Tab Content: Desktop Instructions */}
         {activeTab === 'desktop' && (
           <div className="panel" style={{ padding: '24px 28px' }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: 'hsl(var(--on-surface))' }}>
+            <h3
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                margin: '0 0 16px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               How to Install on Laptop &amp; Desktop (Windows, Mac, Linux)
             </h3>
 
-            <ol style={{ paddingLeft: 20, margin: 0, display: 'flex', flexDirection: 'column', gap: 16, fontSize: 14, color: 'hsl(var(--on-surface))', lineHeight: 1.6 }}>
+            <ol
+              style={{
+                paddingLeft: 20,
+                margin: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                fontSize: 14,
+                color: 'hsl(var(--on-surface))',
+                lineHeight: 1.6,
+              }}
+            >
               <li>
-                Open <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong>, or <strong>Brave</strong> on your desktop.
+                Open <strong>Google Chrome</strong>, <strong>Microsoft Edge</strong>, or{' '}
+                <strong>Brave</strong> on your desktop.
               </li>
               <li>
-                Look at the right side of the address bar at the top of your screen for the <strong>Install Icon</strong> <span className="material-symbols-outlined" style={{ fontSize: 18, verticalAlign: 'middle' }}>install_desktop</span>.
+                Look at the right side of the address bar at the top of your screen for the{' '}
+                <strong>Install Icon</strong>{' '}
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, verticalAlign: 'middle' }}
+                >
+                  install_desktop
+                </span>
+                .
               </li>
               <li>
-                Click the install icon, then click <strong>&quot;Install&quot;</strong> in the confirmation box.
+                Click the install icon, then click <strong>&quot;Install&quot;</strong> in the
+                confirmation box.
               </li>
               <li>
-                The Base Movement app will now launch as a dedicated desktop application with taskbar &amp; dock integration.
+                The Base Movement app will now launch as a dedicated desktop application with
+                taskbar &amp; dock integration.
               </li>
             </ol>
           </div>
@@ -315,38 +425,92 @@ export default function AppDownload() {
           }}
         >
           <div className="panel" style={{ padding: 20 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--primary))', marginBottom: 8 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 28, color: 'hsl(var(--primary))', marginBottom: 8 }}
+            >
               bolt
             </span>
-            <h4 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px', color: 'hsl(var(--on-surface))' }}>
+            <h4
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                margin: '0 0 6px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               Instant &amp; Lightweight
             </h4>
-            <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0, lineHeight: 1.5 }}>
-              No massive 100MB downloads. Loads in milliseconds and updates seamlessly in the background.
+            <p
+              style={{
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                margin: 0,
+                lineHeight: 1.5,
+              }}
+            >
+              No massive 100MB downloads. Loads in milliseconds and updates seamlessly in the
+              background.
             </p>
           </div>
 
           <div className="panel" style={{ padding: 20 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(var(--accent))', marginBottom: 8 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 28, color: 'hsl(var(--accent))', marginBottom: 8 }}
+            >
               wifi_off
             </span>
-            <h4 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px', color: 'hsl(var(--on-surface))' }}>
+            <h4
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                margin: '0 0 6px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               Offline Ready
             </h4>
-            <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0, lineHeight: 1.5 }}>
-              Access your digital membership card and saved policy agenda even without mobile internet.
+            <p
+              style={{
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                margin: 0,
+                lineHeight: 1.5,
+              }}
+            >
+              Access your digital membership card and saved policy agenda even without mobile
+              internet.
             </p>
           </div>
 
           <div className="panel" style={{ padding: 20 }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'hsl(142 76% 36%)', marginBottom: 8 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 28, color: 'hsl(142 76% 36%)', marginBottom: 8 }}
+            >
               notifications_active
             </span>
-            <h4 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 6px', color: 'hsl(var(--on-surface))' }}>
+            <h4
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                margin: '0 0 6px',
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               Youth Job Alerts
             </h4>
-            <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0, lineHeight: 1.5 }}>
-              Receive instant updates when new job openings, training workshops, or local chapter events are announced.
+            <p
+              style={{
+                fontSize: 13,
+                color: 'hsl(var(--on-surface-muted))',
+                margin: 0,
+                lineHeight: 1.5,
+              }}
+            >
+              Receive instant updates when new job openings, training workshops, or local chapter
+              events are announced.
             </p>
           </div>
         </div>

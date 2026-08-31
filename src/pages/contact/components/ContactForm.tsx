@@ -199,7 +199,7 @@ export function ContactForm({
               location_on
             </span>
             Ghana location
-            <span className="text-slate-400 font-normal ml-1">— optional</span>
+            <span className="text-slate-400 font-normal ml-1">optional</span>
           </p>
 
           {/* Region */}
@@ -272,7 +272,7 @@ export function ContactForm({
               public
             </span>
             Base Diaspora community
-            <span className="text-slate-400 font-normal ml-1">— optional</span>
+            <span className="text-slate-400 font-normal ml-1">optional</span>
           </p>
 
           {/* Country */}

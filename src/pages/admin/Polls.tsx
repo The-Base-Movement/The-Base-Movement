@@ -141,7 +141,7 @@ export default function PollsManagement() {
         fetchData()
         contentService.sendPushNotification({
           userIds: 'all',
-          title: 'New poll — your voice matters',
+          title: 'New poll, your voice matters',
           body: newPoll.question.slice(0, 100),
           url: '/dashboard/polls',
         })

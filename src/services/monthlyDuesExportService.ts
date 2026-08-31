@@ -81,5 +81,5 @@ export const monthlyDuesExportService = {
   /** Finance exports honour the currently applied filters. */
   exportFinanceCsv: (filters?: DuesExportFilters) => downloadCsv('finance', filters),
   exportFinancePdf: (filters?: DuesExportFilters) =>
-    downloadPdf('finance', 'Monthly Dues — Finance Report', filters),
+    downloadPdf('finance', 'Monthly Dues, Finance Report', filters),
 }

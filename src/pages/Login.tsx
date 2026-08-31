@@ -499,7 +499,7 @@ export default function Login() {
                     fontSize: 13,
                   }}
                 >
-                  Choose how to reset it — an SMS code to your registered phone, or a secure link to
+                  Choose how to reset it, an SMS code to your registered phone, or a secure link to
                   your registered email.
                 </p>
 

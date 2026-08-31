@@ -71,7 +71,7 @@ function autoChecks(d: DonationDetail, priorCount: number | null): Check[] {
 
 const manualChecks: Check[] = [
   { type: 'warn', label: 'Name vs wallet holder', detail: 'Compare manually' },
-  { type: 'warn', label: 'AML watchlist', detail: 'No external API — verify with officer' },
+  { type: 'warn', label: 'AML watchlist', detail: 'No external API, verify with officer' },
 ]
 
 const GUEST_RECEIPT_ROLES = new Set([

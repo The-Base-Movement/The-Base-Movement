@@ -177,7 +177,7 @@ export default function ConstituencyDetails() {
     <div className="main">
       <SEO
         title={`${constituency.name} Constituency`}
-        description={`Learn about The Base Movement's ${constituency.name} constituency hub — leadership, announcements, and local activities.`}
+        description={`Learn about The Base Movement's ${constituency.name} constituency hub, leadership, announcements, and local activities.`}
         canonical={`/constituencies/${slug}`}
       />
 

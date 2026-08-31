@@ -453,7 +453,7 @@ export function useAssetInventory(departmentId: string, viewMode: ViewMode) {
         toast.error('Assignment failed after approval')
         return false
       }
-      toast.success('Request approved — asset checked out')
+      toast.success('Request approved, asset checked out')
       await fetchRequests()
       await fetchAssets()
       return true

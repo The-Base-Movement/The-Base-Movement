@@ -125,7 +125,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                 color: 'hsl(var(--primary))',
               }}
             >
-              Polling station {pollingStationCode} — verified
+              Polling station {pollingStationCode}, verified
             </span>
           </div>
         ) : (
@@ -219,7 +219,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                         onClick={() => {
                           setPollingStationCode(s.code)
                           setPollingStationName(s.name)
-                          setPsSearch(`${s.code} — ${s.name}`)
+                          setPsSearch(`${s.code}, ${s.name}`)
                           setPsOpen(false)
                         }}
                         style={{
@@ -299,7 +299,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                       color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    — {pollingStationName}
+                    {pollingStationName}
                   </span>
                 )}
               </div>
@@ -316,7 +316,7 @@ export function VoterRegistrationPanel({ region, constituency }: Props) {
                 setSubmittingVoter(false)
                 if (ok) {
                   setVoterStatus('IN_PROGRESS')
-                  toast.success('Polling station submitted — pending admin verification')
+                  toast.success('Polling station submitted, pending admin verification')
                 } else {
                   toast.error('Failed to submit. Please try again.')
                 }

@@ -369,7 +369,7 @@ export function LiveContributionFeed() {
               sensors_off
             </span>
             <p style={{ fontSize: 12, fontWeight: 500, color: 'hsl(var(--on-surface-muted))' }}>
-              No contributions yet — be the first to mobilise.
+              No contributions yet, be the first to mobilise.
             </p>
           </div>
         )}

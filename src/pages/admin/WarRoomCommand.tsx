@@ -276,7 +276,7 @@ export default function WarRoomCommand() {
   return (
     <div className="war-room-page" style={{ paddingBottom: 96, minHeight: 'calc(100vh - 3.5rem)' }}>
       <AdminPageHeader
-        title="War Room — live mobilization"
+        title="War Room, live mobilization"
         icon="sensors"
         description="Real-time strategic oversight, crisis management, and rapid response coordination across all regional sectors."
         actions={

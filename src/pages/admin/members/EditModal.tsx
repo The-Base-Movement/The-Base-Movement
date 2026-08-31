@@ -364,7 +364,7 @@ export function EditModal({
                     opacity: member.platform !== 'DIASPORA' ? 0.5 : 1,
                   }}
                 >
-                  <option value="">— select Base Diaspora —</option>
+                  <option value="">Select Base Diaspora</option>
                   {(chapters ?? []).map((name) => (
                     <option key={name} value={name}>
                       {name}
@@ -379,7 +379,7 @@ export function EditModal({
                   onChange={(e) => onChange(field.key, e.target.value)}
                   style={controlStyle}
                 >
-                  <option value="">— select —</option>
+                  <option value="">Select</option>
                   {field.options.map((o) => (
                     <option key={o} value={o}>
                       {o}
@@ -441,7 +441,7 @@ export function EditModal({
                   onChange={(e) => onChange('ageRange', e.target.value)}
                   style={controlStyle}
                 >
-                  <option value="">— select —</option>
+                  <option value="">Select</option>
                   {ageRanges.map((a) => (
                     <option key={a} value={a}>
                       {a}
@@ -462,7 +462,7 @@ export function EditModal({
                 onChange={(e) => onChange('religion', e.target.value)}
                 style={controlStyle}
               >
-                <option value="">— select —</option>
+                <option value="">Select</option>
                 {religions.map((r) => (
                   <option key={r} value={r}>
                     {r}
@@ -482,7 +482,7 @@ export function EditModal({
                 onChange={(e) => onChange('partyAffiliation', e.target.value)}
                 style={controlStyle}
               >
-                <option value="">— select party —</option>
+                <option value="">Select party</option>
                 {politicalParties.map((p) => (
                   <option key={p} value={p}>
                     {p}

@@ -120,7 +120,7 @@ export function FeedbackVaultModal({ onClose }: FeedbackVaultModalProps) {
                     margin: 0,
                   }}
                 >
-                  — {fb.category} feedback
+                  {fb.category} feedback
                 </p>
               </div>
             ))

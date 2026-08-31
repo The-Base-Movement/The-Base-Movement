@@ -239,14 +239,14 @@ export default function Register() {
       const fieldCount = Object.keys(fields).length
       const platformLabel = detectedPlatform === 'DIASPORA' ? 'Diaspora' : 'Ghana'
       if (fieldCount === 0) {
-        toast.warning('Nothing could be read from the form — please fill in your details manually.')
+        toast.warning('Nothing could be read from the form, please fill in your details manually.')
       } else if (fieldCount < 4) {
         toast.info(
-          `${platformLabel} form partially read — please review and complete the remaining fields.`
+          `${platformLabel} form partially read, please review and complete the remaining fields.`
         )
         setUsedScan(true)
       } else {
-        toast.success(`${platformLabel} form scanned — please review and complete your details.`)
+        toast.success(`${platformLabel} form scanned, please review and complete your details.`)
         setUsedScan(true)
       }
     } catch (error) {

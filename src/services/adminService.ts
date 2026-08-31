@@ -2087,7 +2087,7 @@ class AdminService {
 
     if (error) throw new Error(error.message || 'Failed to update admin data')
     if (!data?.length)
-      throw new Error('Update failed — you may not have permission to edit this record')
+      throw new Error('Update failed, you may not have permission to edit this record')
 
     if (this.currentUser?.id === userId) {
       const assignedRegion =

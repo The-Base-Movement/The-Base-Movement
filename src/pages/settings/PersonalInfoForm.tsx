@@ -433,7 +433,7 @@ export function PersonalInfoForm({
                       color: 'hsl(var(--on-surface-muted))',
                     }}
                   >
-                    {canSetConstituency ? '(Set once — cannot be changed later)' : '(Locked)'}
+                    {canSetConstituency ? '(Set once, cannot be changed later)' : '(Locked)'}
                   </span>
                 </label>
                 {canSetConstituency ? (

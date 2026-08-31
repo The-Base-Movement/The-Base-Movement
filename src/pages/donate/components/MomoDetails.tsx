@@ -196,7 +196,7 @@ export function MomoDetails() {
               </a>
             </div>
             <p style={{ margin: '4px 0 0', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
-              Tap to dial on your phone and follow the prompts to donate — works on MTN, Telecel and
+              Tap to dial on your phone and follow the prompts to donate, works on MTN, Telecel and
               AirtelTigo.
             </p>
           </div>

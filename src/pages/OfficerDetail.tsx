@@ -568,7 +568,7 @@ export default function OfficerDetail() {
       <SEO
         title={officer.name}
         description={
-          officer.bio ? shortSummary(officer.bio, 155) : `${officer.name} — ${officer.role}`
+          officer.bio ? shortSummary(officer.bio, 155) : `${officer.name}, ${officer.role}`
         }
         canonical={`/officers/${toSlug(officer.name)}`}
       />

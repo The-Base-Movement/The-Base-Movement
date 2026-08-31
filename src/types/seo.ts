@@ -75,7 +75,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     label: 'About Us',
     title: 'About Us | The Base Movement',
     description:
-      'Discover The Base Movement — a grassroots movement uniting Ghanaians at home and across the diaspora behind youth empowerment and accountable governance.',
+      'Discover The Base Movement, a grassroots movement uniting Ghanaians at home and across the diaspora behind youth empowerment and accountable governance.',
     focusKeyword: 'The Base Movement',
     keywords: `${TOP_GSC_KEYWORDS}, about the base movement`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/about',
@@ -182,7 +182,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     label: 'Movement Store',
     title: 'Official Store | The Base Movement',
     description:
-      'Shop official gear at The Base Movement store. Wear the movement colors — 100% of merchandise proceeds directly support youth job programs across Ghana.',
+      'Shop official gear at The Base Movement store. Wear the movement colors, 100% of merchandise proceeds directly support youth job programs across Ghana.',
     focusKeyword: 'The Base Movement store',
     canonicalUrl: 'https://www.thebasemovement.org.gh/store',
     ogImage: '/branding/og-image.png',

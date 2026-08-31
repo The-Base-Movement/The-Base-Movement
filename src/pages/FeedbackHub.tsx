@@ -245,7 +245,7 @@ export default function FeedbackHub() {
                   id="textarea-d2d71b"
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value.slice(0, 500))}
-                  placeholder="Detail your observations, concerns, or tactical suggestions. Be specific and constructive — your input shapes national strategy."
+                  placeholder="Detail your observations, concerns, or tactical suggestions. Be specific and constructive, your input shapes national strategy."
                   required
                   style={{
                     width: '100%',

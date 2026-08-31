@@ -362,7 +362,7 @@ export default function ChapterDetails() {
     <div className="main">
       <SEO
         title={displayName}
-        description={`Learn about ${displayName} — community leadership, regional events, mobilization walks, and how to get involved.`}
+        description={`Learn about ${displayName}, community leadership, regional events, mobilization walks, and how to get involved.`}
         keywords={`${displayName}, ${chapter.city_or_region} base movement, ${chapter.country} diaspora chapter, youth mobilization ghana`}
         canonical={`/chapters/${slug}`}
         jsonLd={[chapterSchema, ...eventSchemas]}

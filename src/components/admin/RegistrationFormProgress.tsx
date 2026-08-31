@@ -56,7 +56,7 @@ export function RegistrationFormProgress({ formStep, isMobile }: RegistrationFor
             letterSpacing: '.06em',
           }}
         >
-          Step {formStep} of 4 — {STEP_LABELS[formStep - 1]}
+          Step {formStep} of 4, {STEP_LABELS[formStep - 1]}
         </p>
       </div>
     )
