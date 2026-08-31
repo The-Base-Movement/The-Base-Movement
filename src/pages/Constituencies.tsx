@@ -376,8 +376,8 @@ export default function Constituencies() {
             ))}
           </div>
 
-          {/* Mobile filter toggle */}
-          <div className="mobile-only" style={{ marginBottom: 16 }}>
+          {/* Mobile/tablet filter toggle — switches at lg (1024px), same as the Diaspora page */}
+          <div className="lg:hidden" style={{ marginBottom: 16 }}>
             <button
               className="btn btn-outline"
               style={{ width: '100%', justifyContent: 'center' }}
@@ -391,11 +391,11 @@ export default function Constituencies() {
           </div>
 
           {/* Sidebar + grid */}
-          <div className="sidebar-main" style={{ alignItems: 'start' }}>
-            <div
-              className="desktop-only"
-              style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
-            >
+          <div
+            className="grid grid-cols-1 lg:grid-cols-[280px_1fr]"
+            style={{ alignItems: 'start', gap: 18 }}
+          >
+            <div className="hidden lg:flex" style={{ flexDirection: 'column', gap: 16 }}>
               <div className="panel" style={{ padding: 20 }}>
                 {filterPanel}
               </div>
@@ -658,8 +658,8 @@ export default function Constituencies() {
         ))}
       </div>
 
-      {/* Mobile filter toggle */}
-      <div className="mobile-only" style={{ marginBottom: 16 }}>
+      {/* Mobile/tablet filter toggle — switches at lg (1024px), same as the Diaspora page */}
+      <div className="lg:hidden" style={{ marginBottom: 16 }}>
         <button
           className="btn btn-outline"
           style={{ width: '100%', justifyContent: 'center' }}
@@ -673,9 +673,12 @@ export default function Constituencies() {
       </div>
 
       {/* Sidebar + grid */}
-      <div className="sidebar-main" style={{ alignItems: 'start' }}>
+      <div
+        className="grid grid-cols-1 lg:grid-cols-[280px_1fr]"
+        style={{ alignItems: 'start', gap: 18 }}
+      >
         {/* Sidebar */}
-        <div className="desktop-only" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="hidden lg:flex" style={{ flexDirection: 'column', gap: 16 }}>
           <div className="panel" style={{ padding: 20 }}>
             {filterPanel}
           </div>
