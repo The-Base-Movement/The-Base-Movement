@@ -14,12 +14,14 @@ import { SecuritySettingsTab } from './settings/components/SecuritySettingsTab'
 import { ButtonCustomizerTab } from './settings/components/ButtonCustomizerTab'
 import { AuditLogTab } from './settings/components/AuditLogTab'
 import { AboutPageTab } from './settings/components/AboutPageTab'
+import { WelcomePopupControl } from './settings/components/WelcomePopupControl'
 type SettingsTab =
   | 'profile'
   | 'roles'
   | 'system'
   | 'movement'
   | 'about'
+  | 'popup'
   | 'security'
   | 'buttons'
   | 'audit'
@@ -33,6 +35,7 @@ const allTabs: { id: SettingsTab; label: string; icon: string; superOnly?: boole
   { id: 'system', label: 'Preferences', icon: 'tune', superOnly: true },
   { id: 'movement', label: 'Movement Info', icon: 'campaign', superOnly: true },
   { id: 'about', label: 'About Page', icon: 'info', superOnly: true },
+  { id: 'popup', label: 'Homepage Popup', icon: 'campaign', superOnly: true },
   { id: 'buttons', label: 'Buttons', icon: 'ads_click', superOnly: true },
   { id: 'audit', label: 'Audit Log', icon: 'history', superOnly: true },
 ]
@@ -451,6 +454,7 @@ export default function AdminSettings() {
               toast={toast}
             />
           )}
+          {activeTab === 'popup' && <WelcomePopupControl />}
           {activeTab === 'buttons' && (
             <ButtonCustomizerTab
               siteSettings={siteSettings}

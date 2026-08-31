@@ -37,6 +37,12 @@ export interface BrandingSettings {
   maintenance_mode?: boolean
   maintenance_title?: string
   maintenance_message?: string
+
+  // Homepage welcome popup (toggled from Settings)
+  welcome_popup_enabled?: boolean
+  welcome_popup_message?: string
+  /** Bump to re-show the popup to visitors who already dismissed an older version */
+  welcome_popup_version?: number
   [key: string]: unknown
 }
 
@@ -80,4 +86,13 @@ export const defaultSettings: BrandingSettings = {
   button_active_tab_hover_bg_color: '156 100% 15%',
   button_inactive_tab_hover_bg_color: '0 0% 95%',
   maintenance_mode: false,
+  welcome_popup_enabled: false,
+  welcome_popup_message:
+    'Our official website is now live here at thebasemovement.org.gh!\n\n' +
+    'Already registered on the old site?\n' +
+    '• Your existing email and password still work perfectly here.\n' +
+    '• You do not need to register again.\n' +
+    '• Simply log in with your usual password and check your profile.\n\n' +
+    'New here? Create a new account in two minutes.',
+  welcome_popup_version: 1,
 }

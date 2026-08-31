@@ -38,13 +38,35 @@ export default function MembershipCards() {
 
   const PAGE_SIZE = 50
 
-  // Filters state initialized from URL query params
-  const [platformFilter, setPlatformFilter] = useState<'ALL' | 'GHANA' | 'DIASPORA'>(
-    (searchParams.get('platform') as 'ALL' | 'GHANA' | 'DIASPORA') || 'ALL'
+  // Lead scoping check — computed synchronously so it can seed the filter
+  // state below directly, no effect needed to apply it after mount.
+  const currentUser = adminService.getCurrentUser()
+  const userRole = (currentUser?.role || '') as string
+  const isConstituencyLead = userRole === 'CONSTITUENCY_LEAD'
+  const isChapterLead =
+    userRole === 'CHAPTER_LEAD' ||
+    userRole === 'BASE_DIASPORA_LEAD' ||
+    userRole === 'DIASPORA_AFFAIRS_OFFICER'
+  const leadConstituency = isConstituencyLead && currentUser?.constituency ? currentUser : null
+  const leadChapter =
+    isChapterLead && (currentUser?.country || currentUser?.chapter) ? currentUser : null
+
+  // Filters state initialized from URL query params, with lead users forced
+  // into their own scope regardless of URL.
+  const [platformFilter, setPlatformFilter] = useState<'ALL' | 'GHANA' | 'DIASPORA'>(() => {
+    if (leadConstituency) return 'GHANA'
+    if (leadChapter) return 'DIASPORA'
+    return (searchParams.get('platform') as 'ALL' | 'GHANA' | 'DIASPORA') || 'ALL'
+  })
+  const [regionFilter, setRegionFilter] = useState(
+    () => leadConstituency?.region || searchParams.get('region') || 'ALL'
   )
-  const [regionFilter, setRegionFilter] = useState(searchParams.get('region') || 'ALL')
-  const [constituencyFilter, setConstituencyFilter] = useState(searchParams.get('constituency') || 'ALL')
-  const [countryFilter, setCountryFilter] = useState(searchParams.get('country') || 'ALL')
+  const [constituencyFilter, setConstituencyFilter] = useState(
+    () => leadConstituency?.constituency || searchParams.get('constituency') || 'ALL'
+  )
+  const [countryFilter, setCountryFilter] = useState(
+    () => leadChapter?.country || searchParams.get('country') || 'ALL'
+  )
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '')
   const [photosOnly, setPhotosOnly] = useState(searchParams.get('photosOnly') === '1')
   const [page, setPage] = useState(parseInt(searchParams.get('page') || '1', 10) || 1)
@@ -76,33 +98,12 @@ export default function MembershipCards() {
   // Map of member ID -> HTML element for html2canvas rendering
   const cardElementRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
-  // Lead scoping check
-  const currentUser = adminService.getCurrentUser()
-  const userRole = (currentUser?.role || '') as string
-  const isConstituencyLead = userRole === 'CONSTITUENCY_LEAD'
-  const isChapterLead =
-    userRole === 'CHAPTER_LEAD' ||
-    userRole === 'BASE_DIASPORA_LEAD' ||
-    userRole === 'DIASPORA_AFFAIRS_OFFICER'
-
   useEffect(() => {
     constituencyService
       .listNames()
       .then((items) => setConstituencyOptions(['ALL', ...items.map((c) => c.name)]))
       .catch((err) => console.error('[MEMBERSHIP-CARDS] Failed to load constituencies:', err))
   }, [])
-
-  // Auto-set initial filters if lead user
-  useEffect(() => {
-    if (isConstituencyLead && currentUser?.constituency) {
-      setConstituencyFilter(currentUser.constituency)
-      if (currentUser.region) setRegionFilter(currentUser.region)
-      setPlatformFilter('GHANA')
-    } else if (isChapterLead && (currentUser?.country || currentUser?.chapter)) {
-      if (currentUser.country) setCountryFilter(currentUser.country)
-      setPlatformFilter('DIASPORA')
-    }
-  }, [isConstituencyLead, isChapterLead, currentUser])
 
   // Reset to page 1 whenever filters change
   const handleFilterChange = (setter: () => void) => {
@@ -139,7 +140,16 @@ export default function MembershipCards() {
       active = false
       clearTimeout(timer)
     }
-  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, photosOnly, sortBy, page])
+  }, [
+    platformFilter,
+    regionFilter,
+    constituencyFilter,
+    countryFilter,
+    searchQuery,
+    photosOnly,
+    sortBy,
+    page,
+  ])
 
   // Synchronize URL search params
   useEffect(() => {
@@ -153,7 +163,17 @@ export default function MembershipCards() {
     if (page > 1) params.set('page', page.toString())
     if (sortBy !== 'name_asc') params.set('sort', sortBy)
     setSearchParams(params, { replace: true })
-  }, [platformFilter, regionFilter, constituencyFilter, countryFilter, searchQuery, photosOnly, page, sortBy, setSearchParams])
+  }, [
+    platformFilter,
+    regionFilter,
+    constituencyFilter,
+    countryFilter,
+    searchQuery,
+    photosOnly,
+    page,
+    sortBy,
+    setSearchParams,
+  ])
 
   // Selection handlers
   const handleToggleSelectAll = () => {
@@ -394,7 +414,11 @@ export default function MembershipCards() {
       }}
     >
       <div style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-        Showing <strong>{startCardIndex}–{endCardIndex}</strong> of <strong>{totalCount.toLocaleString()}</strong> cards (Page {page} of {totalPages})
+        Showing{' '}
+        <strong>
+          {startCardIndex}–{endCardIndex}
+        </strong>{' '}
+        of <strong>{totalCount.toLocaleString()}</strong> cards (Page {page} of {totalPages})
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -404,7 +428,9 @@ export default function MembershipCards() {
           disabled={page <= 1 || loading}
           title="First page"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>first_page</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            first_page
+          </span>
         </button>
 
         <button
@@ -413,7 +439,9 @@ export default function MembershipCards() {
           disabled={page <= 1 || loading}
           title="Previous page"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_left</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            chevron_left
+          </span>
           Prev
         </button>
 
@@ -445,7 +473,9 @@ export default function MembershipCards() {
           title="Next page"
         >
           Next
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            chevron_right
+          </span>
         </button>
 
         <button
@@ -454,7 +484,9 @@ export default function MembershipCards() {
           disabled={page >= totalPages || loading}
           title="Last page"
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>last_page</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+            last_page
+          </span>
         </button>
       </div>
     </div>
@@ -492,7 +524,8 @@ export default function MembershipCards() {
             lock
           </span>
           <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
-            <strong>Scoped Access:</strong> You are viewing membership cards for your assigned jurisdiction{' '}
+            <strong>Scoped Access:</strong> You are viewing membership cards for your assigned
+            jurisdiction{' '}
             <strong>
               {currentUser?.constituency || currentUser?.country || currentUser?.chapter}
             </strong>
@@ -502,40 +535,141 @@ export default function MembershipCards() {
       )}
 
       {/* Tactical KPIs Strip — Grid layout responsive 4-column brand sequence (Red, Yellow, Black, Green) */}
-      <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 24 }}>
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--destructive))', position: 'relative', overflow: 'hidden' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+      <div
+        className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        style={{ marginBottom: 24 }}
+      >
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            borderLeft: '3px solid hsl(var(--destructive))',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              margin: '0 0 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Total Filtered Cards
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--destructive))' }}>
+          <p
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 800,
+              margin: 0,
+              color: 'hsl(var(--destructive))',
+            }}
+          >
             {totalCount.toLocaleString()}
           </p>
         </div>
 
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--accent))', position: 'relative', overflow: 'hidden' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            borderLeft: '3px solid hsl(var(--accent))',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              margin: '0 0 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Selected for Export
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--accent))' }}>
+          <p
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 800,
+              margin: 0,
+              color: 'hsl(var(--accent))',
+            }}
+          >
             {selectedIds.size.toLocaleString()}
           </p>
         </div>
 
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--on-surface))', position: 'relative', overflow: 'hidden' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            borderLeft: '3px solid hsl(var(--on-surface))',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              margin: '0 0 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Current Page Batch
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--on-surface))' }}>
+          <p
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 800,
+              margin: 0,
+              color: 'hsl(var(--on-surface))',
+            }}
+          >
             {members.length}
           </p>
         </div>
 
-        <div className="panel" style={{ padding: '16px 20px', borderLeft: '3px solid hsl(var(--primary))', position: 'relative', overflow: 'hidden' }}>
-          <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', margin: '0 0 4px', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div
+          className="panel"
+          style={{
+            padding: '16px 20px',
+            borderLeft: '3px solid hsl(var(--primary))',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              margin: '0 0 4px',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Photo Verified Rate
           </p>
-          <p style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, margin: 0, color: 'hsl(var(--primary))' }}>
-            {members.length > 0 ? `${Math.round((verifiedPhotoCount / members.length) * 100)}%` : '0%'}
+          <p
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 800,
+              margin: 0,
+              color: 'hsl(var(--primary))',
+            }}
+          >
+            {members.length > 0
+              ? `${Math.round((verifiedPhotoCount / members.length) * 100)}%`
+              : '0%'}
           </p>
         </div>
       </div>
@@ -544,7 +678,15 @@ export default function MembershipCards() {
       <div className="panel" style={{ padding: '18px 20px', marginBottom: 24 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Top Row: Search + Photos Only + Sort + Action Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 12,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             <div style={{ position: 'relative', flex: 1, minWidth: 240 }}>
               <span
                 className="material-symbols-outlined"
@@ -611,7 +753,9 @@ export default function MembershipCards() {
                   padding: '6px 10px',
                   borderRadius: 'var(--radius-xs)',
                   background: photosOnly ? 'hsl(var(--primary) / 0.1)' : 'transparent',
-                  border: photosOnly ? '1px solid hsl(var(--primary))' : '1px solid hsl(var(--border))',
+                  border: photosOnly
+                    ? '1px solid hsl(var(--primary))'
+                    : '1px solid hsl(var(--border))',
                 }}
               >
                 <input
@@ -625,7 +769,9 @@ export default function MembershipCards() {
 
               <select
                 value={sortBy}
-                onChange={(e) => handleFilterChange(() => setSortBy(e.target.value as typeof sortBy))}
+                onChange={(e) =>
+                  handleFilterChange(() => setSortBy(e.target.value as typeof sortBy))
+                }
                 style={{
                   height: 38,
                   padding: '0 12px',
@@ -694,12 +840,25 @@ export default function MembershipCards() {
             }}
           >
             <div>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 4, textTransform: 'uppercase' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 4,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Platform / Network
               </label>
               <select
                 value={platformFilter}
-                onChange={(e) => handleFilterChange(() => setPlatformFilter(e.target.value as typeof platformFilter))}
+                onChange={(e) =>
+                  handleFilterChange(() =>
+                    setPlatformFilter(e.target.value as typeof platformFilter)
+                  )
+                }
                 disabled={isConstituencyLead || isChapterLead}
                 style={{
                   width: '100%',
@@ -719,7 +878,16 @@ export default function MembershipCards() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 4, textTransform: 'uppercase' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 4,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Region
               </label>
               <select
@@ -747,7 +915,16 @@ export default function MembershipCards() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 4, textTransform: 'uppercase' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 4,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Constituency
               </label>
               <select
@@ -774,7 +951,16 @@ export default function MembershipCards() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 4, textTransform: 'uppercase' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: 'hsl(var(--on-surface-muted))',
+                  marginBottom: 4,
+                  textTransform: 'uppercase',
+                }}
+              >
                 Country (Diaspora)
               </label>
               <select
@@ -814,11 +1000,26 @@ export default function MembershipCards() {
             borderLeft: '4px solid hsl(var(--primary))',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13, fontWeight: 600 }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: 8,
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
             <span>{progressMsg}</span>
             <span>{progressPct}%</span>
           </div>
-          <div style={{ height: 8, background: 'hsl(var(--border))', borderRadius: 4, overflow: 'hidden' }}>
+          <div
+            style={{
+              height: 8,
+              background: 'hsl(var(--border))',
+              borderRadius: 4,
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 height: '100%',
@@ -832,8 +1033,24 @@ export default function MembershipCards() {
       )}
 
       {/* Select All Checkbox & Summary */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 12,
+        }}
+      >
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            cursor: 'pointer',
+            fontSize: 13,
+            fontWeight: 600,
+          }}
+        >
           <input
             type="checkbox"
             checked={members.length > 0 && selectedIds.size === members.length}
@@ -854,17 +1071,32 @@ export default function MembershipCards() {
       {/* Loading state */}
       {loading ? (
         <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 32, color: 'hsl(var(--on-surface-muted))' }}
+          >
             progress_activity
           </span>
-          <p style={{ color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>Loading digital membership cards...</p>
+          <p style={{ color: 'hsl(var(--on-surface-muted))', marginTop: 8 }}>
+            Loading digital membership cards...
+          </p>
         </div>
       ) : members.length === 0 ? (
         <div className="panel" style={{ padding: 40, textAlign: 'center' }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))' }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))' }}
+          >
             badge
           </span>
-          <p style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--on-surface))', margin: '8px 0 4px' }}>
+          <p
+            style={{
+              fontSize: 15,
+              fontWeight: 600,
+              color: 'hsl(var(--on-surface))',
+              margin: '8px 0 4px',
+            }}
+          >
             No matching membership cards found
           </p>
           <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
@@ -891,20 +1123,33 @@ export default function MembershipCards() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 12,
-                  border: isSelected ? '2px solid hsl(var(--primary))' : '1px solid hsl(var(--border))',
+                  border: isSelected
+                    ? '2px solid hsl(var(--primary))'
+                    : '1px solid hsl(var(--border))',
                   position: 'relative',
                 }}
               >
                 {/* Header Row: Checkbox, Name, Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                  }}
+                >
+                  <label
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}
+                  >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => handleToggleSelectOne(member.id)}
                       style={{ width: 16, height: 16, cursor: 'pointer' }}
                     />
-                    <span style={{ fontSize: 14, fontWeight: 700, color: 'hsl(var(--on-surface))' }}>
+                    <span
+                      style={{ fontSize: 14, fontWeight: 700, color: 'hsl(var(--on-surface))' }}
+                    >
                       {member.fullName}
                     </span>
                   </label>
@@ -1005,20 +1250,40 @@ export default function MembershipCards() {
               borderRadius: 'var(--radius-md)',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: 'hsl(var(--on-surface))' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
                 Update Member Photo
               </h3>
               <button
                 onClick={() => setPhotoModalMember(null)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'hsl(var(--on-surface-muted))' }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'hsl(var(--on-surface-muted))',
+                }}
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <p style={{ fontSize: 13, color: 'hsl(var(--on-surface-muted))', margin: '0 0 16px' }}>
-              Updating photo for <strong>{photoModalMember.fullName}</strong> ({photoModalMember.id}).
+              Updating photo for <strong>{photoModalMember.fullName}</strong> ({photoModalMember.id}
+              ).
             </p>
 
             {/* Photo Preview Container */}
@@ -1037,9 +1302,16 @@ export default function MembershipCards() {
               }}
             >
               {photoPreview ? (
-                <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
               ) : (
-                <span className="material-symbols-outlined" style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 40, color: 'hsl(var(--on-surface-muted))' }}
+                >
                   person
                 </span>
               )}
@@ -1048,13 +1320,25 @@ export default function MembershipCards() {
             <div style={{ marginBottom: 20 }}>
               <label
                 className="btn btn-outline"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', width: '100%' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  cursor: 'pointer',
+                  width: '100%',
+                }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                   upload_file
                 </span>
                 Choose New Photo File
-                <input type="file" accept="image/*" onChange={handlePhotoFileChange} style={{ display: 'none' }} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoFileChange}
+                  style={{ display: 'none' }}
+                />
               </label>
             </div>
 
