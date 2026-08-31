@@ -41,8 +41,6 @@ export interface BrandingSettings {
   // Homepage welcome popup (toggled from Settings)
   welcome_popup_enabled?: boolean
   welcome_popup_message?: string
-  /** Bump to re-show the popup to visitors who already dismissed an older version */
-  welcome_popup_version?: number
   [key: string]: unknown
 }
 
@@ -94,5 +92,4 @@ export const defaultSettings: BrandingSettings = {
     '• You do not need to register again.\n' +
     '• Simply log in with your usual password and check your profile.\n\n' +
     'New here? Create a new account in two minutes.',
-  welcome_popup_version: 1,
 }

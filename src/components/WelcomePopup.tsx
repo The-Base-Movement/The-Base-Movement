@@ -1,21 +1,32 @@
 /**
- * WelcomePopup — one-time announcement modal shown to logged-out visitors on
- * the homepage. Toggled and edited from Settings ("Homepage Popup" tab),
- * which writes `welcome_popup_enabled` / `welcome_popup_message` /
- * `welcome_popup_version` site settings (same mechanism as maintenance mode).
+ * WelcomePopup — announcement modal shown to logged-out visitors on the
+ * homepage. Toggled and edited from Settings ("Homepage Popup" tab), which
+ * writes `welcome_popup_enabled` / `welcome_popup_message` site settings
+ * (same mechanism as maintenance mode).
  *
- * "Strategic" open/close: opens after a short delay (avoids fighting the hero
- * animation on paint), and is remembered as dismissed per popup version in
- * localStorage so a returning visitor isn't nagged again until the message
- * changes and IT bumps the version.
+ * "Strategic" open: triggers once the visitor has scrolled 20% down the
+ * page (not on paint, so it never fights the hero animation) and reappears
+ * on every fresh homepage visit, since the component's own mount/unmount is
+ * the reset, no persisted dismissal.
  */
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useBranding } from '@/hooks/useBranding'
 
-const OPEN_DELAY_MS = 1400
-const DISMISS_KEY = 'welcome_popup_dismissed_version'
+const SCROLL_TRIGGER_PCT = 20
+const DOMAIN_RE = /thebasemovement\.org\.gh/gi
+
+function renderMessage(text: string) {
+  const parts = text.split(DOMAIN_RE)
+  const matches = text.match(DOMAIN_RE) || []
+  const nodes: React.ReactNode[] = []
+  parts.forEach((part, i) => {
+    if (part) nodes.push(part)
+    if (matches[i]) nodes.push(<strong key={i}>{matches[i]}</strong>)
+  })
+  return nodes
+}
 
 export function WelcomePopup() {
   const { user, isLoading } = useAuth()
@@ -24,28 +35,36 @@ export function WelcomePopup() {
   const [open, setOpen] = useState(false)
 
   const enabled = settings.welcome_popup_enabled === true
-  const version = String(settings.welcome_popup_version ?? 1)
   const message =
     typeof settings.welcome_popup_message === 'string' ? settings.welcome_popup_message : ''
 
   useEffect(() => {
     if (isLoading || user || !enabled) return
-    if (localStorage.getItem(DISMISS_KEY) === version) return
 
-    const timer = setTimeout(() => setOpen(true), OPEN_DELAY_MS)
-    return () => clearTimeout(timer)
-  }, [isLoading, user, enabled, version])
+    function checkScroll() {
+      const doc = document.documentElement
+      const scrollable = doc.scrollHeight - doc.clientHeight
+      if (scrollable <= 0) return
+      const pct = (window.scrollY / scrollable) * 100
+      if (pct >= SCROLL_TRIGGER_PCT) {
+        setOpen(true)
+        window.removeEventListener('scroll', checkScroll)
+      }
+    }
+
+    window.addEventListener('scroll', checkScroll, { passive: true })
+    checkScroll()
+    return () => window.removeEventListener('scroll', checkScroll)
+  }, [isLoading, user, enabled])
 
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close()
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   function close() {
-    localStorage.setItem(DISMISS_KEY, version)
     setOpen(false)
   }
 
@@ -95,11 +114,14 @@ export function WelcomePopup() {
           borderRadius: 'var(--radius-lg)',
           width: '100%',
           maxWidth: 460,
-          maxHeight: '90vh',
+          minHeight: 520,
+          maxHeight: '95vh',
           overflowY: 'auto',
-          padding: '32px 28px',
+          padding: '36px 28px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.35)',
           border: '1px solid hsl(var(--border))',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Eagle watermark */}
@@ -110,10 +132,10 @@ export function WelcomePopup() {
           style={{
             position: 'absolute',
             right: '-8%',
-            bottom: '-8%',
-            width: 220,
+            bottom: '-6%',
+            width: 180,
             height: 'auto',
-            opacity: 0.06,
+            opacity: 0.05,
             pointerEvents: 'none',
             zIndex: 0,
             userSelect: 'none',
@@ -145,7 +167,15 @@ export function WelcomePopup() {
           </span>
         </button>
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <span
             className="pill pill-ok"
             style={{
@@ -186,9 +216,10 @@ export function WelcomePopup() {
               lineHeight: 1.7,
               color: 'hsl(var(--on-surface-muted))',
               whiteSpace: 'pre-line',
+              flex: 1,
             }}
           >
-            {message}
+            {renderMessage(message)}
           </p>
 
           <div
@@ -199,7 +230,7 @@ export function WelcomePopup() {
               type="button"
               className="btn btn-primary"
               onClick={() => goTo('/login')}
-              style={{ flex: 1, minWidth: 140 }}
+              style={{ flex: 1, minWidth: 140, minHeight: 44 }}
             >
               Log In Now
             </button>
@@ -207,7 +238,7 @@ export function WelcomePopup() {
               type="button"
               className="btn btn-outline"
               onClick={() => goTo('/register')}
-              style={{ flex: 1, minWidth: 140 }}
+              style={{ flex: 1, minWidth: 140, minHeight: 44 }}
             >
               Create Account
             </button>
@@ -217,7 +248,7 @@ export function WelcomePopup() {
             type="button"
             className="btn btn-ghost btn-sm"
             onClick={() => goTo('/faq#new-site')}
-            style={{ width: '100%' }}
+            style={{ width: '100%', minHeight: 40 }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
               help

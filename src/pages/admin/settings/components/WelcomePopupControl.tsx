@@ -6,15 +6,13 @@ import { defaultSettings } from '@/types/branding'
 /**
  * IT/Settings control for the homepage welcome popup shown to logged-out
  * visitors. Writes `welcome_popup_enabled` / `welcome_popup_message` site
- * settings, then broadcasts so BrandingContext picks it up live. Bumping
- * `welcome_popup_version` re-shows the popup to visitors who already
- * dismissed an earlier message (WelcomePopup remembers dismissals per
- * version in localStorage).
+ * settings, then broadcasts so BrandingContext picks it up live. The popup
+ * itself triggers once per homepage visit at 20% scroll, so there is no
+ * dismissal state to reset here.
  */
 export function WelcomePopupControl() {
   const [enabled, setEnabled] = useState(false)
   const [message, setMessage] = useState('')
-  const [version, setVersion] = useState(1)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -28,7 +26,6 @@ export function WelcomePopupControl() {
             ? s.welcome_popup_message
             : String(defaultSettings.welcome_popup_message)
         )
-        setVersion(Number(s.welcome_popup_version ?? 1) || 1)
       } finally {
         setLoading(false)
       }
@@ -36,13 +33,12 @@ export function WelcomePopupControl() {
     load()
   }, [])
 
-  async function persist(next: { enabled: boolean; message: string; version: number }) {
+  async function persist(next: { enabled: boolean; message: string }) {
     setSaving(true)
     try {
       const results = await Promise.all([
         adminService.updateSiteSetting('welcome_popup_enabled', next.enabled),
         adminService.updateSiteSetting('welcome_popup_message', next.message.trim()),
-        adminService.updateSiteSetting('welcome_popup_version', next.version),
       ])
       if (results.some((ok) => !ok)) throw new Error('save failed')
       window.dispatchEvent(new Event('site_settings_updated'))
@@ -59,17 +55,11 @@ export function WelcomePopupControl() {
   function handleToggle() {
     const next = !enabled
     setEnabled(next)
-    persist({ enabled: next, message, version })
+    persist({ enabled: next, message })
   }
 
   function handleSaveMessage() {
-    persist({ enabled, message, version })
-  }
-
-  function handleResaveAndReshow() {
-    const nextVersion = version + 1
-    setVersion(nextVersion)
-    persist({ enabled, message, version: nextVersion })
+    persist({ enabled, message })
   }
 
   return (
@@ -198,18 +188,6 @@ export function WelcomePopupControl() {
               save
             </span>
             Save message
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            disabled={loading || saving}
-            onClick={handleResaveAndReshow}
-            title="Re-show the popup even to visitors who already dismissed it"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              refresh
-            </span>
-            Save & re-show to everyone
           </button>
         </div>
       </div>

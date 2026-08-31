@@ -39,7 +39,11 @@ const FAQ_ITEMS: FAQItem[] = [
         >
           info@thebasemovement.org.gh
         </a>{' '}
-        or call +233 500 4896 97.
+        or call{' '}
+        <a href="tel:+233500489697" className="text-primary font-semibold hover:underline">
+          +233 500 4896 97
+        </a>
+        .
       </>
     ),
   },
