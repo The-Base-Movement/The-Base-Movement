@@ -137,31 +137,34 @@ export function ContactInfoPanel({
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
 
-        {/* Location Map */}
-        <div className="overflow-hidden border border-slate-200 shadow-sm bg-white">
-          <div className="aspect-[4/3] w-full bg-slate-100">
-            <iframe
-              title="The Base Movement Headquarters Location Map"
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              style={{ border: 0 }}
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4658.42845002469!2d-0.23188742436465223!3d5.599442833209982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf99e8dc4ab0a9%3A0x5f2ed928ab4a0305!2sThe%20Base%20Movement!5e1!3m2!1sen!2sbe!4v1788182245600!5m2!1sen!2sbe"
-              allowFullScreen
-              loading="lazy"
-            />
-          </div>
-          <div className="p-5 border-t border-slate-100">
-            <p className="text-micro font-meta font-medium text-[var(--brand-green)] tracking-tight">
-              Official headquarters
-            </p>
-            <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
-              Our central hub in Tesano, Accra, serving as the heart of movement operations and
-              community engagement.
-            </p>
-          </div>
-        </div>
+export function ContactMap() {
+  return (
+    <div className="overflow-hidden border border-slate-200 shadow-sm bg-white">
+      <div className="aspect-[21/9] w-full bg-slate-100">
+        <iframe
+          title="The Base Movement Headquarters Location Map"
+          width="100%"
+          height="100%"
+          frameBorder="0"
+          style={{ border: 0 }}
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4658.42845002469!2d-0.23188742436465223!3d5.599442833209982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf99e8dc4ab0a9%3A0x5f2ed928ab4a0305!2sThe%20Base%20Movement!5e1!3m2!1sen!2sbe!4v1788182245600!5m2!1sen!2sbe"
+          allowFullScreen
+          loading="lazy"
+        />
+      </div>
+      <div className="p-5 border-t border-slate-100">
+        <p className="text-micro font-meta font-medium text-[var(--brand-green)] tracking-tight">
+          Official headquarters
+        </p>
+        <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
+          Our central hub in Tesano, Accra, serving as the heart of movement operations and
+          community engagement.
+        </p>
       </div>
     </div>
   )
