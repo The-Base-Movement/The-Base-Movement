@@ -10,6 +10,7 @@ import { EMPTY_PUBLIC_STATS } from '@/services/publicSiteService'
 import { Helmet } from 'react-helmet-async'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
+import { WelcomePopup } from '@/components/WelcomePopup'
 
 import { HeroSection, MobileHeroUpdatesTicker } from './home/HeroSection'
 
@@ -129,6 +130,7 @@ export default function Home() {
 
   return (
     <main className="bg-background font-body-md">
+      <WelcomePopup />
       <SEO title="The Base Movement | Ghana First, Jobs for the Youth" canonical="/" />
       <Helmet>
         <link

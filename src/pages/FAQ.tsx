@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { BrandLine } from '@/components/ui/BrandLine'
@@ -16,6 +16,33 @@ interface FAQItem {
 }
 
 const FAQ_ITEMS: FAQItem[] = [
+  {
+    id: 'new-site',
+    category: 'App & Security',
+    question: 'The website looks different, is thebasemovement.org.gh really official?',
+    answer: (
+      <>
+        Yes. <strong>thebasemovement.org.gh</strong> is our official, permanent website. If you
+        registered on the old site, your existing email and password still work here, you do not
+        need to register again. Simply{' '}
+        <Link to="/login" className="text-primary font-semibold hover:underline">
+          log in
+        </Link>{' '}
+        with your usual password and check your profile. New here? You can{' '}
+        <Link to="/register" className="text-primary font-semibold hover:underline">
+          create an account
+        </Link>{' '}
+        in two minutes. Need help logging in? Email us at{' '}
+        <a
+          href="mailto:info@thebasemovement.org.gh"
+          className="text-primary font-semibold hover:underline"
+        >
+          info@thebasemovement.org.gh
+        </a>{' '}
+        or call +233 500 4896 97.
+      </>
+    ),
+  },
   {
     id: 'q1',
     category: 'General & Mission',
@@ -149,7 +176,14 @@ const FAQ_ITEMS: FAQItem[] = [
 export default function FAQ() {
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [openId, setOpenId] = useState<string | null>('q1')
+  const [openId, setOpenId] = useState<string | null>(
+    window.location.hash === '#new-site' ? 'new-site' : 'q1'
+  )
+
+  useEffect(() => {
+    if (window.location.hash !== '#new-site') return
+    document.getElementById('new-site')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
 
   const toggleAccordion = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id))
@@ -299,6 +333,7 @@ export default function FAQ() {
               return (
                 <div
                   key={item.id}
+                  id={item.id}
                   className="bg-white border border-border shadow-sm rounded-none transition-all duration-200 overflow-hidden"
                 >
                   <button
