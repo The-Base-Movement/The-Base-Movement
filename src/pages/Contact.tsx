@@ -133,7 +133,7 @@ export default function Contact() {
 
           {/* Form */}
           <div className="lg:col-span-3">
-            <div className="bg-white p-6 sm:p-8 md:p-12 border border-slate-200 rounded-none shadow-sm h-full">
+            <div className="bg-white p-6 sm:p-8 md:p-12 border border-slate-200 rounded-none shadow-sm">
               <h2 className="text-2xl font-medium text-charcoal-dark mb-8 font-meta tracking-tight">
                 Send us a message
               </h2>

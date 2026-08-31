@@ -140,7 +140,7 @@ export function ContactInfoPanel({
 
         {/* Location Map */}
         <div className="overflow-hidden border border-slate-200 shadow-sm bg-white">
-          <div className="aspect-[16/9] w-full bg-slate-100">
+          <div className="aspect-[4/3] w-full bg-slate-100">
             <iframe
               title="The Base Movement Headquarters Location Map"
               width="100%"
