@@ -38,7 +38,7 @@ export default function About() {
         title="About"
         description="Learn about The Base Movement, a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
       />
-      <section className="bg-[#F7F5F2] border-b border-border/60 py-16 md:py-24 px-4 sm:px-8">
+      <section className="bg-surface-warm border-b border-border/60 py-16 md:py-24 px-4 sm:px-8">
         <AboutHero tagline={siteSettings.about_hero_tagline} />
       </section>
 
@@ -61,7 +61,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="bg-[#F7F5F2] py-20 md:py-28 px-4 sm:px-8 border-t border-border/60">
+      <section className="bg-surface-warm py-20 md:py-28 px-4 sm:px-8 border-t border-border/60">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <AboutCTA />
         </div>

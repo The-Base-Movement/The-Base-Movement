@@ -116,6 +116,9 @@ export function WelcomePopup() {
           .welcome-popup-actions { flex-direction: column !important; }
           .welcome-popup-actions .btn { width: 100%; }
         }
+        @media (min-width: 1024px) {
+          .welcome-popup-card { max-height: 94vh !important; min-height: 560px; }
+        }
       `}</style>
       <div
         className="welcome-popup-card"

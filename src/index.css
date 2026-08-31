@@ -1469,6 +1469,20 @@ td.leadership-col-secondary {
   }
 }
 
+/* Public Navbar-only breakpoint: tablets get the mobile hamburger nav too,
+   the desktop nav only kicks in at true desktop widths (matches the home
+   hero's lg: breakpoint so the header and hero switch layout together). */
+@media (max-width: 1023px) {
+  .nav-desktop-only {
+    display: none !important;
+  }
+}
+@media (min-width: 1024px) {
+  .nav-mobile-only {
+    display: none !important;
+  }
+}
+
 /* Page-level responsive grids */
 .panel-twocol {
   display: grid;
