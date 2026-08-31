@@ -38,7 +38,8 @@ const FAQ_ITEMS: FAQItem[] = [
           className="text-primary font-semibold hover:underline"
         >
           info@thebasemovement.org.gh
-        </a>{' '}
+        </a>
+        <br />
         or call{' '}
         <a href="tel:+233500489697" className="text-primary font-semibold hover:underline">
           +233 500 4896 97
