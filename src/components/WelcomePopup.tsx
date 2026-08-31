@@ -1,8 +1,10 @@
 /**
  * WelcomePopup — announcement modal shown to logged-out visitors on the
  * homepage. Toggled and edited from Settings ("Homepage Popup" tab), which
- * writes `welcome_popup_enabled` / `welcome_popup_message` site settings
- * (same mechanism as maintenance mode).
+ * writes `welcome_popup_enabled` / `welcome_popup_message` /
+ * `welcome_popup_start_at` / `welcome_popup_end_at` site settings (same
+ * mechanism as maintenance mode). The master toggle and the scheduled
+ * active/end window both have to allow it before it can show.
  *
  * "Strategic" open: triggers once the visitor has scrolled 20% down the
  * page (not on paint, so it never fights the hero animation) and reappears
@@ -34,9 +36,20 @@ export function WelcomePopup() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
-  const enabled = settings.welcome_popup_enabled === true
   const message =
     typeof settings.welcome_popup_message === 'string' ? settings.welcome_popup_message : ''
+
+  const startAt =
+    typeof settings.welcome_popup_start_at === 'string' && settings.welcome_popup_start_at
+      ? new Date(settings.welcome_popup_start_at).getTime()
+      : null
+  const endAt =
+    typeof settings.welcome_popup_end_at === 'string' && settings.welcome_popup_end_at
+      ? new Date(settings.welcome_popup_end_at).getTime()
+      : null
+  const now = Date.now()
+  const withinWindow = (!startAt || now >= startAt) && (!endAt || now <= endAt)
+  const enabled = settings.welcome_popup_enabled === true && withinWindow
 
   useEffect(() => {
     if (isLoading || user || !enabled) return

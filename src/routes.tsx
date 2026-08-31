@@ -84,6 +84,7 @@ const AdminPlanManager = lazy(() => import('./pages/admin/PlanManager'))
 const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
 const AdminRegions = lazy(() => import('./pages/admin/Regions'))
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
+const AdminFAQManagement = lazy(() => import('./pages/admin/FAQManagement'))
 const AdminEvents = lazy(() => import('./pages/admin/Events'))
 const AdminContentCalendar = lazy(() => import('./pages/admin/content/ContentCalendar'))
 const AdminImpactProjects = lazy(() => import('./pages/admin/ImpactProjects'))
@@ -362,6 +363,7 @@ export const routes: RouteObject[] = [
               { path: '/admin/plan-manager', element: <AdminPlanManager /> },
               { path: '/admin/regions', element: <AdminRegions /> },
               { path: '/admin/blogs', element: <AdminBlogs /> },
+              { path: '/admin/faq', element: <AdminFAQManagement /> },
               { path: '/admin/events', element: <AdminEvents /> },
               { path: '/admin/content-calendar', element: <AdminContentCalendar /> },
               { path: '/admin/impact-projects', element: <AdminImpactProjects /> },

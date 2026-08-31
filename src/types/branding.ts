@@ -41,6 +41,10 @@ export interface BrandingSettings {
   // Homepage welcome popup (toggled from Settings)
   welcome_popup_enabled?: boolean
   welcome_popup_message?: string
+  /** ISO datetime — popup stays off until this time, even if enabled. Empty/unset = no start restriction. */
+  welcome_popup_start_at?: string
+  /** ISO datetime — popup stops showing after this time, even if enabled. Empty/unset = no end restriction. */
+  welcome_popup_end_at?: string
   [key: string]: unknown
 }
 
