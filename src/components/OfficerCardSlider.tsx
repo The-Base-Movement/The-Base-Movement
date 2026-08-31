@@ -40,13 +40,19 @@ const HorizontalRail = () => (
   />
 )
 
+// Tablets (768–1023px) use the carousel too, same as mobile — otherwise a
+// tier with fewer than SLIDER_MIN officers falls back to the flex-wrap grid,
+// which shows one wide "landscape" card per row instead of two portrait-ish
+// cards side by side.
+const TABLET_MAX_WIDTH = 1024
+
 export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
   const [isMobile, setIsMobile] = useState(
-    () => typeof window !== 'undefined' && window.innerWidth < 768
+    () => typeof window !== 'undefined' && window.innerWidth < TABLET_MAX_WIDTH
   )
 
   useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768)
+    const handler = () => setIsMobile(window.innerWidth < TABLET_MAX_WIDTH)
     window.addEventListener('resize', handler)
     return () => window.removeEventListener('resize', handler)
   }, [])
