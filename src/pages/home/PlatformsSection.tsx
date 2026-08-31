@@ -4,7 +4,10 @@ import { ButtonAccent } from '@/components/buttons/ButtonAccent'
 
 export function PlatformsSection() {
   return (
-    <section aria-labelledby="platforms-heading" className="py-20 md:py-28 bg-[#F7F5F2] border-y border-border/60">
+    <section
+      aria-labelledby="platforms-heading"
+      className="py-20 md:py-28 bg-surface-warm border-y border-border/60"
+    >
       <div className="page-container">
         <div className="mb-12 max-w-xl">
           <span className="text-[10px] font-medium tracking-[0.08em] uppercase text-primary font-meta block mb-2">
@@ -30,7 +33,8 @@ export function PlatformsSection() {
                 </h3>
               </div>
               <p className="text-sm md:text-base text-muted-foreground mb-8 leading-relaxed font-body-md">
-                Get involved directly in your constituency. Participate in grassroots organizing, civic training, and practical action for jobs and national development.
+                Get involved directly in your constituency. Participate in grassroots organizing,
+                civic training, and practical action for jobs and national development.
               </p>
             </div>
             <div>
@@ -56,7 +60,8 @@ export function PlatformsSection() {
                 </h3>
               </div>
               <p className="text-sm md:text-base text-muted-foreground mb-8 leading-relaxed font-body-md">
-                Stay connected to home and mobilize from abroad. Deploy your skills, professional networks, and international support into Ghana's future.
+                Stay connected to home and mobilize from abroad. Deploy your skills, professional
+                networks, and international support into Ghana's future.
               </p>
             </div>
             <div>

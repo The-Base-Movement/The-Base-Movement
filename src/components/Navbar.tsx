@@ -247,7 +247,10 @@ export default function Navbar() {
         </div>
 
         {/* Desktop nav links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }} className="desktop-only">
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 24 }}
+          className="nav-desktop-only"
+        >
           {PRIMARY_NAV_LINKS.map((link) => (
             <Link
               key={link.label}
@@ -386,7 +389,10 @@ export default function Navbar() {
         </div>
 
         {/* Desktop auth / user */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} className="desktop-only">
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+          className="nav-desktop-only"
+        >
           {themeToggle}
           {isLoggedIn ? (
             <div style={{ position: 'relative' }} ref={dropdownRef}>
@@ -569,7 +575,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile actions */}
-        <div className="mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div className="nav-mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Link
             to={isLoggedIn ? '/dashboard/donate' : '/donate'}
             aria-label="Donate"
@@ -617,7 +623,7 @@ export default function Navbar() {
       {isOpen && (
         <>
           <div
-            className="mobile-only"
+            className="nav-mobile-only"
             onClick={() => setIsOpen(false)}
             style={{
               position: 'fixed',
@@ -627,7 +633,7 @@ export default function Navbar() {
             }}
           />
           <div
-            className="mobile-only"
+            className="nav-mobile-only"
             id="mobile-nav-drawer"
             style={{
               position: 'fixed',

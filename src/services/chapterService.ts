@@ -81,37 +81,18 @@ class ChapterService {
       return []
     }
 
-    const chapterNames = (data || []).map((c) => c.name as string).filter(Boolean)
     const leaderIds = [...new Set((data || []).map((c) => c.leader_id).filter(Boolean))] as string[]
 
-    // Fetch countries flags, live member counts (direct per-chapter DB count),
-    // and leader avatars in parallel.
-    const [{ data: countriesData }, directoryRows, liveCountRows] = await Promise.all([
+    // Fetch countries flags, live member counts, and leader avatars in
+    // parallel. Member counts come from get_chapter_member_counts() — a
+    // SECURITY DEFINER RPC — because public.users has no public SELECT RLS
+    // policy (members can only read their own row), so a raw `.from('users')`
+    // select here would silently return zero rows for anon/non-admin
+    // visitors and every chapter card would show "0 members".
+    const [{ data: countriesData }, directoryRows, { data: countRows }] = await Promise.all([
       supabase.from('countries').select('name, flag_url'),
       getPublicDirectoryProfiles(leaderIds), // avatar lookup, scoped to this page's chapter leaders only
-      // Count members per chapter directly in the DB — no row-level cap.
-      // Paginate past the PostgREST 1000-row default.
-      chapterNames.length > 0
-        ? (async () => {
-            const PAGE = 1000
-            let from = 0
-            const rows: { chapter: string }[] = []
-            while (true) {
-              const { data: page } = await supabase
-                .from('users')
-                .select('chapter')
-                .in('chapter', chapterNames)
-                .eq('status', 'Active')
-                .is('deleted_at', null)
-                .range(from, from + PAGE - 1)
-              if (!page || page.length === 0) break
-              rows.push(...(page as { chapter: string }[]))
-              if (page.length < PAGE) break
-              from += PAGE
-            }
-            return { data: rows }
-          })()
-        : Promise.resolve({ data: [] as { chapter: string }[] }),
+      supabase.rpc('get_chapter_member_counts'),
     ])
 
     const leaderAvatarMap: Record<string, string> = {}
@@ -124,11 +105,9 @@ class ChapterService {
       return acc
     }, {})
 
-    // Build live count map from the direct DB rows (accurate, no row-cap)
     const liveCounts: Record<string, number> = {}
-    ;(liveCountRows.data ?? []).forEach((u: { chapter: string }) => {
-      if (u.chapter)
-        liveCounts[u.chapter.toLowerCase()] = (liveCounts[u.chapter.toLowerCase()] || 0) + 1
+    ;(countRows ?? []).forEach((row: { chapter: string; member_count: number }) => {
+      if (row.chapter) liveCounts[row.chapter.toLowerCase()] = row.member_count
     })
 
     return (data || []).map((c) => {
@@ -204,14 +183,12 @@ class ChapterService {
       .eq('name', data.country)
       .single()
 
-    // Live member count via a direct DB count (no need to pull every member's
-    // name/avatar just to count chapter matches).
-    const { count: liveCount } = await supabase
-      .from('users')
-      .select('id', { count: 'exact', head: true })
-      .eq('chapter', data.name)
-      .eq('status', 'Active')
-      .is('deleted_at', null)
+    // Live member count via get_chapter_member_count() — public.users has no
+    // public SELECT RLS policy, so a raw `.from('users')` count here would
+    // silently return 0 for anon/non-admin visitors (see getChapters above).
+    const { data: liveCount } = await supabase.rpc('get_chapter_member_count', {
+      p_chapter_name: data.name,
+    })
 
     let leaderAvatarUrl: string | undefined = undefined
     let leaderRegisteredChapter: string | undefined = undefined

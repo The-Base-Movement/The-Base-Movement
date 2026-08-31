@@ -14,7 +14,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
   return (
     <section
       aria-labelledby="updates-heading"
-      className="py-20 md:py-28 bg-[#F7F5F2] border-t border-border/60"
+      className="py-20 md:py-28 bg-surface-warm border-t border-border/60"
     >
       <div className="page-container">
         <div className="flex justify-between items-end mb-12" data-fade>

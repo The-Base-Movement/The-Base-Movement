@@ -120,7 +120,7 @@ export function MobileHeroUpdatesTicker({ latestPosts }: { latestPosts: BlogPost
 
   return (
     <section
-      className="sm:hidden border-b border-accent/70 bg-primary text-primary-foreground"
+      className="lg:hidden border-b border-accent/70 bg-primary text-primary-foreground"
       aria-label="Urgent updates"
     >
       <div className="page-container py-2.5">
@@ -214,8 +214,8 @@ export function HeroSection({
 
       <div className="home-hero-shade absolute inset-0 z-0" />
 
-      <div className="page-container pb-14 pt-28 md:pb-[90px] md:pt-32 relative z-10 flex flex-col md:flex-row items-stretch md:items-end justify-end gap-8 md:gap-12 w-full min-h-screen">
-        <div className="md:flex-1 text-center md:text-left">
+      <div className="page-container pb-14 pt-28 lg:pb-[90px] lg:pt-32 relative z-10 flex flex-col lg:flex-row items-stretch lg:items-end justify-end gap-8 lg:gap-12 w-full min-h-screen">
+        <div className="lg:flex-1 text-center lg:text-left">
           <h1
             id="hero-heading"
             className="font-meta font-medium mb-2 leading-[1.05] tracking-tighter"
@@ -234,7 +234,7 @@ export function HeroSection({
           <p className="text-white/70 text-xs md:text-sm font-meta font-medium tracking-tight max-w-xl mb-3">
             Where you live decides how you join, by constituency in Ghana, or by country abroad.
           </p>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center md:justify-start">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-center lg:justify-start">
             <Link
               to="/register?platform=GHANA"
               className="inline-flex items-center justify-center gap-2 px-7 py-4 font-meta text-sm tracking-tight hover:opacity-90 transition-opacity"
@@ -282,7 +282,7 @@ export function HeroSection({
           </div>
         </div>
 
-        <div className="hidden md:flex flex-1 justify-center md:justify-end">
+        <div className="hidden lg:flex flex-1 justify-center lg:justify-end">
           <HeroUpdatesSlider latestPosts={latestPosts} />
         </div>
       </div>
