@@ -33,6 +33,7 @@ serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const webhookUrl =
+      Deno.env.get('DISCORD_PASSWORD_RESET_WEBHOOK_URL') ||
       Deno.env.get('DISCORD_ALERTS_WEBHOOK_URL') ||
       Deno.env.get('DISCORD_SECURITY_WEBHOOK_URL') ||
       Deno.env.get('DISCORD_WEBHOOK_URL') ||
