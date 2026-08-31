@@ -149,18 +149,10 @@ const FAQ_ITEMS: FAQItem[] = [
 export default function FAQ() {
   const [activeCategory, setActiveCategory] = useState<string>('All')
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [openIds, setOpenIds] = useState<Set<string>>(new Set(['q1', 'q2', 'q3', 'q4']))
+  const [openId, setOpenId] = useState<string | null>('q1')
 
   const toggleAccordion = (id: string) => {
-    setOpenIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
+    setOpenId((prev) => (prev === id ? null : id))
   }
 
   const filteredFaqs = FAQ_ITEMS.filter((item) => {
@@ -303,7 +295,7 @@ export default function FAQ() {
         <div className="space-y-4">
           {filteredFaqs.length > 0 ? (
             filteredFaqs.map((item) => {
-              const isOpen = openIds.has(item.id)
+              const isOpen = openId === item.id
               return (
                 <div
                   key={item.id}
