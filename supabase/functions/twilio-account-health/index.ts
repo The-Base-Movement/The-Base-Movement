@@ -5,13 +5,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-expect-error: Deno global
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  // @ts-expect-error: Deno global
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   const authz = requireServiceRoleCall(req, serviceKey)
   if (!authz.ok) {
@@ -22,9 +20,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // @ts-expect-error: Deno global
     const accountSid = (Deno.env.get('TWILIO_ACCOUNT_SID') || Deno.env.get('TWILIO_SID'))?.trim()
-    // @ts-expect-error: Deno global
     const authToken = (Deno.env.get('TWILIO_AUTH_TOKEN') || Deno.env.get('TWILIO_TOKEN'))?.trim()
 
     if (!accountSid || !authToken) {
