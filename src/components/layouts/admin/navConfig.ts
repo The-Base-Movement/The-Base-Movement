@@ -338,6 +338,12 @@ export const getNavGroups = (
         permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
       },
       {
+        to: '/admin/faq',
+        icon: 'quiz',
+        label: 'FAQ',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+      {
         to: '/admin/content-calendar',
         icon: 'calendar_month',
         label: 'Content calendar',

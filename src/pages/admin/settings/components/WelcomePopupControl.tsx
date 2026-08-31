@@ -6,15 +6,24 @@ import { defaultSettings } from '@/types/branding'
 /**
  * IT/Settings control for the homepage welcome popup shown to logged-out
  * visitors. Writes `welcome_popup_enabled` / `welcome_popup_message` site
- * settings, then broadcasts so BrandingContext picks it up live. Bumping
- * `welcome_popup_version` re-shows the popup to visitors who already
- * dismissed an earlier message (WelcomePopup remembers dismissals per
- * version in localStorage).
+ * settings, then broadcasts so BrandingContext picks it up live. The popup
+ * itself triggers once per homepage visit at 20% scroll, so there is no
+ * dismissal state to reset here.
  */
+// datetime-local wants "YYYY-MM-DDTHH:mm", not a full ISO string with seconds/zone
+function toDatetimeLocal(iso: string): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export function WelcomePopupControl() {
   const [enabled, setEnabled] = useState(false)
   const [message, setMessage] = useState('')
-  const [version, setVersion] = useState(1)
+  const [startAt, setStartAt] = useState('')
+  const [endAt, setEndAt] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
@@ -28,7 +37,14 @@ export function WelcomePopupControl() {
             ? s.welcome_popup_message
             : String(defaultSettings.welcome_popup_message)
         )
-        setVersion(Number(s.welcome_popup_version ?? 1) || 1)
+        setStartAt(
+          typeof s.welcome_popup_start_at === 'string'
+            ? toDatetimeLocal(s.welcome_popup_start_at)
+            : ''
+        )
+        setEndAt(
+          typeof s.welcome_popup_end_at === 'string' ? toDatetimeLocal(s.welcome_popup_end_at) : ''
+        )
       } finally {
         setLoading(false)
       }
@@ -36,13 +52,25 @@ export function WelcomePopupControl() {
     load()
   }, [])
 
-  async function persist(next: { enabled: boolean; message: string; version: number }) {
+  async function persist(next: {
+    enabled: boolean
+    message: string
+    startAt: string
+    endAt: string
+  }) {
     setSaving(true)
     try {
       const results = await Promise.all([
         adminService.updateSiteSetting('welcome_popup_enabled', next.enabled),
         adminService.updateSiteSetting('welcome_popup_message', next.message.trim()),
-        adminService.updateSiteSetting('welcome_popup_version', next.version),
+        adminService.updateSiteSetting(
+          'welcome_popup_start_at',
+          next.startAt ? new Date(next.startAt).toISOString() : ''
+        ),
+        adminService.updateSiteSetting(
+          'welcome_popup_end_at',
+          next.endAt ? new Date(next.endAt).toISOString() : ''
+        ),
       ])
       if (results.some((ok) => !ok)) throw new Error('save failed')
       window.dispatchEvent(new Event('site_settings_updated'))
@@ -59,17 +87,11 @@ export function WelcomePopupControl() {
   function handleToggle() {
     const next = !enabled
     setEnabled(next)
-    persist({ enabled: next, message, version })
+    persist({ enabled: next, message, startAt, endAt })
   }
 
   function handleSaveMessage() {
-    persist({ enabled, message, version })
-  }
-
-  function handleResaveAndReshow() {
-    const nextVersion = version + 1
-    setVersion(nextVersion)
-    persist({ enabled, message, version: nextVersion })
+    persist({ enabled, message, startAt, endAt })
   }
 
   return (
@@ -187,6 +209,89 @@ export function WelcomePopupControl() {
             need to include links for them.
           </p>
         </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'hsl(var(--on-surface-muted))',
+                marginBottom: 6,
+              }}
+            >
+              Active window (optional)
+            </label>
+            <input
+              type="datetime-local"
+              value={startAt}
+              onChange={(e) => setStartAt(e.target.value)}
+              disabled={loading}
+              style={{
+                width: '100%',
+                height: 38,
+                padding: '0 12px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--card))',
+                boxSizing: 'border-box',
+                outline: 'none',
+              }}
+            />
+          </div>
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: 11,
+                fontWeight: 'var(--font-weight-medium, 500)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'hsl(var(--on-surface-muted))',
+                marginBottom: 6,
+              }}
+            >
+              End window (optional)
+            </label>
+            <input
+              type="datetime-local"
+              value={endAt}
+              onChange={(e) => setEndAt(e.target.value)}
+              disabled={loading}
+              style={{
+                width: '100%',
+                height: 38,
+                padding: '0 12px',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'var(--radius-sm)',
+                fontFamily: "'Public Sans', sans-serif",
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+                background: 'hsl(var(--card))',
+                boxSizing: 'border-box',
+                outline: 'none',
+              }}
+            />
+          </div>
+          <p
+            style={{
+              gridColumn: '1 / -1',
+              margin: 0,
+              fontSize: 11,
+              color: 'hsl(var(--on-surface-muted))',
+            }}
+          >
+            Leave either blank to not restrict that side. The toggle above is a master switch, it
+            still has to be ON for the popup to show even inside this window.
+          </p>
+        </div>
+
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
             type="button"
@@ -198,18 +303,6 @@ export function WelcomePopupControl() {
               save
             </span>
             Save message
-          </button>
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            disabled={loading || saving}
-            onClick={handleResaveAndReshow}
-            title="Re-show the popup even to visitors who already dismissed it"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              refresh
-            </span>
-            Save & re-show to everyone
           </button>
         </div>
       </div>
