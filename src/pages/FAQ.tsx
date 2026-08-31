@@ -97,8 +97,8 @@ const FAQ_ITEMS: FAQItem[] = [
     answer: (
       <>
         Our national headquarters is located at{' '}
-        <strong>GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana</strong>. You
-        can find full contact details and Google Maps location on our{' '}
+        <strong>HQXC+Q76 The Base Movement, Accra, Ghana</strong>. You can find full contact details
+        and Google Maps location on our{' '}
         <Link to="/contact" className="text-primary font-semibold hover:underline">
           Contact Page
         </Link>
@@ -185,7 +185,7 @@ export default function FAQ() {
                   : item.id === 'q5'
                     ? 'Through a target 1-Million Jobs Plan focused on priority sectors including agricultural industrialization, technical trades, digital technology, and local manufacturing across all 16 regions.'
                     : item.id === 'q6'
-                      ? 'The national headquarters is located at GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana.'
+                      ? 'The national headquarters is located at HQXC+Q76 The Base Movement, Accra, Ghana.'
                       : item.id === 'q7'
                         ? 'Printable PDF membership entry forms for both Ghana and Diaspora networks can be downloaded on the website at thebasemovement.org.gh/registration-form-preview.'
                         : 'You can support community projects, youth training initiatives, and branch operations by visiting our secure donation portal at thebasemovement.org.gh/donate.',
