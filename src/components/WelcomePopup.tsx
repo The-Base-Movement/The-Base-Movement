@@ -6,17 +6,20 @@
  * mechanism as maintenance mode). The master toggle and the scheduled
  * active/end window both have to allow it before it can show.
  *
- * "Strategic" open: triggers once the visitor has scrolled 5% down the
- * page (not on paint, so it never fights the hero animation) and reappears
- * on every fresh homepage visit, since the component's own mount/unmount is
- * the reset, no persisted dismissal.
+ * "Strategic" open: triggers once the visitor has scrolled 5% down the page
+ * (not on paint, so it never fights the hero animation), and again if they
+ * scroll to within 10% of the bottom, even if they closed it the first
+ * time, since reaching the end of the page is a second natural read-more
+ * moment. Both triggers reset on every fresh homepage visit, since the
+ * component's own mount/unmount is the reset, no persisted dismissal.
  */
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useBranding } from '@/hooks/useBranding'
 
-const SCROLL_TRIGGER_PCT = 5
+const TOP_SCROLL_TRIGGER_PCT = 5
+const BOTTOM_SCROLL_TRIGGER_PCT = 10
 const DOMAIN_RE = /thebasemovement\.org\.gh/gi
 
 function renderMessage(text: string) {
@@ -54,13 +57,24 @@ export function WelcomePopup() {
   useEffect(() => {
     if (isLoading || user || !enabled) return
 
+    let topTriggered = false
+    let bottomTriggered = false
+
     function checkScroll() {
       const doc = document.documentElement
       const scrollable = doc.scrollHeight - doc.clientHeight
       if (scrollable <= 0) return
       const pct = (window.scrollY / scrollable) * 100
-      if (pct >= SCROLL_TRIGGER_PCT) {
+
+      if (!topTriggered && pct >= TOP_SCROLL_TRIGGER_PCT) {
+        topTriggered = true
         setOpen(true)
+      }
+      if (!bottomTriggered && pct >= 100 - BOTTOM_SCROLL_TRIGGER_PCT) {
+        bottomTriggered = true
+        setOpen(true)
+      }
+      if (topTriggered && bottomTriggered) {
         window.removeEventListener('scroll', checkScroll)
       }
     }
@@ -117,7 +131,7 @@ export function WelcomePopup() {
           .welcome-popup-actions .btn { width: 100%; }
         }
         @media (min-width: 1024px) {
-          .welcome-popup-card { max-height: 94vh !important; min-height: 560px; }
+          .welcome-popup-card { max-height: 94vh !important; }
         }
       `}</style>
       <div
@@ -161,7 +175,6 @@ export function WelcomePopup() {
           style={{
             position: 'relative',
             zIndex: 1,
-            flex: 1,
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -237,7 +250,6 @@ export function WelcomePopup() {
               lineHeight: 1.7,
               color: 'hsl(var(--on-surface-muted))',
               whiteSpace: 'pre-line',
-              flex: 1,
             }}
           >
             {renderMessage(message)}
