@@ -230,7 +230,7 @@ export async function scanFormFile(
 
   const timeout = new Promise<never>((_, reject) =>
     setTimeout(
-      () => reject(new Error('Scan timed out — please fill in your details manually.')),
+      () => reject(new Error('Scan timed out, please fill in your details manually.')),
       SCAN_TIMEOUT_MS
     )
   )

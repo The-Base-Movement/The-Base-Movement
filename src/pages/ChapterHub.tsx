@@ -340,7 +340,7 @@ export default function ChapterHub() {
           .invoke('send-push-notification', {
             body: {
               userIds: memberIds,
-              title: `${chapter.name} — new announcement`,
+              title: `${chapter.name}, new announcement`,
               body: announceDraft.trim().slice(0, 100),
               url: '/dashboard/chapter-hub',
             },

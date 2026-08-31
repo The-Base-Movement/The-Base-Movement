@@ -280,7 +280,7 @@ export function ChapterCard({ chapter, userChapterName }: ChapterCardProps) {
           ) : (
             <Link
               to={`/dashboard/chapters/${slug}`}
-              aria-label={`Join the Diaspora — ${diasporaName(chapter.name)}`}
+              aria-label={`Join the Diaspora, ${diasporaName(chapter.name)}`}
               style={{
                 flexShrink: 0,
                 padding: '6px 12px',

@@ -36,7 +36,7 @@ export default function About() {
     >
       <SEO
         title="About"
-        description="Learn about The Base Movement — a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
+        description="Learn about The Base Movement, a grassroots political movement for Ghana built on patriotism, honesty, and discipline, uniting compatriots at home and across the diaspora behind a Ghana First agenda."
       />
       <section className="bg-[#F7F5F2] border-b border-border/60 py-16 md:py-24 px-4 sm:px-8">
         <AboutHero tagline={siteSettings.about_hero_tagline} />

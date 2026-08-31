@@ -74,6 +74,7 @@ export default function MonthlyDuesTab() {
   }, [session, currentMonth])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
     void load()
   }, [load])
 
@@ -187,7 +188,7 @@ export default function MonthlyDuesTab() {
       } else {
         toast[result.retryable ? 'error' : 'success'](
           result.retryable
-            ? 'Hubtel could not confirm the cancellation yet — try again shortly.'
+            ? 'Hubtel could not confirm the cancellation yet, try again shortly.'
             : 'Recurring payments cancelled.'
         )
       }
@@ -270,7 +271,7 @@ export default function MonthlyDuesTab() {
           }}
         >
           We asked Hubtel to cancel your recurring dues invoice but have not received confirmation
-          yet. Your enrollment stays paused until Hubtel confirms — nothing further will be charged
+          yet. Your enrollment stays paused until Hubtel confirms, nothing further will be charged
           once cancellation completes.
         </p>
         <button

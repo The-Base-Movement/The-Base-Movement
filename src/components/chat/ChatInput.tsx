@@ -153,7 +153,7 @@ export function ChatInput({
       setMicError(
         name === 'NotFoundError' || name === 'DevicesNotFoundError'
           ? 'No microphone found'
-          : 'Microphone unavailable — allow access in your browser and reload'
+          : 'Microphone unavailable, allow access in your browser and reload'
       )
     }
   }

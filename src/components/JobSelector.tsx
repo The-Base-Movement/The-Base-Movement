@@ -210,7 +210,9 @@ export function JobSelector({
   return (
     <div style={{ display: 'grid', gap: 10 }} ref={containerRef}>
       {/* Inline label row: Profession | Occupation */}
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+      <div
+        style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}
+      >
         <span style={labelStyle}>Profession{star}</span>
         <span style={{ ...labelStyle, fontSize: 10, opacity: 0.65 }}>Occupation</span>
       </div>
@@ -257,7 +259,10 @@ export function JobSelector({
         {search && (
           <button
             type="button"
-            onClick={() => { setSearch(''); setShowResults(false) }}
+            onClick={() => {
+              setSearch('')
+              setShowResults(false)
+            }}
             style={{
               position: 'absolute',
               right: 10,
@@ -271,7 +276,9 @@ export function JobSelector({
               display: 'flex',
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+              close
+            </span>
           </button>
         )}
       </div>
@@ -300,10 +307,22 @@ export function JobSelector({
           <button
             type="button"
             onClick={() => {
-              const cleared: JobSelection = { industryId: null, subCategoryId: null, roleId: null, isOther: false, customTitle: '' }
+              const cleared: JobSelection = {
+                industryId: null,
+                subCategoryId: null,
+                roleId: null,
+                isOther: false,
+                customTitle: '',
+              }
               onChange?.(cleared)
               onLabelChange?.('')
-              onSelectionChange?.({ job_industry_id: null, job_sub_category_id: null, job_role_id: null, profession: '', job_custom_title: null })
+              onSelectionChange?.({
+                job_industry_id: null,
+                job_sub_category_id: null,
+                job_role_id: null,
+                profession: '',
+                job_custom_title: null,
+              })
             }}
             style={{
               marginLeft: 'auto',
@@ -317,7 +336,9 @@ export function JobSelector({
             }}
             title="Clear selection"
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+              close
+            </span>
           </button>
         </div>
       )}
@@ -366,7 +387,10 @@ export function JobSelector({
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 15, color: 'hsl(var(--on-surface-muted))' }}
+                >
                   edit
                 </span>
                 Enter my occupation manually
@@ -449,16 +473,17 @@ export function JobSelector({
                   color: 'hsl(var(--on-surface-muted))',
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'hsl(var(--container-low))'
+                  ;(e.currentTarget as HTMLButtonElement).style.background =
+                    'hsl(var(--container-low))'
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                  ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
                 }}
               >
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   edit
                 </span>
-                Not listed — enter manually
+                Not listed, enter manually
               </button>
             </>
           )}

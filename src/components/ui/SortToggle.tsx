@@ -24,7 +24,7 @@ export function SortToggle({ value, onChange, label = 'A–Z' }: SortToggleProps
     <button
       type="button"
       onClick={() => onChange(isAsc ? 'desc' : 'asc')}
-      title={isAsc ? 'Sorted A → Z — click for Z → A' : 'Sorted Z → A — click for A → Z'}
+      title={isAsc ? 'Sorted A → Z, click for Z → A' : 'Sorted Z → A, click for A → Z'}
       style={{
         display: 'inline-flex',
         alignItems: 'center',

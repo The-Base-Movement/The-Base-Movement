@@ -122,7 +122,7 @@ export default function Jobs() {
     if (monthlyCount >= 3) {
       return (
         <span className="pill pill-err" style={{ fontSize: 12 }}>
-          3 / 3 — resets 1 {nextMonthName()}
+          3 / 3, resets 1 {nextMonthName()}
         </span>
       )
     }
@@ -226,7 +226,8 @@ export default function Jobs() {
             lineHeight: 1.5,
           }}
         >
-          Explore verified employment, skill development, and strategic roles across Ghana and Diaspora chapters as part of Dr. George Oti Bonsu's 1 Million Youth Jobs initiative.
+          Explore verified employment, skill development, and strategic roles across Ghana and
+          Diaspora chapters as part of Dr. George Oti Bonsu's 1 Million Youth Jobs initiative.
         </p>
       </div>
 

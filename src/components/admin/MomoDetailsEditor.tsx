@@ -175,7 +175,7 @@ export function MomoDetailsEditor() {
           </div>
           <p style={{ margin: '0 0 10px', fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
             Works on every Ghana network (MTN, Telecel, AirtelTigo). Shown on the donate page as a
-            tap-to-dial link — unlike the network-specific merchant number above.
+            tap-to-dial link, unlike the network-specific merchant number above.
           </p>
           <label htmlFor="momo-short-code" style={labelSt}>
             Dial Code

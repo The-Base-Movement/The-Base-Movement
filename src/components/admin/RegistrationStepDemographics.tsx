@@ -682,7 +682,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
                         type="button"
                         onClick={() => {
                           handleChange('pollingStationCode', s.code)
-                          setPsSearch(`${s.code} — ${s.name}`)
+                          setPsSearch(`${s.code}, ${s.name}`)
                         }}
                         style={{
                           display: 'flex',
@@ -736,7 +736,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
               >
                 Polling Station Code{' '}
                 <span style={{ color: 'hsl(var(--on-surface-muted))', textTransform: 'none' }}>
-                  (optional — auto-fills location)
+                  (optional, auto-fills location)
                 </span>
               </label>
               <input
@@ -817,10 +817,10 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
               Assigned chapter <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <input
-              aria-label="E.g. Base Diaspora — UK"
+              aria-label="E.g. Base Diaspora, UK"
               name="name-4d1480"
               id="input-4d1480"
-              placeholder="E.g. Base Diaspora — UK"
+              placeholder="E.g. Base Diaspora, UK"
               required
               value={formData.chapter}
               onChange={(e) => handleChange('chapter', e.target.value)}

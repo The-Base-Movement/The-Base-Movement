@@ -242,7 +242,7 @@ export default function ConstituencyHub() {
           .invoke('send-push-notification', {
             body: {
               userIds: memberIds,
-              title: `${constituency.name} — new announcement`,
+              title: `${constituency.name}, new announcement`,
               body: announceDraft.trim().slice(0, 100),
               url: `/dashboard/constituencies/${constituencySlug(constituency.name)}`,
             },

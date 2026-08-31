@@ -286,7 +286,7 @@ export function MfaSetupNag() {
                 >
                   Your account has admin privileges but two-factor authentication is not set up.
                   Without 2FA, anyone with your password can reach the Command Center. Activating
-                  takes about a minute — keep your authenticator app handy.
+                  takes about a minute, keep your authenticator app handy.
                 </p>
               </div>
             </div>
@@ -363,7 +363,7 @@ export function MfaSetupNag() {
             >
               Use Google Authenticator, Authy, or any TOTP app, then continue.
               <br />
-              First delete any old &ldquo;The Base Movement&rdquo; entry — a stale one gives invalid
+              First delete any old &ldquo;The Base Movement&rdquo; entry, a stale one gives invalid
               codes.
             </p>
 
