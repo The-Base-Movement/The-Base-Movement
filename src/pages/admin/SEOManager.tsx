@@ -574,7 +574,7 @@ export default function SEOManager() {
                     {analysis.grade === 'GOOD'
                       ? 'Excellent Optimization'
                       : analysis.grade === 'OK'
-                        ? 'Fair — Needs Improvement'
+                        ? 'Fair, Needs Improvement'
                         : 'Poor Optimization'}
                   </div>
                 </div>

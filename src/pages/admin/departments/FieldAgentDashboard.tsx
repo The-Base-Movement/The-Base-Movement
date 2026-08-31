@@ -101,7 +101,7 @@ export default function FieldAgentDashboard() {
         description={
           assignment
             ? `Assigned to ${assignment.constituency}${assignment.region ? `, ${assignment.region}` : ''}`
-            : 'Ground operations — member registration & verification'
+            : 'Ground operations, member registration & verification'
         }
       />
 
@@ -573,8 +573,8 @@ export default function FieldAgentDashboard() {
           />
           <p style={{ margin: 0, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
             {isOnline
-              ? 'Connected — registrations will save directly to the server.'
-              : 'Offline mode — registrations are saved locally and will sync automatically when connection is restored.'}
+              ? 'Connected, registrations will save directly to the server.'
+              : 'Offline mode, registrations are saved locally and will sync automatically when connection is restored.'}
           </p>
         </div>
       </div>

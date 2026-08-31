@@ -73,7 +73,7 @@ export function MemberReadinessTable({
               marginTop: 2,
             }}
           >
-            Polling station codes submitted by members — use this to coordinate election-day
+            Polling station codes submitted by members, use this to coordinate election-day
             logistics by constituency.
           </p>
         </div>

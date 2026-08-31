@@ -38,7 +38,7 @@ export default function ITNotes() {
   useITLayout(
     'Team Noticeboard',
     'sticky_note_2',
-    'Shared sticky notes for the IT team — pin ideas, reminders and updates.',
+    'Shared sticky notes for the IT team, pin ideas, reminders and updates.',
     <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>
       <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
         add
@@ -231,7 +231,7 @@ export default function ITNotes() {
                 ? 'No archived notes.'
                 : colorFilter
                   ? `No ${colorFilter} notes on the board.`
-                  : 'The board is empty — pin the first note!'}
+                  : 'The board is empty, pin the first note!'}
           </p>
           {!colorFilter && !query && !showArchived && (
             <button className="btn btn-primary btn-sm" onClick={() => setCreateOpen(true)}>

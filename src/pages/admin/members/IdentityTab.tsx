@@ -515,7 +515,7 @@ export function IdentityTab({ member, onEdit, onVerify }: IdentityTabProps) {
                               onClick={() => {
                                 setSelectedCode(s.code)
                                 setSelectedName(s.name)
-                                setPsSearch(`${s.code} — ${s.name}`)
+                                setPsSearch(`${s.code}, ${s.name}`)
                                 setPsOpen(false)
                               }}
                               style={{

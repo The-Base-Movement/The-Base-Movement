@@ -48,7 +48,7 @@ export function ConstituencyCoverageTable({
               marginTop: 2,
             }}
           >
-            Members per constituency — sorted by presence. Use this to identify thin areas needing
+            Members per constituency, sorted by presence. Use this to identify thin areas needing
             mobilization.
           </p>
         </div>

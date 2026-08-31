@@ -84,7 +84,7 @@ export default function LeadersAuthActivity() {
   useITLayout(
     'All Activity',
     'history',
-    'Every action and device event by privileged admin roles — statistics, filters and export.'
+    'Every action and device event by privileged admin roles, statistics, filters and export.'
   )
 
   const [leaders, setLeaders] = useState<LeaderAccount[]>([])

@@ -117,7 +117,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
     }))
     setMemberSearchQuery('')
     setMemberSearchResults([])
-    toast.success(`"${member.name}" identified — credentials pre-filled.`)
+    toast.success(`"${member.name}" identified, credentials pre-filled.`)
   }
 
   const clearMemberSelection = () => {
@@ -649,7 +649,7 @@ export function AuthorForm({ mode, authorId, onClose, onSuccess }: AuthorFormPro
                   onChange={(e) => setFormData((prev) => ({ ...prev, role: e.target.value }))}
                   style={{ ...inputSt, appearance: 'none', cursor: 'pointer' }}
                 >
-                  <option value="">— Select a role —</option>
+                  <option value="">Select a role</option>
                   {availableRoles.map((r) => (
                     <option key={r} value={r}>
                       {r}

@@ -112,11 +112,11 @@ export function DeployMissionForm({
               Mission title <span style={{ color: 'hsl(var(--destructive))' }}>*</span>
             </label>
             <input
-              aria-label="e.g. Operation Doorstep Blitz — Lapaz Central"
+              aria-label="e.g. Operation Doorstep Blitz, Lapaz Central"
               name="name-81c63d"
               id="input-81c63d"
               type="text"
-              placeholder="e.g. Operation Doorstep Blitz — Lapaz Central"
+              placeholder="e.g. Operation Doorstep Blitz, Lapaz Central"
               style={{ ...fieldStyle, height: 44 }}
               value={newCampaign.title || ''}
               onChange={(e) => setNewCampaign((prev) => ({ ...prev, title: e.target.value }))}

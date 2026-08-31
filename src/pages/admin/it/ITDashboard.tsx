@@ -66,7 +66,7 @@ export default function ITDashboard() {
   useITLayout(
     'IT Department',
     'computer',
-    'Internal IT operations — projects, tasks, protocols and team structure.'
+    'Internal IT operations, projects, tasks, protocols and team structure.'
   )
 
   const [stats, setStats] = useState<ITStats | null>(null)

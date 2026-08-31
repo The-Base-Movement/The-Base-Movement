@@ -139,7 +139,7 @@ export default function ITSecurity() {
         const slug = title.trim().replace(/\s+/g, '-').toLowerCase().slice(0, 40)
         const path = `${userId}/${Date.now()}-${slug}.pdf`
         fileUrl = await itService.uploadSecurityProtocol(pdfFile, path)
-        setProgress('PDF uploaded — saving record…')
+        setProgress('PDF uploaded, saving record…')
       }
 
       await itService.createSecurityProtocol({

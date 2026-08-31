@@ -879,10 +879,10 @@ export function MemberDetailPanel({
             </h3>
             <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
               {resetResult.tempPassword
-                ? `This account can't use an email reset link, so a temporary password was set${resetResult.email ? ` for ${resetResult.email}` : ''}. Share it securely — the member is asked to change it on first login.`
+                ? `This account can't use an email reset link, so a temporary password was set${resetResult.email ? ` for ${resetResult.email}` : ''}. Share it securely, the member is asked to change it on first login.`
                 : resetResult.emailed
                   ? `A password-reset link was emailed to ${resetResult.email}. It opens the reset form and is valid for 1 hour.`
-                  : 'Email could not be sent — copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
+                  : 'Email could not be sent, copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
             </p>
             {resetResult.tempPassword && (
               <code

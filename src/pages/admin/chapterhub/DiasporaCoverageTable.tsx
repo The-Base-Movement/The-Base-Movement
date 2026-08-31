@@ -44,7 +44,7 @@ export function DiasporaCoverageTable({ stats }: DiasporaCoverageTableProps) {
               marginTop: 2,
             }}
           >
-            Members per country — sorted by presence. Use this to identify thin markets needing
+            Members per country, sorted by presence. Use this to identify thin markets needing
             mobilization.
           </p>
         </div>

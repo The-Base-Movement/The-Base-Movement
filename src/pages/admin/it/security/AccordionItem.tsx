@@ -180,9 +180,9 @@ export function AccordionItem({ protocol, isOpen, onToggle, onDelete }: Accordio
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                Protocol Document{' '}
+                Protocol Document,{' '}
                 <span style={{ fontWeight: 400, color: 'hsl(var(--on-surface-muted))' }}>
-                  — PDF hosted on Supabase Storage
+                  PDF hosted on Supabase Storage
                 </span>
               </p>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>

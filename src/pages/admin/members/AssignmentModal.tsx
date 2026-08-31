@@ -215,7 +215,7 @@ export function AssignmentModal({
                 {constituencies.map((c) => (
                   <option key={c.id} value={String(c.id)}>
                     {c.name}
-                    {c.regionName ? ` — ${c.regionName}` : ''}
+                    {c.regionName ? `, ${c.regionName}` : ''}
                   </option>
                 ))}
               </select>
@@ -237,7 +237,7 @@ export function AssignmentModal({
               {roles.map((r) => (
                 <option key={r.id} value={r.name}>
                   {formatRoleName(r.name)}
-                  {r.description ? ` — ${r.description}` : ''}
+                  {r.description ? `, ${r.description}` : ''}
                 </option>
               ))}
             </select>

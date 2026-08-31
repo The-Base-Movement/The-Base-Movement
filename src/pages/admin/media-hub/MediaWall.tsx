@@ -734,7 +734,7 @@ export default function MediaWall() {
                 }}
               >
                 {compAudience === 'team'
-                  ? 'Internal only — stays inside the media team.'
+                  ? 'Internal only, stays inside the media team.'
                   : 'Also shown to tagged members on their Comms Hub.'}
               </p>
 

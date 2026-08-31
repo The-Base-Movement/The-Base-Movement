@@ -27,7 +27,7 @@ export function HubHeader({
       <AdminPageHeader
         title={chapter.name}
         icon="account_balance"
-        description={`${chapter.leader_name || 'No leader assigned'} — ${chapter.city_or_region}, ${chapter.country}`}
+        description={`${chapter.leader_name || 'No leader assigned'}, ${chapter.city_or_region}, ${chapter.country}`}
       />
 
       <div className="kpis">

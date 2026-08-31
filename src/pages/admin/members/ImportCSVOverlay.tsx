@@ -347,7 +347,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
     }
     if (validRecords.length > MAX_IMPORT_ROWS) {
       toast.error(
-        `Too many records. Maximum per import is ${MAX_IMPORT_ROWS.toLocaleString()}. This file has ${validRecords.length.toLocaleString()} valid rows — split it into smaller files.`
+        `Too many records. Maximum per import is ${MAX_IMPORT_ROWS.toLocaleString()}. This file has ${validRecords.length.toLocaleString()} valid rows, split it into smaller files.`
       )
       return
     }
@@ -444,7 +444,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
       }
 
       const skipNote =
-        totalSkipped > 0 ? ` (${totalSkipped} skipped — phone number already registered)` : ''
+        totalSkipped > 0 ? ` (${totalSkipped} skipped, phone number already registered)` : ''
       toast.success(`${totalInserted} member${totalInserted !== 1 ? 's' : ''} imported.${skipNote}`)
       onSuccess()
       onClose()
@@ -583,7 +583,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                     <strong style={{ color: 'hsl(var(--on-surface))' }}>
                       Region &amp; Constituency
                     </strong>{' '}
-                    — leave blank for Diaspora.
+                    leave blank for Diaspora.
                   </li>
                   <li>Upload the filled CSV. Invalid rows are skipped; valid ones are imported.</li>
                 </ol>
@@ -840,7 +840,7 @@ export function ImportCSVOverlay({ onClose, onSuccess }: ImportCSVOverlayProps) 
                       fontSize: 12,
                     }}
                   >
-                    Rows with errors — will be skipped
+                    Rows with errors, will be skipped
                   </h5>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {parsedRecords

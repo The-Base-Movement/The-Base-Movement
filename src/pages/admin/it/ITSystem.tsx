@@ -58,7 +58,7 @@ export default function ITSystem() {
     smsBalanceValue === null
       ? (balance?.sms_detail ?? 'Unavailable')
       : smsBalanceValue < 500
-        ? 'Critically low — top up'
+        ? 'Critically low, top up'
         : smsBalanceValue < SMS_CYCLE_TARGET
           ? `Covers ${Math.round((smsBalanceValue / SMS_CYCLE_TARGET) * 100)}% of one full cycle`
           : 'Sufficient for a full cycle'
@@ -102,7 +102,7 @@ export default function ITSystem() {
         ? 'Optimal'
         : cacheRatio >= 80
           ? 'Moderate'
-          : 'Low — check indexes'
+          : 'Low, check indexes'
 
   return (
     <div>

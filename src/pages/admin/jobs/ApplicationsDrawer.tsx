@@ -87,7 +87,7 @@ export function ApplicationsDrawer({ job, onClose }: Props) {
               Applications
             </p>
             <p style={{ margin: 0, fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
-              {job.title} — {job.organization}
+              {job.title}, {job.organization}
             </p>
           </div>
           <button
@@ -275,7 +275,7 @@ export function ApplicationsDrawer({ job, onClose }: Props) {
                   color: 'hsl(var(--on-surface))',
                 }}
               >
-                Cover Letter — {viewCoverLetter.member?.full_name}
+                Cover Letter, {viewCoverLetter.member?.full_name}
               </p>
               <button
                 onClick={() => setViewCoverLetter(null)}

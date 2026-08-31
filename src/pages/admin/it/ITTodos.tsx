@@ -44,7 +44,7 @@ export default function ITTodos() {
   useITLayout(
     'Team To-Dos',
     'checklist',
-    'Daily IT task list — add, assign and check off tasks.',
+    'Daily IT task list, add, assign and check off tasks.',
     <button className="btn btn-primary btn-sm" onClick={() => setAddOpen(true)}>
       <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
         add
@@ -345,7 +345,7 @@ export default function ITTodos() {
             </span>
             <p style={{ margin: 0, fontSize: 13 }}>
               {filter === 'all'
-                ? 'No tasks yet — add one above.'
+                ? 'No tasks yet, add one above.'
                 : `No ${STATUS_CONFIG[filter as TodoStatus].label.toLowerCase()} tasks.`}
             </p>
           </div>
