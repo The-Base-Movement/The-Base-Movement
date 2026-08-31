@@ -96,8 +96,16 @@ export const partyAffiliationService = {
       .select()
       .single()
 
-    if (error && (error.code === 'PGRST204' || error.message.includes('column') || error.message.includes('400'))) {
-      console.warn('[partyAffiliationService] createParty retrying without new columns:', error.message)
+    if (
+      error &&
+      (error.code === 'PGRST204' ||
+        error.message.includes('column') ||
+        error.message.includes('400'))
+    ) {
+      console.warn(
+        '[partyAffiliationService] createParty retrying without new columns:',
+        error.message
+      )
       const safePayload = { ...payload }
       delete safePayload.color
       delete safePayload.logo_url
@@ -139,8 +147,16 @@ export const partyAffiliationService = {
       .select()
       .single()
 
-    if (error && (error.code === 'PGRST204' || error.message.includes('column') || error.message.includes('400'))) {
-      console.warn('[partyAffiliationService] updateParty retrying without new columns:', error.message)
+    if (
+      error &&
+      (error.code === 'PGRST204' ||
+        error.message.includes('column') ||
+        error.message.includes('400'))
+    ) {
+      console.warn(
+        '[partyAffiliationService] updateParty retrying without new columns:',
+        error.message
+      )
       const safeUpdates = { ...updates }
       delete safeUpdates.color
       delete safeUpdates.logo_url
@@ -186,7 +202,7 @@ export const partyAffiliationService = {
       .from('media')
       .upload(fileName, file, { cacheControl: '3600', upsert: true })
 
-    let publicUrl = ''
+    let publicUrl: string
     if (uploadError) {
       // Fallback to branding bucket if media bucket fails
       const { error: fallbackError } = await supabase.storage
@@ -239,7 +255,10 @@ export const partyAffiliationService = {
     let dbParties = initialDbParties
 
     if (partiesErr) {
-      console.warn('[partyAffiliationService] Falling back to standard columns for political_parties:', partiesErr.message)
+      console.warn(
+        '[partyAffiliationService] Falling back to standard columns for political_parties:',
+        partiesErr.message
+      )
       const fallback = await supabase
         .from('political_parties')
         .select('id, name, code, full_label, sort_order')
@@ -249,7 +268,14 @@ export const partyAffiliationService = {
 
     const dbPartyMap = new Map<
       string,
-      { id: string; name: string; code: string; full_label: string; logo_url?: string | null; color?: string | null }
+      {
+        id: string
+        name: string
+        code: string
+        full_label: string
+        logo_url?: string | null
+        color?: string | null
+      }
     >()
 
     const allKnownParties = new Set<string>()

@@ -12,6 +12,9 @@ type PollingStationRow = Record<string, string | null>
 
 async function fetchAllPollingStationRows(
   select: string,
+  // ponytail: PostgrestFilterBuilder's generics don't survive reassignment
+  // through a callback without exploding into an "excessively deep" TS error.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   applyFilters?: (query: any) => any
 ): Promise<PollingStationRow[]> {
   const rows: PollingStationRow[] = []
@@ -22,30 +25,31 @@ async function fetchAllPollingStationRows(
     const { data, error } = await query.range(from, from + PAGE_SIZE - 1)
     if (error) return []
     if (!data?.length) return rows
-    rows.push(...((data as unknown) as PollingStationRow[]))
+    rows.push(...(data as unknown as PollingStationRow[]))
     if (data.length < PAGE_SIZE) return rows
   }
 }
 
 export function distinctSortedStrings(rows: PollingStationRow[], field: string): string[] {
-  return [...new Set(rows.map((row) => row[field]).filter((value): value is string => !!value))].sort(
-    (a, b) => a.localeCompare(b)
-  )
+  return [
+    ...new Set(rows.map((row) => row[field]).filter((value): value is string => !!value)),
+  ].sort((a, b) => a.localeCompare(b))
 }
 
 /** Distinct districts within a region, alphabetical. */
 export async function getDistricts(region: string): Promise<string[]> {
   if (!region) return []
-  const rows = await fetchAllPollingStationRows('district', (query) => query.ilike('region', region))
+  const rows = await fetchAllPollingStationRows('district', (query) =>
+    query.ilike('region', region)
+  )
   return distinctSortedStrings(rows, 'district')
 }
 
 /** Distinct constituencies within a region + district, alphabetical. */
 export async function getConstituencies(region: string, district: string): Promise<string[]> {
   if (!region || !district) return []
-  const rows = await fetchAllPollingStationRows(
-    'constituency',
-    (query) => query.ilike('region', region).ilike('district', district)
+  const rows = await fetchAllPollingStationRows('constituency', (query) =>
+    query.ilike('region', region).ilike('district', district)
   )
   return distinctSortedStrings(rows, 'constituency')
 }
