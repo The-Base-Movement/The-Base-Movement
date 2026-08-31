@@ -67,7 +67,12 @@ function MovementAtAGlanceInner({
       { key: 'members', label: 'Registered members', value: stats.members, accent: '#006B3F' },
       { key: 'regions', label: 'Regions', value: stats.regions, accent: '#CE1126' },
       { key: 'chapters', label: 'Diaspora', value: stats.chapters, accent: '#DAA520' },
-      { key: 'diaspora', label: 'Diaspora countries', value: stats.diaspora, accent: 'hsl(var(--on-surface))' },
+      {
+        key: 'diaspora',
+        label: 'Diaspora countries',
+        value: stats.diaspora,
+        accent: 'hsl(var(--on-surface))',
+      },
     ].filter((s) => s.value > 0)
 
     if (statItems.length === 0) return null
@@ -183,27 +188,34 @@ function MovementAtAGlanceInner({
         value={stats.countries || stats.chapters}
         label="Countries worldwide with Base Diaspora members"
         series={stats.countriesSeries}
-        delta={stats.chaptersDelta || (stats.countries ? `In ${stats.countries.toLocaleString()} countries` : '')}
+        delta={
+          stats.chaptersDelta ||
+          (stats.countries ? `In ${stats.countries.toLocaleString()} countries` : '')
+        }
         deltaIcon="up"
       />
-      <StatCard
-        accent="hsl(var(--on-surface))"
-        eye="Diaspora"
-        value={stats.diaspora}
-        label="Global Ghanaians supporting from abroad"
-        series={stats.diasporaSeries}
-        delta={stats.diasporaDelta}
-        deltaIcon="up"
-      />
-      <StatCard
-        accent="#006B3F"
-        eye="Ghana Base"
-        value={stats.members}
-        label="Verified citizens registered nationwide"
-        series={stats.membersSeries}
-        delta={stats.membersDelta}
-        deltaIcon="up"
-      />
+      <div className="col-span-2 lg:col-span-1">
+        <StatCard
+          accent="hsl(var(--on-surface))"
+          eye="Diaspora"
+          value={stats.diaspora}
+          label="Global Ghanaians supporting from abroad"
+          series={stats.diasporaSeries}
+          delta={stats.diasporaDelta}
+          deltaIcon="up"
+        />
+      </div>
+      <div className="col-span-2 lg:col-span-1">
+        <StatCard
+          accent="#006B3F"
+          eye="Ghana Base"
+          value={stats.members}
+          label="Verified citizens registered nationwide"
+          series={stats.membersSeries}
+          delta={stats.membersDelta}
+          deltaIcon="up"
+        />
+      </div>
     </div>
   )
 

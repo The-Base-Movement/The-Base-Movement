@@ -6,7 +6,7 @@
  * mechanism as maintenance mode). The master toggle and the scheduled
  * active/end window both have to allow it before it can show.
  *
- * "Strategic" open: triggers once the visitor has scrolled 20% down the
+ * "Strategic" open: triggers once the visitor has scrolled 5% down the
  * page (not on paint, so it never fights the hero animation) and reappears
  * on every fresh homepage visit, since the component's own mount/unmount is
  * the reset, no persisted dismissal.
@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useBranding } from '@/hooks/useBranding'
 
-const SCROLL_TRIGGER_PCT = 20
+const SCROLL_TRIGGER_PCT = 5
 const DOMAIN_RE = /thebasemovement\.org\.gh/gi
 
 function renderMessage(text: string) {
@@ -126,11 +126,10 @@ export function WelcomePopup() {
           background: 'hsl(var(--card))',
           borderRadius: 'var(--radius-lg)',
           width: '100%',
-          maxWidth: 460,
-          minHeight: 520,
-          maxHeight: '95vh',
+          maxWidth: 560,
+          maxHeight: '90vh',
           overflowY: 'auto',
-          padding: '36px 28px',
+          padding: '28px 28px 32px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.35)',
           border: '1px solid hsl(var(--border))',
           display: 'flex',
@@ -155,31 +154,6 @@ export function WelcomePopup() {
           }}
         />
 
-        <button
-          type="button"
-          onClick={close}
-          aria-label="Close"
-          style={{
-            position: 'absolute',
-            top: 12,
-            right: 12,
-            width: 30,
-            height: 30,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: 'none',
-            background: 'hsl(var(--container-low))',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            zIndex: 1,
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
-            close
-          </span>
-        </button>
-
         <div
           style={{
             position: 'relative',
@@ -189,23 +163,54 @@ export function WelcomePopup() {
             flexDirection: 'column',
           }}
         >
-          <span
-            className="pill pill-ok"
+          <div
             style={{
-              fontSize: 11,
-              fontWeight: 600,
-              padding: '4px 12px',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: 6,
+              justifyContent: 'space-between',
+              gap: 12,
               marginBottom: 14,
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
-              campaign
+            <span
+              className="pill pill-ok"
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                padding: '4px 12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                campaign
+              </span>
+              Official Update
             </span>
-            Official Update
-          </span>
+
+            <button
+              type="button"
+              onClick={close}
+              aria-label="Close"
+              style={{
+                width: 30,
+                height: 30,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: 'none',
+                background: 'hsl(var(--container-low))',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                flexShrink: 0,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                close
+              </span>
+            </button>
+          </div>
 
           <h2
             id="welcome-popup-title"
