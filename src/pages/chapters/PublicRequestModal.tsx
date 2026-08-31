@@ -41,9 +41,9 @@ export function PublicRequestModal({
             </h3>
           </div>
           <p className="text-stone-400 text-xs font-medium tracking-tight m-0 leading-relaxed">
-            Base Diaspora communities bring people together by country or city to connect, organise
-            constructive activities, and support Ghana&rsquo;s future. Submit your interest to help
-            start a community where you live.
+            Base Diaspora communities are organised by country to connect, organise constructive
+            activities, and support Ghana&rsquo;s future. Submit your interest to help start a
+            community for your country.
           </p>
         </div>
         {submissionSuccess ? (
@@ -65,7 +65,7 @@ export function PublicRequestModal({
           <form onSubmit={onSubmit} className="p-8 space-y-6">
             <div className="space-y-1.5">
               <label htmlFor="input-53d016" className="text-micro font-medium text-stone-400">
-                Country or territory, and city or region
+                Country
               </label>
               <div className="relative">
                 <span
@@ -75,11 +75,11 @@ export function PublicRequestModal({
                   location_on
                 </span>
                 <input
-                  aria-label="Country or territory, and city or region"
+                  aria-label="Country"
                   name="chapterLocation"
                   id="input-53d016"
                   required
-                  placeholder="e.g. London, United Kingdom or Toronto, Canada"
+                  placeholder="e.g. United Kingdom, Canada, Germany"
                   value={chapterLocation}
                   onChange={(e) => setChapterLocation(e.target.value)}
                   className="w-full pl-10 h-12 bg-stone-50 border border-stone-200 font-medium text-sm outline-none focus:border-brand-green"

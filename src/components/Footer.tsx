@@ -247,98 +247,106 @@ export default function Footer() {
               color: '#fff',
             }}
           >
-            <div
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 'var(--font-weight-medium, 500)',
-                fontSize: 17,
-                letterSpacing: '-.01em',
-                marginBottom: 10,
-                color: '#fff',
-              }}
-            >
-              Stay Informed.
-            </div>
-            <p
-              style={{
-                fontFamily: "'Public Sans', sans-serif",
-                fontWeight: 400,
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.5)',
-                lineHeight: 1.6,
-                marginBottom: 20,
-                marginTop: 0,
-              }}
-            >
-              Subscribe to receive regular updates on our progress, community initiatives, and news
-              from across the movement.
-            </p>
+            <div className="footer-newsletter-inner">
+              <div>
+                <div
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 'var(--font-weight-medium, 500)',
+                    fontSize: 17,
+                    letterSpacing: '-.01em',
+                    marginBottom: 10,
+                    color: '#fff',
+                  }}
+                >
+                  Stay Informed.
+                </div>
+                <p
+                  style={{
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 400,
+                    fontSize: 12,
+                    color: 'rgba(255,255,255,0.5)',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}
+                >
+                  Subscribe to receive regular updates on our progress, community initiatives, and
+                  news from across the movement.
+                </p>
+              </div>
 
-            <form
-              onSubmit={handleSubscribe}
-              style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
-            >
-              <input
-                name="email"
-                id="input-a60551"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
-                required
-                disabled={subscribed}
+              <form
+                onSubmit={handleSubscribe}
                 style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 'var(--button-radius)',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 500,
-                  fontSize: 12,
-                  color: '#fff',
-                  outline: 'none',
-                  boxSizing: 'border-box',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  marginTop: 20,
                 }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
-                onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
-              />
-              <input
-                name="phone"
-                id="input-newsletter-phone"
-                type="tel"
-                autoComplete="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Phone number for SMS (optional)"
-                disabled={subscribed}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 'var(--button-radius)',
-                  fontFamily: "'Public Sans', sans-serif",
-                  fontWeight: 500,
-                  fontSize: 12,
-                  color: '#fff',
-                  outline: 'none',
-                  boxSizing: 'border-box',
-                }}
-                onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
-                onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
-              />
-              <EmailSuggestion email={email} onAccept={(v) => setEmail(v)} />
-              <ButtonPrimary type="submit" className="w-full" disabled={submitting || subscribed}>
-                {submitting ? 'Subscribing…' : subscribed ? 'Subscribed' : 'Subscribe'}
-                {!subscribed && (
-                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
-                    send
-                  </span>
-                )}
-              </ButtonPrimary>
-            </form>
+              >
+                <input
+                  name="email"
+                  id="input-a60551"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email address"
+                  required
+                  disabled={subscribed}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: 'var(--button-radius)',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 500,
+                    fontSize: 12,
+                    color: '#fff',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+                />
+                <input
+                  name="phone"
+                  id="input-newsletter-phone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone number for SMS (optional)"
+                  disabled={subscribed}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: 'var(--button-radius)',
+                    fontFamily: "'Public Sans', sans-serif",
+                    fontWeight: 500,
+                    fontSize: 12,
+                    color: '#fff',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => (e.currentTarget.style.borderColor = 'hsl(var(--primary))')}
+                  onBlur={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
+                />
+                <EmailSuggestion email={email} onAccept={(v) => setEmail(v)} />
+                <ButtonPrimary type="submit" className="w-full" disabled={submitting || subscribed}>
+                  {submitting ? 'Subscribing…' : subscribed ? 'Subscribed' : 'Subscribe'}
+                  {!subscribed && (
+                    <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                      send
+                    </span>
+                  )}
+                </ButtonPrimary>
+              </form>
+            </div>
           </div>
         </div>
 

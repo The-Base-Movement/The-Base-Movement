@@ -750,7 +750,7 @@
 
 /* Form Styles */
 .form-understate {
-  border: 1px solid #bec9bf;
+  border: 1px solid hsl(var(--border));
   background: hsl(var(--card));
   border-radius: var(--radius-sm);
   font-size: 13px;
@@ -1719,6 +1719,25 @@ td.leadership-col-secondary {
   .footer-grid {
     grid-template-columns: 1fr 1fr !important;
     row-gap: 48px;
+  }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Newsletter card spans the full tablet width instead of leaving the
+     second column empty, and switches to a text | form two-up layout. */
+  .footer-grid > *:last-child {
+    grid-column: 1 / -1;
+  }
+  .footer-newsletter-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* Constituency/chapter directory cards: exactly 2 columns on tablet
+     regardless of whether the filter sidebar is showing. */
+  .constituency-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 @media (max-width: 640px) {

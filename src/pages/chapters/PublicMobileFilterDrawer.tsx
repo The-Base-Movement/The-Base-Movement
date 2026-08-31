@@ -20,7 +20,7 @@ export function PublicMobileFilterDrawer({
       onClick={onClose}
     >
       <div
-        className="bg-white w-[300px] h-full overflow-y-auto"
+        className="bg-white w-[340px] max-w-[86vw] h-full overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-stone-100 flex items-center justify-between">
