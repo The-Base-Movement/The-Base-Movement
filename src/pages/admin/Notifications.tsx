@@ -186,7 +186,7 @@ export default function AdminNotifications() {
             notifications_none
           </span>
           <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
-            {filter === 'unread' ? 'All clear — nothing unread.' : 'No notifications here.'}
+            {filter === 'unread' ? 'All clear, nothing unread.' : 'No notifications here.'}
           </p>
         </div>
       ) : (

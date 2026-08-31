@@ -89,7 +89,7 @@ export default function JobTaxonomy() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       if (/foreign key|violates|23503/i.test(msg)) {
-        toast.error('Cannot delete — still assigned to one or more members.')
+        toast.error('Cannot delete, still assigned to one or more members.')
       } else {
         console.error(err)
         toast.error(msg || 'Action failed')
@@ -393,7 +393,7 @@ function Column({
                   color: 'hsl(var(--on-surface-muted))',
                 }}
               >
-                Nothing here yet — add the first entry above.
+                Nothing here yet, add the first entry above.
               </p>
             ) : (
               children
@@ -559,7 +559,7 @@ function TaxRow({
           </button>
           <button
             className="btn btn-ghost btn-sm"
-            title={usage > 0 ? 'In use — reassign members first' : 'Delete'}
+            title={usage > 0 ? 'In use, reassign members first' : 'Delete'}
             onClick={() => setConfirming(true)}
             disabled={busy || usage > 0}
           >

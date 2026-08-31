@@ -134,7 +134,7 @@ export default function PasswordResets() {
             Password Reset Requests
           </h1>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-            SMS OTP recovery attempts — phone-based resets only
+            SMS OTP recovery attempts, phone-based resets only
           </p>
         </div>
         <button

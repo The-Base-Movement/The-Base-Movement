@@ -137,7 +137,7 @@ export default function MLIntelligence() {
               color: 'hsl(var(--destructive))',
             }}
           >
-            Service offline — start the FastAPI server locally or on your VPS (see
+            Service offline, start the FastAPI server locally or on your VPS (see
             docs/audits/ml-microservice-audit-2026-05-31.md)
           </span>
         )}

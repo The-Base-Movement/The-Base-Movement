@@ -61,9 +61,9 @@ export default function AdminDashboard() {
 
   // Broadcast State
   const [broadcast, setBroadcast] = useState({
-    title: 'Eastern region jobs program — first cohort begins Monday',
+    title: 'Eastern region jobs program, first cohort begins Monday',
     content:
-      'Compatriots — the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
+      'Compatriots, the first 600 youth begin paid apprenticeships across 14 districts of the Eastern region this Monday.',
     target_type: 'REGION' as Broadcast['target_type'],
     target_value: 'Eastern',
     priority: 'Normal' as Broadcast['priority'],

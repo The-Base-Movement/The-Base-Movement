@@ -157,7 +157,7 @@ export default function ImpactProjects() {
     <div className="main">
       <AdminPageHeader
         title="Charitable Works"
-        description="Manage the public /impact showcase — each project shows up to 4 images and notes."
+        description="Manage the public /impact showcase, each project shows up to 4 images and notes."
       />
 
       {editingId ? (
@@ -219,7 +219,7 @@ export default function ImpactProjects() {
 
             <div>
               <label htmlFor="ip-summary" style={labelSt}>
-                Card summary (short — shown on the card)
+                Card summary (short, shown on the card)
               </label>
               <textarea
                 id="ip-summary"
@@ -232,20 +232,20 @@ export default function ImpactProjects() {
 
             <div>
               <label htmlFor="ip-notes" style={labelSt}>
-                Notes (full write-up — shown when the card opens)
+                Notes (full write-up, shown when the card opens)
               </label>
               <textarea
                 id="ip-notes"
                 style={{ ...inputSt, minHeight: 140, resize: 'vertical' }}
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder="Tell the story of the work — what was done, who it helped, the outcome."
+                placeholder="Tell the story of the work, what was done, who it helped, the outcome."
               />
             </div>
 
             {/* Images */}
             <div>
-              <label style={labelSt}>Images (up to {MAX_IMAGES} — first is the card cover)</label>
+              <label style={labelSt}>Images (up to {MAX_IMAGES}, first is the card cover)</label>
               <div
                 style={{
                   display: 'grid',

@@ -153,7 +153,7 @@ export default function PressReleases() {
         cancel()
         reload()
       } else {
-        toast.error('Save failed — check the slug is unique')
+        toast.error('Save failed, check the slug is unique')
       }
     } finally {
       setSaving(false)
@@ -269,7 +269,7 @@ export default function PressReleases() {
 
             <div>
               <label htmlFor="pr-content" style={labelSt}>
-                Body * (the full statement — paragraphs separated by a blank line)
+                Body * (the full statement, paragraphs separated by a blank line)
               </label>
               <textarea
                 id="pr-content"

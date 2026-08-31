@@ -568,7 +568,7 @@ export default function FinanceReviewInbox() {
                     color: 'hsl(var(--on-surface))',
                   }}
                 >
-                  In Progress — Other Tiers
+                  In Progress, Other Tiers
                 </p>
               </div>
               <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>

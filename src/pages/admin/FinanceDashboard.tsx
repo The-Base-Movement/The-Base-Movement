@@ -747,7 +747,7 @@ export default function FinanceDashboard() {
           <div className="panel" style={{ padding: 20, overflow: 'hidden' }}>
             <PanelHeaderBar
               title="Recent Transactions"
-              subtitle="Last 20 entries — donations and expenses combined"
+              subtitle="Last 20 entries, donations and expenses combined"
             />
             <div
               className="ph"

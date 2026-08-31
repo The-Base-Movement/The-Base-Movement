@@ -125,7 +125,7 @@ export default function MemberVerification() {
       if (result.flagged) {
         toast.warning(`AI Alert: Low confidence score (${result.confidence}%). Review carefully.`)
       } else {
-        toast.success('AI scan complete — high identity match confidence.')
+        toast.success('AI scan complete, high identity match confidence.')
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'AI assistant unavailable.')
@@ -190,7 +190,7 @@ export default function MemberVerification() {
         emergencyPhone: fields.emergencyPhone ?? selectedMember.emergencyPhone,
         status: 'In Review',
       })
-      toast.success('Details updated — moved to In Review.')
+      toast.success('Details updated, moved to In Review.')
       refreshCounts()
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Failed to save changes.')

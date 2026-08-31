@@ -1106,7 +1106,7 @@ export default function AdminMemberDetail() {
             <p style={{ margin: '0 0 16px', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}>
               {resetResult.emailed
                 ? `A password-reset link was emailed to ${resetResult.email}. It opens the reset form and is valid for 1 hour.`
-                : 'Email could not be sent — copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
+                : 'Email could not be sent, copy this link and share it securely. It opens the reset form and is valid for 1 hour.'}
             </p>
             {resetResult.actionLink && (
               <code

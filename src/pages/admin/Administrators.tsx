@@ -175,7 +175,7 @@ export default function Administrators() {
     if (!selectedMember) return
     const memberId = selectedMember.authId ?? selectedMember.id
     if (needsLoginEmail && !provisionEmail.trim()) {
-      toast.error('This member registered by phone — enter the email they will use to sign in.')
+      toast.error('This member registered by phone, enter the email they will use to sign in.')
       return
     }
     setIsProvisioning(true)

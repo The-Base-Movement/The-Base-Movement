@@ -254,7 +254,7 @@ export default function JobsAnalytics() {
           Jobs Analytics
         </h1>
         <p style={{ margin: '4px 0 0', fontSize: 13, color: 'hsl(var(--on-surface-muted))' }}>
-          Member professions across the approved taxonomy — {totalAll} member
+          Member professions across the approved taxonomy, {totalAll} member
           {totalAll === 1 ? '' : 's'} have a saved job.
         </p>
       </div>
@@ -485,7 +485,7 @@ export default function JobsAnalytics() {
                 <p
                   style={{ margin: '2px 0 0', fontSize: 12, color: 'hsl(var(--on-surface-muted))' }}
                 >
-                  Member-entered titles not in the official list — review for taxonomy additions.
+                  Member-entered titles not in the official list, review for taxonomy additions.
                 </p>
               </div>
               <span className="pill pill-warn">{customCount} total</span>

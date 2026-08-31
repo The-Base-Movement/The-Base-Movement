@@ -139,7 +139,7 @@ export default function CronMonitor() {
         }}
       >
         <strong style={{ fontWeight: 'var(--font-weight-medium, 500)' }}>Dispatch</strong> reports
-        only that pg_cron fired the request — not what the function returned. A job can read Success
+        only that pg_cron fired the request, not what the function returned. A job can read Success
         here and still fail on every run. Check the Auth column and the failures below.
       </p>
 

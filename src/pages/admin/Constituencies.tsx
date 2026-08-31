@@ -624,7 +624,7 @@ export default function AdminConstituencies() {
                 onChange={(e) => setSelectedRegionId(Number(e.target.value))}
                 style={inputSt}
               >
-                <option value="">— select region —</option>
+                <option value="">Select region</option>
                 {regions.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name}

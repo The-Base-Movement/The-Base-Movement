@@ -16,7 +16,7 @@ const SECTIONS = [
         <p>
           <strong>Contact for data protection matters:</strong>
           <br />
-          The Base Movement — Data Protection Desk
+          The Base Movement, Data Protection Desk
           <br />
           Email:{' '}
           <a
@@ -80,7 +80,7 @@ const SECTIONS = [
                   'Political affiliation',
                   'Membership in The Base Movement',
                   'Core movement activity',
-                  'Explicit consent (sensitive data — Act 843 s.16)',
+                  'Explicit consent (sensitive data, Act 843 s.16)',
                 ],
                 [
                   'National ID',
@@ -171,7 +171,7 @@ const SECTIONS = [
             ['Resend / Mail provider', 'Transactional and newsletter email delivery.'],
           ].map(([name, desc]) => (
             <li key={name}>
-              <strong>{name}</strong> — {desc}
+              <strong>{name}</strong>, {desc}
             </li>
           ))}
         </ul>
@@ -190,25 +190,24 @@ const SECTIONS = [
       <>
         <ul className="space-y-2 text-sm" style={{ paddingLeft: '1.25rem', listStyleType: 'disc' }}>
           <li>
-            <strong>Active member profiles</strong> — retained for the duration of membership.
+            <strong>Active member profiles</strong>, retained for the duration of membership.
           </li>
           <li>
-            <strong>Donation records</strong> — retained for 7 years for financial audit compliance.
+            <strong>Donation records</strong>, retained for 7 years for financial audit compliance.
           </li>
           <li>
-            <strong>Error logs (Sentry)</strong> — auto-deleted after 90 days.
+            <strong>Error logs (Sentry)</strong>, auto-deleted after 90 days.
           </li>
           <li>
-            <strong>Analytics data (Vercel Analytics)</strong> — anonymised, retained indefinitely
-            in aggregate.
+            <strong>Analytics data (Vercel Analytics)</strong>, anonymised, retained indefinitely in
+            aggregate.
           </li>
           <li>
-            <strong>Deactivated accounts</strong> — soft-deleted; a 90-day retention window applies
+            <strong>Deactivated accounts</strong>, soft-deleted; a 90-day retention window applies
             before permanent erasure.
           </li>
           <li>
-            <strong>Newsletter subscriptions</strong> — removed within 7 days of unsubscribe
-            request.
+            <strong>Newsletter subscriptions</strong>, removed within 7 days of unsubscribe request.
           </li>
         </ul>
         <p className="mt-4">
@@ -250,7 +249,7 @@ const SECTIONS = [
             ],
           ].map(([right, desc]) => (
             <li key={right}>
-              <strong>{right}</strong> — {desc}
+              <strong>{right}</strong>, {desc}
             </li>
           ))}
         </ul>
@@ -331,7 +330,7 @@ const SECTIONS = [
         <p>
           We use <strong>Vercel Analytics</strong> to understand how visitors use this site and
           monitor performance. It does not use cookies and does not collect personally identifiable
-          information — all data is aggregated and anonymous.
+          information, all data is aggregated and anonymous.
         </p>
       </>
     ),
@@ -376,7 +375,7 @@ export default function Privacy() {
         <div className="page-container relative z-10">
           <Breadcrumbs />
           <p className="font-meta text-warm-gold tracking-tight text-xs mb-3 mt-6">
-            Data Protection — Act 843
+            Data Protection, Act 843
           </p>
           <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             Privacy <span className="text-brand-green">Policy</span>
@@ -386,7 +385,7 @@ export default function Privacy() {
             only what we need, protect what you share, and tell you exactly how we use it.
           </p>
           <p className="text-xs text-slate-400 mt-6">
-            Last updated: July 2026. Draft for legal review — final version pending approval by a
+            Last updated: July 2026. Draft for legal review, final version pending approval by a
             qualified Ghanaian data-protection lawyer.
           </p>
         </div>
@@ -436,7 +435,7 @@ export default function Privacy() {
                 Exercise your rights
               </h3>
               <p className="text-slate-300 text-sm mb-6">
-                To access, correct, or delete your data — or to withdraw consent — contact our Data
+                To access, correct, or delete your data, or to withdraw consent, contact our Data
                 Protection Desk:
               </p>
               <a

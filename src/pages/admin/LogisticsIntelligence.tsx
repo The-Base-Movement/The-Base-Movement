@@ -109,7 +109,7 @@ export default function LogisticsIntelligence() {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    toast.success(`Purchase order generated — ${alerts.length} low-stock items included.`)
+    toast.success(`Purchase order generated, ${alerts.length} low-stock items included.`)
     setIsGeneratingPO(false)
   }
 
