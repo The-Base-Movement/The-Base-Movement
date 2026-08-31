@@ -74,12 +74,13 @@ export default function Contact() {
   const contactSchema = {
     '@context': 'https://schema.org',
     '@type': 'NGO',
-    name: 'The Base Movement LBG',
+    name: 'The Base Movement',
     url: 'https://www.thebasemovement.org.gh/contact',
     logo: 'https://www.thebasemovement.org.gh/branding/logo.png',
     address: {
       '@type': 'PostalAddress',
-      streetAddress: (settings.primary_address as string) || 'GI-208-9132, 0kn042 Tesano / Abeka 208',
+      streetAddress:
+        (settings.primary_address as string) || 'GI-208-9132, 0kn042 Tesano / Abeka 208',
       addressLocality: 'Accra',
       addressRegion: 'Greater Accra',
       addressCountry: 'GH',
@@ -95,8 +96,8 @@ export default function Contact() {
   return (
     <main className="bg-surface-warm font-body-md min-h-screen pb-24">
       <SEO
-        title="Get in Touch | Contact The Base Movement LBG"
-        description="Contact The Base Movement LBG headquarters in Tesano, Accra. Send a message, find contact details, or reach out to our Ghana and Diaspora teams."
+        title="Get in Touch | Contact The Base Movement"
+        description="Contact The Base Movement headquarters in Tesano, Accra. Send a message, find contact details, or reach out to our Ghana and Diaspora teams."
         keywords="contact the base movement, the base movement head office accra, the base movement tesano, the base movement email, the base movement phone number, base ghana contact"
         canonical="/contact"
         jsonLd={contactSchema}

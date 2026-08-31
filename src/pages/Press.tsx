@@ -51,7 +51,7 @@ export default function Press() {
         datePublished: pr.publishedAt,
         publisher: {
           '@type': 'Organization',
-          name: 'The Base Movement LBG',
+          name: 'The Base Movement',
           logo: {
             '@type': 'ImageObject',
             url: 'https://www.thebasemovement.org.gh/branding/logo.png',
@@ -64,7 +64,7 @@ export default function Press() {
   return (
     <main className="min-h-screen pb-24" style={{ background: 'hsl(var(--container-low))' }}>
       <SEO
-        title="Press Room & Official Media Updates | The Base Movement LBG"
+        title="Press Room & Official Media Updates | The Base Movement"
         description="Access official press releases, downloadable media kits, policy updates, and brand assets from The Base Movement's national communications and media relations desk."
         keywords="the base movement press release, the base movement media kit, official statements Dr George Oti Bonsu, Ghana political news releases, the base movement press room"
         canonical="/press"
@@ -81,8 +81,12 @@ export default function Press() {
           <h1 className="font-meta font-medium text-4xl md:text-5xl tracking-tight leading-tight mb-4">
             The Base Movement Press Room &amp; Official Media Updates
           </h1>
-          <p className="text-lg max-w-2xl font-body-md mb-8" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            Authoritative statements, official press releases, and brand guidelines from The Base Movement LBG communications team.
+          <p
+            className="text-lg max-w-2xl font-body-md mb-8"
+            style={{ color: 'rgba(255,255,255,0.65)' }}
+          >
+            Authoritative statements, official press releases, and brand guidelines from The Base
+            Movement communications team.
           </p>
           <div>
             <a

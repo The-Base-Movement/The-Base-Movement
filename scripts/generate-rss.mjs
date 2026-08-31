@@ -106,9 +106,9 @@ async function main() {
   const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>The Base Movement LBG | Official RSS Feed</title>
+    <title>The Base Movement | Official RSS Feed</title>
     <link>${SITE_URL}/blog</link>
-    <description>Official updates, press releases, policy announcements, and articles from The Base Movement LBG communications desk.</description>
+    <description>Official updates, press releases, policy announcements, and articles from The Base Movement communications desk.</description>
     <language>en-gh</language>
     <lastBuildDate>${now}</lastBuildDate>
     <atom:link href="${SITE_URL}/blog/feed.xml" rel="self" type="application/rss+xml"/>

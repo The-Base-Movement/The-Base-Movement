@@ -87,15 +87,26 @@ export default function Events() {
         const liveEvts: MovementEvent[] = (data || []).map((evt: Record<string, unknown>) => ({
           id: evt.id as string,
           title: evt.title as string,
-          category: evt.type === 'Rally' ? 'Mobilization Walk' : evt.type === 'Training' ? 'Job Workshop' : (evt.type as MovementEvent['category']) || 'Town Hall',
+          category:
+            evt.type === 'Rally'
+              ? 'Mobilization Walk'
+              : evt.type === 'Training'
+                ? 'Job Workshop'
+                : (evt.type as MovementEvent['category']) || 'Town Hall',
           date: evt.date as string,
           locationName: (evt.location as string) || 'Location TBA',
           gpsAddress: (evt.location as string) || '',
           region: (evt.chapter as string) || 'Greater Accra',
           description: (evt.description as string) || '',
-          attendingCount: (evt.attendees_actual as number) || (evt.attendees_expected as number) || 0,
-          organizer: `The Base Movement LBG - ${(evt.chapter as string) || 'Secretariat'}`,
-          status: evt.status === 'Completed' ? 'Completed' : evt.status === 'In Progress' ? 'In Progress' : 'Planned',
+          attendingCount:
+            (evt.attendees_actual as number) || (evt.attendees_expected as number) || 0,
+          organizer: `The Base Movement - ${(evt.chapter as string) || 'Secretariat'}`,
+          status:
+            evt.status === 'Completed'
+              ? 'Completed'
+              : evt.status === 'In Progress'
+                ? 'In Progress'
+                : 'Planned',
         }))
 
         if (!cancelled) {
@@ -291,7 +302,7 @@ export default function Events() {
       region: newEvent.region,
       description: newEvent.description,
       attendingCount: 1,
-      organizer: `The Base Movement LBG - ${newEvent.region} Secretariat`,
+      organizer: `The Base Movement - ${newEvent.region} Secretariat`,
       status: 'Planned',
     }
     setEventsList((prev) => [created, ...prev])
@@ -359,7 +370,8 @@ export default function Events() {
               maxWidth: 780,
             }}
           >
-            Join town halls, national mobilization walks, career workshops, and community action days led by Dr. George Oti Bonsu and regional leadership across Ghana and the diaspora.
+            Join town halls, national mobilization walks, career workshops, and community action
+            days led by Dr. George Oti Bonsu and regional leadership across Ghana and the diaspora.
           </p>
         </div>
 
@@ -489,9 +501,30 @@ export default function Events() {
                 }}
               />
               <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <div style={{ height: 16, width: '40%', background: 'hsl(var(--border))', borderRadius: 4 }} />
-                <div style={{ height: 20, width: '80%', background: 'hsl(var(--border))', borderRadius: 4 }} />
-                <div style={{ height: 14, width: '90%', background: 'hsl(var(--border))', borderRadius: 4 }} />
+                <div
+                  style={{
+                    height: 16,
+                    width: '40%',
+                    background: 'hsl(var(--border))',
+                    borderRadius: 4,
+                  }}
+                />
+                <div
+                  style={{
+                    height: 20,
+                    width: '80%',
+                    background: 'hsl(var(--border))',
+                    borderRadius: 4,
+                  }}
+                />
+                <div
+                  style={{
+                    height: 14,
+                    width: '90%',
+                    background: 'hsl(var(--border))',
+                    borderRadius: 4,
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -508,7 +541,9 @@ export default function Events() {
           <span className="material-symbols-outlined" style={{ fontSize: 42, marginBottom: 8 }}>
             event_busy
           </span>
-          <p style={{ margin: 0, fontSize: 15, fontWeight: 500 }}>No upcoming events found matching your filters.</p>
+          <p style={{ margin: 0, fontSize: 15, fontWeight: 500 }}>
+            No upcoming events found matching your filters.
+          </p>
         </div>
       ) : (
         <div
@@ -529,8 +564,7 @@ export default function Events() {
             const isRsvped = rsvpedEventIds.has(evt.id)
 
             const cardBanner =
-              evt.imageUrl ||
-              'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729'
+              evt.imageUrl || 'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729'
 
             return (
               <div
@@ -557,7 +591,15 @@ export default function Events() {
                 />
 
                 {/* Event Card Banner */}
-                <Link to={`${basePath}/${evt.id}`} style={{ display: 'block', height: 140, overflow: 'hidden', position: 'relative' }}>
+                <Link
+                  to={`${basePath}/${evt.id}`}
+                  style={{
+                    display: 'block',
+                    height: 140,
+                    overflow: 'hidden',
+                    position: 'relative',
+                  }}
+                >
                   <img
                     src={cardBanner}
                     alt={evt.title}
@@ -616,7 +658,13 @@ export default function Events() {
                           {monthStr}
                         </div>
                       </div>
-                      <span style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', fontWeight: 500 }}>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: 'hsl(var(--on-surface-muted))',
+                          fontWeight: 500,
+                        }}
+                      >
                         {timeStr}
                       </span>
                     </div>
@@ -678,12 +726,21 @@ export default function Events() {
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
-                      <span className="material-symbols-outlined" style={{ fontSize: 15, color: 'hsl(var(--primary))' }}>
+                      <span
+                        className="material-symbols-outlined"
+                        style={{ fontSize: 15, color: 'hsl(var(--primary))' }}
+                      >
                         location_on
                       </span>
                       <span>{evt.locationName}</span>
                     </div>
-                    <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', paddingLeft: 21 }}>
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: 'hsl(var(--on-surface-muted))',
+                        paddingLeft: 21,
+                      }}
+                    >
                       {evt.gpsAddress}
                     </div>
                   </div>
@@ -720,7 +777,13 @@ export default function Events() {
                   <button
                     onClick={() => handleRSVP(evt)}
                     className={`btn btn-sm ${isRsvped ? 'btn-ok' : 'btn-primary'}`}
-                    style={{ flex: 1, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                    style={{
+                      flex: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 4,
+                    }}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                       {isRsvped ? 'check_circle' : 'event_available'}
@@ -733,7 +796,12 @@ export default function Events() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-outline btn-sm"
-                    style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+                    style={{
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
                     title="Add to Google Calendar"
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
@@ -816,8 +884,22 @@ export default function Events() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0, color: 'hsl(var(--on-surface))' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: 18,
+                  fontWeight: 600,
+                  margin: 0,
+                  color: 'hsl(var(--on-surface))',
+                }}
+              >
                 Create New Event Draft
               </h2>
               <button
@@ -829,9 +911,20 @@ export default function Events() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateEvent} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <form
+              onSubmit={handleCreateEvent}
+              style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    marginBottom: 4,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
                   Event Title *
                 </label>
                 <input
@@ -855,12 +948,25 @@ export default function Events() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      marginBottom: 4,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
                     Category *
                   </label>
                   <select
                     value={newEvent.category}
-                    onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value as MovementEvent['category'] })}
+                    onChange={(e) =>
+                      setNewEvent({
+                        ...newEvent,
+                        category: e.target.value as MovementEvent['category'],
+                      })
+                    }
                     style={{
                       width: '100%',
                       height: 38,
@@ -880,7 +986,15 @@ export default function Events() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      marginBottom: 4,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
                     Region *
                   </label>
                   <select
@@ -907,7 +1021,15 @@ export default function Events() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      marginBottom: 4,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
                     Date & Time *
                   </label>
                   <input
@@ -929,7 +1051,15 @@ export default function Events() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      marginBottom: 4,
+                      color: 'hsl(var(--on-surface))',
+                    }}
+                  >
                     Venue Name *
                   </label>
                   <input
@@ -953,7 +1083,15 @@ export default function Events() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    marginBottom: 4,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
                   Ghana Post GPS / Street Address
                 </label>
                 <input
@@ -975,7 +1113,15 @@ export default function Events() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'hsl(var(--on-surface))' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    marginBottom: 4,
+                    color: 'hsl(var(--on-surface))',
+                  }}
+                >
                   Event Description
                 </label>
                 <textarea

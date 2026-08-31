@@ -28,7 +28,7 @@ interface SEOProps {
 }
 
 export const DEFAULT_SEO_KEYWORDS =
-  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration, thebasemovement.org.gh, the base movement app, the base movement limited by guarantee, the base movement lbg, oti bonsu base movement, george oti bonsu npp, the base movement founder, how to register for the base movement, the base movement registration link, the base movement login, the base movement head office accra, the base movement tesano, the base movement chapters, ghana first jobs for the youth, new political movements in ghana 2026, jobs for the youth ghana, third force political party ghana, the base ghana first, the base movement ghana registration form, the base movement ghana jobs, the base ghana first sues the base movement, the base ghana first registration, the base party'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration, thebasemovement.org.gh, the base movement app, oti bonsu base movement, george oti bonsu npp, the base movement founder, how to register for the base movement, the base movement registration link, the base movement login, the base movement head office accra, the base movement tesano, the base movement chapters, ghana first jobs for the youth, new political movements in ghana 2026, jobs for the youth ghana, third force political party ghana, the base ghana first, the base movement ghana registration form, the base movement ghana jobs, the base ghana first sues the base movement, the base ghana first registration, the base party'
 
 export default function SEO({
   title,
@@ -43,7 +43,7 @@ export default function SEO({
   const { settings } = useBranding()
   const { pathname } = useLocation()
 
-  const siteName = 'The Base Movement LBG'
+  const siteName = 'The Base Movement'
   const fullTitle = title
     ? title.includes(siteName)
       ? title // already brand-qualified (e.g. homepage) — don't double-append
@@ -60,7 +60,6 @@ export default function SEO({
   const canonicalPath = canonical ?? pathname
   const canonicalUrl = canonicalPath ? `${siteUrl}${canonicalPath}` : null
 
-
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -74,8 +73,18 @@ export default function SEO({
       {!noindex && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
       {/* RSS Feed Auto-Discovery */}
-      <link rel="alternate" type="application/rss+xml" title="The Base Movement RSS Feed" href="https://www.thebasemovement.org.gh/blog/feed.xml" />
-      <link rel="alternate" type="application/rss+xml" title="The Base Movement News Feed" href="https://www.thebasemovement.org.gh/feed.xml" />
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="The Base Movement RSS Feed"
+        href="https://www.thebasemovement.org.gh/blog/feed.xml"
+      />
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="The Base Movement News Feed"
+        href="https://www.thebasemovement.org.gh/feed.xml"
+      />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
@@ -96,11 +105,7 @@ export default function SEO({
       <meta name="twitter:image" content={image} />
 
       {/* JSON-LD Structured Data Schema */}
-      {jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLd)}
-        </script>
-      )}
+      {jsonLd && <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>}
     </Helmet>
   )
 }

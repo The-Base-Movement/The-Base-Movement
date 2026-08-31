@@ -229,7 +229,7 @@ serve(async (req: Request) => {
               </div>
               <p style="color: #666; font-size: 14px;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
               <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement LBG — Official Member Platform</p>
+              <p style="font-size: 12px; color: #999; text-align: center;">The Base Movement — Official Member Platform</p>
             </div>
           `,
         })
