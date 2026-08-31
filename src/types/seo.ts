@@ -39,19 +39,19 @@ export interface SEOAnalysis {
 }
 
 const TOP_GSC_KEYWORDS =
-  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration, thebasemovement.org.gh, the base movement app, the base movement limited by guarantee, the base movement lbg, oti bonsu base movement, george oti bonsu npp, the base movement founder, how to register for the base movement, the base movement registration link, the base movement login, the base movement head office accra, the base movement tesano, the base movement chapters, ghana first jobs for the youth, new political movements in ghana 2026, jobs for the youth ghana, third force political party ghana, the base ghana first, the base movement ghana registration form, the base movement ghana jobs, the base ghana first sues the base movement, the base ghana first registration, the base party'
+  'the base movement ghana, the base movement, Dr George Oti Bonsu, Dr. George Oti Bonsu, George Oti Bonsu, the base movement ghana registration online, the base registration online login, the base ghana, base movement ghana, the base movement ghana registration, thebasemovement.org.gh, the base movement app, oti bonsu base movement, george oti bonsu npp, the base movement founder, how to register for the base movement, the base movement registration link, the base movement login, the base movement head office accra, the base movement tesano, the base movement chapters, ghana first jobs for the youth, new political movements in ghana 2026, jobs for the youth ghana, third force political party ghana, the base ghana first, the base movement ghana registration form, the base movement ghana jobs, the base ghana first sues the base movement, the base ghana first registration, the base party'
 
 export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/',
     label: 'Home Page',
-    title: 'The Base Movement LBG | Ghana First, Jobs for the Youth',
+    title: 'The Base Movement | Ghana First, Jobs for the Youth',
     description:
-      'Join The Base Movement LBG in Ghana and across the diaspora. We are committed to youth employment, accountable leadership, civic action, and economic progress.',
-    focusKeyword: 'The Base Movement LBG',
+      'Join The Base Movement in Ghana and across the diaspora. We are committed to youth employment, accountable leadership, civic action, and economic progress.',
+    focusKeyword: 'The Base Movement',
     keywords: TOP_GSC_KEYWORDS,
     canonicalUrl: 'https://www.thebasemovement.org.gh/',
-    ogTitle: 'The Base Movement LBG | Ghana First, Jobs for the Youth',
+    ogTitle: 'The Base Movement | Ghana First, Jobs for the Youth',
     ogDescription:
       'Join citizens in Ghana and across the diaspora working together for youth employment and accountable leadership.',
     ogImage: '/branding/og-image.png',
@@ -66,7 +66,8 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
     keywords: `${TOP_GSC_KEYWORDS}, install base movement app, progressive web app ghana`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/app',
     ogTitle: 'Download The Base Movement App | Official PWA',
-    ogDescription: 'Install the official app of The Base Movement on your Android, iPhone, or Desktop device.',
+    ogDescription:
+      'Install the official app of The Base Movement on your Android, iPhone, or Desktop device.',
     ogImage: '/branding/og-image.png',
   },
   {
@@ -105,15 +106,15 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/register',
     label: 'Member Registration',
-    title: 'Official Member Registration | The Base Movement LBG',
+    title: 'Official Member Registration | The Base Movement',
     description:
-      'Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
+      'Join The Base Movement today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
     focusKeyword: 'how to register for the base movement',
     keywords: `${TOP_GSC_KEYWORDS}, official member registration, how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/register',
-    ogTitle: 'Official Member Registration | The Base Movement LBG',
+    ogTitle: 'Official Member Registration | The Base Movement',
     ogDescription:
-      'Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
+      'Join The Base Movement today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified.',
     ogImage: '/branding/og-image.png',
   },
   {
@@ -199,7 +200,7 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/press',
     label: 'Press Center',
-    title: 'Press Room & Official Media Updates | The Base Movement LBG',
+    title: 'Press Room & Official Media Updates | The Base Movement',
     description:
       "Access official press releases, downloadable media kits, policy updates, and brand assets from The Base Movement's national communications and media relations desk.",
     focusKeyword: 'press releases Ghana',
@@ -210,9 +211,9 @@ export const DEFAULT_PAGE_CONFIGS: PageSEOConfig[] = [
   {
     path: '/faq',
     label: 'Frequently Asked Questions (FAQ)',
-    title: 'Frequently Asked Questions (FAQ) | The Base Movement LBG',
+    title: 'Frequently Asked Questions (FAQ) | The Base Movement',
     description:
-      'Find clear answers to key questions about The Base Movement LBG, founder Dr. George Oti Bonsu, joining from the Diaspora, app download, and youth job plans.',
+      'Find clear answers to key questions about The Base Movement, founder Dr. George Oti Bonsu, joining from the Diaspora, app download, and youth job plans.',
     focusKeyword: 'What is The Base Movement in Ghana',
     keywords: `${TOP_GSC_KEYWORDS}, what is the base movement in ghana, who is the founder of the base movement, dr george oti bonsu, how to join the base movement from diaspora, the base movement app download, the base movement faq`,
     canonicalUrl: 'https://www.thebasemovement.org.gh/faq',

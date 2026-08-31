@@ -43,15 +43,25 @@ export default function EventDetail() {
         const loadedEvt: MovementEvent = {
           id: data.id,
           title: data.title,
-          category: data.type === 'Rally' ? 'Mobilization Walk' : data.type === 'Training' ? 'Job Workshop' : (data.type as MovementEvent['category']) || 'Town Hall',
+          category:
+            data.type === 'Rally'
+              ? 'Mobilization Walk'
+              : data.type === 'Training'
+                ? 'Job Workshop'
+                : (data.type as MovementEvent['category']) || 'Town Hall',
           date: data.date,
           locationName: data.location || 'Location TBA',
           gpsAddress: data.location || '',
           region: data.chapter || 'Greater Accra',
           description: data.description || '',
           attendingCount: data.attendees_actual || data.attendees_expected || 0,
-          organizer: `The Base Movement LBG - ${data.chapter || 'Secretariat'}`,
-          status: data.status === 'Completed' ? 'Completed' : data.status === 'In Progress' ? 'In Progress' : 'Planned',
+          organizer: `The Base Movement - ${data.chapter || 'Secretariat'}`,
+          status:
+            data.status === 'Completed'
+              ? 'Completed'
+              : data.status === 'In Progress'
+                ? 'In Progress'
+                : 'Planned',
         }
 
         if (!cancelled) setEvent(loadedEvt)
@@ -106,10 +116,20 @@ export default function EventDetail() {
           padding: 24,
         }}
       >
-        <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', marginBottom: 12 }}>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: 48, color: 'hsl(var(--on-surface-muted))', marginBottom: 12 }}
+        >
           event_busy
         </span>
-        <h2 style={{ fontSize: 22, fontWeight: 600, color: 'hsl(var(--on-surface))', margin: '0 0 8px' }}>
+        <h2
+          style={{
+            fontSize: 22,
+            fontWeight: 600,
+            color: 'hsl(var(--on-surface))',
+            margin: '0 0 8px',
+          }}
+        >
           Event Not Found
         </h2>
         <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', margin: '0 0 20px' }}>
@@ -155,8 +175,7 @@ export default function EventDetail() {
   }
 
   const eventBanner =
-    event.imageUrl ||
-    'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729'
+    event.imageUrl || 'https://www.thebasemovement.org.gh/branding/og-image.png?v=20260729'
 
   const eventSchema = {
     '@context': 'https://schema.org',
@@ -230,7 +249,8 @@ export default function EventDetail() {
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
+              background:
+                'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
             }}
           />
 
@@ -315,7 +335,12 @@ export default function EventDetail() {
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline"
-              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              style={{
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
             >
               <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
                 calendar_add_on
@@ -342,19 +367,48 @@ export default function EventDetail() {
         {/* Left Column: Details & Agenda */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div className="panel" style={{ padding: 24 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 600, color: 'hsl(var(--on-surface))', margin: '0 0 12px' }}>
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: 'hsl(var(--on-surface))',
+                margin: '0 0 12px',
+              }}
+            >
               About This Event
             </h2>
-            <p style={{ fontSize: 14, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.6, margin: 0 }}>
+            <p
+              style={{
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                lineHeight: 1.6,
+                margin: 0,
+              }}
+            >
               {event.description}
             </p>
           </div>
 
           <div className="panel" style={{ padding: 24 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 600, color: 'hsl(var(--on-surface))', margin: '0 0 16px' }}>
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 600,
+                color: 'hsl(var(--on-surface))',
+                margin: '0 0 16px',
+              }}
+            >
               Event Agenda & Highlights
             </h2>
-            <ul style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: 'hsl(var(--on-surface-muted))', lineHeight: 1.8 }}>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: 20,
+                fontSize: 14,
+                color: 'hsl(var(--on-surface-muted))',
+                lineHeight: 1.8,
+              }}
+            >
               <li>Opening Remarks & National Mobilization Keynote by Movement Leadership.</li>
               <li>Interactive Youth Employment, Entrepreneurship & Skills Presentation.</li>
               <li>Community Floor Q&A with Regional Executive Officers.</li>
@@ -367,12 +421,30 @@ export default function EventDetail() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Venue Card */}
           <div className="panel" style={{ padding: 20 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 600, color: 'hsl(var(--on-surface))', margin: '0 0 12px' }}>
+            <h3
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: 'hsl(var(--on-surface))',
+                margin: '0 0 12px',
+              }}
+            >
               Venue & Location
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13, color: 'hsl(var(--on-surface))' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                fontSize: 13,
+                color: 'hsl(var(--on-surface))',
+              }}
+            >
               <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'hsl(var(--primary))' }}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, color: 'hsl(var(--primary))' }}
+                >
                   location_on
                 </span>
                 {event.locationName}
@@ -385,7 +457,10 @@ export default function EventDetail() {
 
           {/* Attendees Card */}
           <div className="panel" style={{ padding: 20, textAlign: 'center' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'hsl(var(--primary))', marginBottom: 6 }}>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 32, color: 'hsl(var(--primary))', marginBottom: 6 }}
+            >
               groups
             </span>
             <div style={{ fontSize: 24, fontWeight: 700, color: 'hsl(var(--on-surface))' }}>

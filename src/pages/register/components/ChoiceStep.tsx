@@ -26,9 +26,9 @@ export function ChoiceStep({
       <div className={compact ? 'p-5' : 'p-8 md:p-10'}>
         {!compact && (
           <SEO
-            title="Official Member Registration | The Base Movement LBG"
-            description="Join The Base Movement LBG today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified."
-            keywords="how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement, the base movement lbg, the base movement ghana"
+            title="Official Member Registration | The Base Movement"
+            description="Join The Base Movement today. Complete your official Ghana or Diaspora registration online, download physical sign-up forms, and get verified."
+            keywords="how to register for the base movement, the base movement registration link, the base movement ghana registration online, the base movement registration form, the base ghana registration, join the base movement, the base movement ghana"
             canonical="/register"
           />
         )}
@@ -42,11 +42,14 @@ export function ChoiceStep({
             Official Member Registration
           </h1>
           <h2 className="text-[11px] font-semibold text-primary uppercase tracking-[.06em] m-0">
-            The Base Movement LBG · Ghana &amp; Diaspora Network
+            The Base Movement · Ghana &amp; Diaspora Network
           </h2>
           <p className="text-[12px] text-on-surface-muted mt-2">
             Confused about requirements? Read our step-by-step{' '}
-            <Link to="/blog/how-to-register-and-get-verified" className="text-primary font-medium hover:underline">
+            <Link
+              to="/blog/how-to-register-and-get-verified"
+              className="text-primary font-medium hover:underline"
+            >
               How to Register &amp; Get Verified Guide →
             </Link>
           </p>

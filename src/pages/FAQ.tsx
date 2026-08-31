@@ -6,7 +6,11 @@ import { Breadcrumbs } from '@/components/Breadcrumbs'
 
 interface FAQItem {
   id: string
-  category: 'General & Mission' | 'Founder & Leadership' | 'Diaspora & Registration' | 'App & Security'
+  category:
+    | 'General & Mission'
+    | 'Founder & Leadership'
+    | 'Diaspora & Registration'
+    | 'App & Security'
   question: string
   answer: React.ReactNode
 }
@@ -18,7 +22,9 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'What is The Base Movement in Ghana?',
     answer: (
       <>
-        The Base Movement LBG is a grassroots socio-political organization in Ghana focused on industrialization, job creation, and economic accountability under the core mission <strong>&quot;Ghana First, Jobs for the Youth&quot;</strong>.
+        The Base Movement is a grassroots socio-political organization in Ghana focused on
+        industrialization, job creation, and economic accountability under the core mission{' '}
+        <strong>&quot;Ghana First, Jobs for the Youth&quot;</strong>.
       </>
     ),
   },
@@ -28,7 +34,9 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'Who is the founder of The Base Movement?',
     answer: (
       <>
-        The Base Movement was founded by Ghanaian businessman and philanthropist <strong>Dr. George Oti Bonsu</strong> to empower youth, foster disciplined governance, and drive nationwide economic transformation.
+        The Base Movement was founded by Ghanaian businessman and philanthropist{' '}
+        <strong>Dr. George Oti Bonsu</strong> to empower youth, foster disciplined governance, and
+        drive nationwide economic transformation.
       </>
     ),
   },
@@ -39,10 +47,14 @@ const FAQ_ITEMS: FAQItem[] = [
     answer: (
       <>
         Ghanaians living abroad can join by visiting our official website and completing the online{' '}
-        <Link to="/register?platform=DIASPORA" className="text-primary font-semibold hover:underline">
+        <Link
+          to="/register?platform=DIASPORA"
+          className="text-primary font-semibold hover:underline"
+        >
           Diaspora Registration Form
         </Link>{' '}
-        to get assigned to your international country chapter and receive your verified digital membership card.
+        to get assigned to your international country chapter and receive your verified digital
+        membership card.
       </>
     ),
   },
@@ -52,11 +64,13 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'Does The Base Movement have an official mobile app?',
     answer: (
       <>
-        Yes, The Base Movement provides an official, lightweight Progressive Web App (PWA) directly via our website at{' '}
+        Yes, The Base Movement provides an official, lightweight Progressive Web App (PWA) directly
+        via our website at{' '}
         <Link to="/app" className="text-primary font-semibold hover:underline">
           thebasemovement.org.gh/app
         </Link>
-        . It can be installed in seconds on Android, iPhone/iPad (iOS Safari), and Desktop without requiring Google Play Store or Apple App Store accounts.
+        . It can be installed in seconds on Android, iPhone/iPad (iOS Safari), and Desktop without
+        requiring Google Play Store or Apple App Store accounts.
       </>
     ),
   },
@@ -66,7 +80,9 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'How does The Base Movement plan to create youth jobs in Ghana?',
     answer: (
       <>
-        Through our strategic <strong>1-Million Jobs Plan</strong> focused on priority economic sectors including agricultural industrialization, technical trades, digital technology, and local manufacturing across all 16 regions of Ghana. Read our complete blueprint on{' '}
+        Through our strategic <strong>1-Million Jobs Plan</strong> focused on priority economic
+        sectors including agricultural industrialization, technical trades, digital technology, and
+        local manufacturing across all 16 regions of Ghana. Read our complete blueprint on{' '}
         <Link to="/our-agenda" className="text-primary font-semibold hover:underline">
           The Plan
         </Link>{' '}
@@ -80,7 +96,9 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'Where is the national headquarters of The Base Movement located?',
     answer: (
       <>
-        Our national headquarters is located at <strong>GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana</strong>. You can find full contact details and Google Maps location on our{' '}
+        Our national headquarters is located at{' '}
+        <strong>GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana</strong>. You
+        can find full contact details and Google Maps location on our{' '}
         <Link to="/contact" className="text-primary font-semibold hover:underline">
           Contact Page
         </Link>
@@ -94,8 +112,13 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'How do I download the physical membership registration form?',
     answer: (
       <>
-        Printable PDF membership entry forms for both Ghana and Diaspora networks can be previewed and downloaded directly on our{' '}
-        <Link to="/registration-form-preview?platform=GHANA" target="_blank" className="text-primary font-semibold hover:underline">
+        Printable PDF membership entry forms for both Ghana and Diaspora networks can be previewed
+        and downloaded directly on our{' '}
+        <Link
+          to="/registration-form-preview?platform=GHANA"
+          target="_blank"
+          className="text-primary font-semibold hover:underline"
+        >
           Downloadable Registration Forms
         </Link>{' '}
         page. Once filled, scanned copies can be uploaded online for processing.
@@ -108,7 +131,8 @@ const FAQ_ITEMS: FAQItem[] = [
     question: 'How can I support or donate to The Base Movement?',
     answer: (
       <>
-        You can support community projects, youth training initiatives, and branch operations by visiting our secure{' '}
+        You can support community projects, youth training initiatives, and branch operations by
+        visiting our secure{' '}
         <Link to="/donate" className="text-primary font-semibold hover:underline">
           Donation Portal
         </Link>{' '}
@@ -144,7 +168,8 @@ export default function FAQ() {
     const matchesSearch =
       !searchQuery.trim() ||
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (typeof item.answer === 'string' && item.answer.toLowerCase().includes(searchQuery.toLowerCase()))
+      (typeof item.answer === 'string' &&
+        item.answer.toLowerCase().includes(searchQuery.toLowerCase()))
     return matchesCategory && matchesSearch
   })
 
@@ -158,31 +183,37 @@ export default function FAQ() {
         '@type': 'Answer',
         text:
           item.id === 'q1'
-            ? "The Base Movement LBG is a grassroots socio-political organization in Ghana focused on industrialization, job creation, and economic accountability under the core mission 'Ghana First, Jobs for the Youth'."
+            ? "The Base Movement is a grassroots socio-political organization in Ghana focused on industrialization, job creation, and economic accountability under the core mission 'Ghana First, Jobs for the Youth'."
             : item.id === 'q2'
-            ? 'The Base Movement was founded by Ghanaian businessman and philanthropist Dr. George Oti Bonsu to empower youth and foster disciplined governance.'
-            : item.id === 'q3'
-            ? 'Ghanaians living abroad can join by visiting our official website (thebasemovement.org.gh/register) and completing the online Diaspora registration form to get verified.'
-            : item.id === 'q4'
-            ? 'The Base Movement provides an official, lightweight Progressive Web App (PWA) directly via the website (thebasemovement.org.gh/app) that can be installed on Android, iOS, and Desktop without Google Play Store or Apple App Store.'
-            : item.id === 'q5'
-            ? 'Through a target 1-Million Jobs Plan focused on priority sectors including agricultural industrialization, technical trades, digital technology, and local manufacturing across all 16 regions.'
-            : item.id === 'q6'
-            ? 'The national headquarters is located at GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana.'
-            : item.id === 'q7'
-            ? 'Printable PDF membership entry forms for both Ghana and Diaspora networks can be downloaded on the website at thebasemovement.org.gh/registration-form-preview.'
-            : 'You can support community projects, youth training initiatives, and branch operations by visiting our secure donation portal at thebasemovement.org.gh/donate.',
+              ? 'The Base Movement was founded by Ghanaian businessman and philanthropist Dr. George Oti Bonsu to empower youth and foster disciplined governance.'
+              : item.id === 'q3'
+                ? 'Ghanaians living abroad can join by visiting our official website (thebasemovement.org.gh/register) and completing the online Diaspora registration form to get verified.'
+                : item.id === 'q4'
+                  ? 'The Base Movement provides an official, lightweight Progressive Web App (PWA) directly via the website (thebasemovement.org.gh/app) that can be installed on Android, iOS, and Desktop without Google Play Store or Apple App Store.'
+                  : item.id === 'q5'
+                    ? 'Through a target 1-Million Jobs Plan focused on priority sectors including agricultural industrialization, technical trades, digital technology, and local manufacturing across all 16 regions.'
+                    : item.id === 'q6'
+                      ? 'The national headquarters is located at GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Greater Accra, Ghana.'
+                      : item.id === 'q7'
+                        ? 'Printable PDF membership entry forms for both Ghana and Diaspora networks can be downloaded on the website at thebasemovement.org.gh/registration-form-preview.'
+                        : 'You can support community projects, youth training initiatives, and branch operations by visiting our secure donation portal at thebasemovement.org.gh/donate.',
       },
     })),
   }
 
-  const categories = ['All', 'General & Mission', 'Founder & Leadership', 'Diaspora & Registration', 'App & Security']
+  const categories = [
+    'All',
+    'General & Mission',
+    'Founder & Leadership',
+    'Diaspora & Registration',
+    'App & Security',
+  ]
 
   return (
     <main className="min-h-screen pb-24" style={{ background: 'hsl(var(--container-low))' }}>
       <SEO
-        title="Frequently Asked Questions (FAQ) | The Base Movement LBG"
-        description="Find clear answers to key questions about The Base Movement LBG, founder Dr. George Oti Bonsu, joining from the Diaspora, app download, and youth job plans."
+        title="Frequently Asked Questions (FAQ) | The Base Movement"
+        description="Find clear answers to key questions about The Base Movement, founder Dr. George Oti Bonsu, joining from the Diaspora, app download, and youth job plans."
         keywords="what is the base movement in ghana, who is the founder of the base movement, dr george oti bonsu, how to join the base movement from diaspora, the base movement app download, the base movement faq"
         canonical="/faq"
         jsonLd={faqSchema}
@@ -195,7 +226,16 @@ export default function FAQ() {
           <Breadcrumbs />
           <span
             className="pill pill-ok"
-            style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 12, marginTop: 16 }}
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              padding: '4px 12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 12,
+              marginTop: 16,
+            }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
               help
@@ -210,12 +250,16 @@ export default function FAQ() {
             <BrandLine />
           </div>
           <p className="text-base text-slate-300 font-body-md leading-relaxed">
-            Get instant, verified answers regarding The Base Movement LBG, founder Dr. George Oti Bonsu, registration pipelines, mobile PWA app, and regional branch operations.
+            Get instant, verified answers regarding The Base Movement, founder Dr. George Oti Bonsu,
+            registration pipelines, mobile PWA app, and regional branch operations.
           </p>
 
           {/* Search Box */}
           <div className="mt-8 relative max-w-xl mx-auto">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" style={{ fontSize: 20 }}>
+            <span
+              className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              style={{ fontSize: 20 }}
+            >
               search
             </span>
             <input
@@ -299,12 +343,18 @@ export default function FAQ() {
             })
           ) : (
             <div className="bg-white p-12 text-center border border-border">
-              <span className="material-symbols-outlined text-slate-300 mb-3" style={{ fontSize: 40 }}>
+              <span
+                className="material-symbols-outlined text-slate-300 mb-3"
+                style={{ fontSize: 40 }}
+              >
                 search_off
               </span>
-              <h3 className="text-base font-semibold text-charcoal-dark mb-1">No matching questions found</h3>
+              <h3 className="text-base font-semibold text-charcoal-dark mb-1">
+                No matching questions found
+              </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4">
-                We couldn&apos;t find any questions matching &quot;{searchQuery}&quot;. Try adjusting your search query or view all questions.
+                We couldn&apos;t find any questions matching &quot;{searchQuery}&quot;. Try
+                adjusting your search query or view all questions.
               </p>
               <button
                 onClick={() => {
@@ -326,13 +376,20 @@ export default function FAQ() {
           </span>
           <h3 className="text-xl font-bold text-charcoal-dark mb-2">Still have questions?</h3>
           <p className="text-sm text-slate-600 max-w-md mx-auto mb-6">
-            Can&apos;t find the answer you&apos;re looking for? Reach out directly to our central communications and member support desk.
+            Can&apos;t find the answer you&apos;re looking for? Reach out directly to our central
+            communications and member support desk.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Link to="/contact" className="btn btn-primary px-6 py-2.5 text-xs font-bold rounded-full">
+            <Link
+              to="/contact"
+              className="btn btn-primary px-6 py-2.5 text-xs font-bold rounded-full"
+            >
               Contact Us
             </Link>
-            <Link to="/register" className="btn btn-outline px-6 py-2.5 text-xs font-bold rounded-full">
+            <Link
+              to="/register"
+              className="btn btn-outline px-6 py-2.5 text-xs font-bold rounded-full"
+            >
               Join The Base
             </Link>
           </div>

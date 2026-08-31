@@ -307,10 +307,11 @@ export default function ChapterDetails() {
     '@context': 'https://schema.org',
     '@type': 'GovernmentBenefitsService',
     name: `${displayName} - The Base Movement`,
-    description: chapter.description || `Official regional hub for ${displayName} under The Base Movement.`,
+    description:
+      chapter.description || `Official regional hub for ${displayName} under The Base Movement.`,
     provider: {
       '@type': 'NGO',
-      name: 'The Base Movement LBG',
+      name: 'The Base Movement',
       url: 'https://www.thebasemovement.org.gh',
       logo: 'https://www.thebasemovement.org.gh/branding/logo.png',
     },
@@ -319,7 +320,12 @@ export default function ChapterDetails() {
       name: chapter.city_or_region || chapter.country || 'Ghana',
       addressCountry: chapter.country === 'Ghana' ? 'GH' : chapter.country || 'GH',
     },
-    knowsAbout: ['Youth Empowerment', 'Industrialization', 'Job Creation', 'Grassroots Mobilization'],
+    knowsAbout: [
+      'Youth Empowerment',
+      'Industrialization',
+      'Job Creation',
+      'Grassroots Mobilization',
+    ],
     contactPoint: {
       '@type': 'ContactPoint',
       email: chapter.email || 'info@thebasemovement.org.gh',
@@ -347,7 +353,7 @@ export default function ChapterDetails() {
     },
     organizer: {
       '@type': 'NGO',
-      name: 'The Base Movement LBG',
+      name: 'The Base Movement',
       url: 'https://www.thebasemovement.org.gh',
     },
   }))
