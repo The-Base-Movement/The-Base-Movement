@@ -91,7 +91,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         spaceBetween={24}
         breakpoints={{
           0: { slidesPerView: 1 },
-          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 2 },
         }}
         style={{ overflow: 'hidden', paddingTop: '16px', marginTop: '-16px' }}
         className="officials-swiper"
@@ -117,7 +117,7 @@ export function OfficerCardSlider({ children, count }: OfficerCardSliderProps) {
         .officials-swiper .swiper-slide {
           height: auto;
         }
-        @media (max-width: 767px) {
+        @media (max-width: 1023px) {
           .officials-swiper {
             padding: 0 20px;
           }
