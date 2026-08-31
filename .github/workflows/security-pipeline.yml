@@ -91,6 +91,21 @@ jobs:
           path: ./
           extra_args: --only-verified
 
+      - name: Block hardcoded webhook/callback URLs
+        run: |
+          # Catches hardcoded webhook URLs even when TruffleHog's --only-verified
+          # can't confirm liveness (e.g. already-revoked, or provider doesn't
+          # support live verification). Same class of bug as the leaked Discord
+          # webhooks fixed in PR #315 — these must always come from
+          # Deno.env.get(...) / import.meta.env, never a literal in source.
+          PATTERN='https://(discord(app)?\.com/api/webhooks|hooks\.slack\.com/services)/[A-Za-z0-9_/.\-]+'
+          if grep -rEn "$PATTERN" --include='*.ts' --include='*.tsx' \
+              --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.git \
+              --exclude-dir=docs .; then
+            echo "::error::Hardcoded webhook URL found in source. Use an env var (Deno.env.get / import.meta.env) instead — see PR #315."
+            exit 1
+          fi
+
   sast-code-scan:
     name: SAST Code Analysis (Semgrep)
     runs-on: ubuntu-latest
