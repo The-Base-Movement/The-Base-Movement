@@ -103,21 +103,9 @@ export default function AdminEvents() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
     fetchEvents()
   }, [fetchEvents])
-
-  // Handle URL ?edit=ID parameter
-  useEffect(() => {
-    if (events.length === 0) return
-    const params = new URLSearchParams(window.location.search)
-    const editId = params.get('edit')
-    if (editId) {
-      const target = events.find((e) => e.id === editId)
-      if (target) {
-        handleOpenModal(target)
-      }
-    }
-  }, [events])
 
   // Open Create / Edit Modal
   const handleOpenModal = (event?: FieldEvent) => {
@@ -127,7 +115,9 @@ export default function AdminEvents() {
       setEditingEvent(event)
       setFormData({
         title: event.title,
-        date: event.date ? new Date(event.date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+        date: event.date
+          ? new Date(event.date).toISOString().slice(0, 16)
+          : new Date().toISOString().slice(0, 16),
         location: event.location || '',
         chapter: event.chapter || 'Greater Accra',
         status: event.status || 'Planned',
@@ -149,9 +139,25 @@ export default function AdminEvents() {
     setIsModalOpen(true)
   }
 
+  // Handle URL ?edit=ID parameter
+  useEffect(() => {
+    if (events.length === 0) return
+    const params = new URLSearchParams(window.location.search)
+    const editId = params.get('edit')
+    if (editId) {
+      const target = events.find((e) => e.id === editId)
+      if (target) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing modal open state from the URL
+        handleOpenModal(target)
+      }
+    }
+  }, [events])
+
   const handleBannerUpload = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Invalid file type', { description: 'Please select an image file (PNG, JPG, WEBP).' })
+      toast.error('Invalid file type', {
+        description: 'Please select an image file (PNG, JPG, WEBP).',
+      })
       return
     }
     setIsUploadingBanner(true)
@@ -195,9 +201,12 @@ export default function AdminEvents() {
       }
 
       if (success) {
-        toast.success(editingEvent ? 'Event updated successfully' : 'Field event created & scheduled', {
-          description: `"${payload.title}" has been synced to the field database.`,
-        })
+        toast.success(
+          editingEvent ? 'Event updated successfully' : 'Field event created & scheduled',
+          {
+            description: `"${payload.title}" has been synced to the field database.`,
+          }
+        )
         setIsModalOpen(false)
         fetchEvents()
       } else {
@@ -264,7 +273,14 @@ export default function AdminEvents() {
       case 'In Progress':
         return <span className="pill pill-warn">In Progress</span>
       case 'Planned':
-        return <span className="pill pill-warn" style={{ background: 'hsl(217, 91%, 60% / 0.15)', color: 'hsl(217, 91%, 45%)' }}>Planned</span>
+        return (
+          <span
+            className="pill pill-warn"
+            style={{ background: 'hsl(217, 91%, 60% / 0.15)', color: 'hsl(217, 91%, 45%)' }}
+          >
+            Planned
+          </span>
+        )
       case 'Cancelled':
         return <span className="pill pill-err">Cancelled</span>
     }
@@ -283,12 +299,20 @@ export default function AdminEvents() {
         description="Schedule, coordinate, and track regional town halls, rallies, recruitment drives, and training workshops."
         actions={
           <>
-            <Link to="/admin/content-calendar" className="btn btn-outline btn-sm" style={{ textDecoration: 'none' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>calendar_month</span>
+            <Link
+              to="/admin/content-calendar"
+              className="btn btn-outline btn-sm"
+              style={{ textDecoration: 'none' }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                calendar_month
+              </span>
               Content Calendar
             </Link>
             <button className="btn btn-primary btn-sm" onClick={() => handleOpenModal()}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                add
+              </span>
               Schedule Event
             </button>
           </>
@@ -296,12 +320,33 @@ export default function AdminEvents() {
       />
 
       {/* Tactical KPIs Strip */}
-      <div className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 20 }}>
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--destructive))', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+      <div
+        className="kpis grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        style={{ marginBottom: 20 }}
+      >
+        <div
+          className="panel"
+          style={{ borderLeft: '3px solid hsl(var(--destructive))', padding: '16px 20px' }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Active & Planned Events
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--destructive))', marginTop: 4 }}>
+          <div
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 700,
+              color: 'hsl(var(--destructive))',
+              marginTop: 4,
+            }}
+          >
             {stats.plannedCount + stats.inProgressCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -309,11 +354,29 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div
+          className="panel"
+          style={{ borderLeft: '3px solid hsl(var(--accent))', padding: '16px 20px' }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Total Budget Allocated
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--accent))', marginTop: 4 }}>
+          <div
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 700,
+              color: 'hsl(var(--accent))',
+              marginTop: 4,
+            }}
+          >
             GHS {stats.totalBudgetAllocated.toLocaleString()}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -321,11 +384,30 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em', marginBottom: 4 }}>
+        <div
+          className="panel"
+          style={{ borderLeft: '3px solid hsl(var(--on-surface))', padding: '16px 20px' }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+              marginBottom: 4,
+            }}
+          >
             Expected Attendance
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 800, color: 'hsl(var(--on-surface))', marginTop: 4 }}>
+          <div
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 800,
+              color: 'hsl(var(--on-surface))',
+              marginTop: 4,
+            }}
+          >
             {stats.totalExpected.toLocaleString()}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -333,11 +415,29 @@ export default function AdminEvents() {
           </div>
         </div>
 
-        <div className="panel" style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}>
-          <div style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', color: 'hsl(var(--on-surface-muted))', letterSpacing: '0.05em' }}>
+        <div
+          className="panel"
+          style={{ borderLeft: '3px solid hsl(var(--primary))', padding: '16px 20px' }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              color: 'hsl(var(--on-surface-muted))',
+              letterSpacing: '0.05em',
+            }}
+          >
             Completed Mobilizations
           </div>
-          <div style={{ fontSize: 'var(--kpi-num-size)', fontWeight: 700, color: 'hsl(var(--primary))', marginTop: 4 }}>
+          <div
+            style={{
+              fontSize: 'var(--kpi-num-size)',
+              fontWeight: 700,
+              color: 'hsl(var(--primary))',
+              marginTop: 4,
+            }}
+          >
             {stats.completedCount}
           </div>
           <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))', marginTop: 2 }}>
@@ -348,7 +448,15 @@ export default function AdminEvents() {
 
       {/* Search and Filters Toolbar */}
       <div className="panel" style={{ marginBottom: 20, padding: 16 }}>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: 12,
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div style={{ position: 'relative', minWidth: 260, flex: 1 }}>
             <span
               className="material-symbols-outlined"
@@ -469,45 +577,146 @@ export default function AdminEvents() {
       <div className="panel" style={{ padding: 0, overflow: 'hidden' }}>
         {isLoading ? (
           <div style={{ padding: 48, textAlign: 'center', color: 'hsl(var(--on-surface-muted))' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 36, marginBottom: 8 }}>progress_activity</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 36, marginBottom: 8 }}>
+              progress_activity
+            </span>
             <div>Loading field events directory...</div>
           </div>
         ) : filteredEvents.length === 0 ? (
           <div style={{ padding: 48, textAlign: 'center', color: 'hsl(var(--on-surface-muted))' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 42, marginBottom: 8, opacity: 0.5 }}>event_busy</span>
-            <div style={{ fontSize: 16, fontWeight: 600, color: 'hsl(var(--on-surface))' }}>No Field Events Found</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Try clearing search filters or schedule a new mobilization event.</div>
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 42, marginBottom: 8, opacity: 0.5 }}
+            >
+              event_busy
+            </span>
+            <div style={{ fontSize: 16, fontWeight: 600, color: 'hsl(var(--on-surface))' }}>
+              No Field Events Found
+            </div>
+            <div style={{ fontSize: 13, marginTop: 4 }}>
+              Try clearing search filters or schedule a new mobilization event.
+            </div>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
-                <tr style={{ background: 'hsl(var(--surface))', borderBottom: '1px solid hsl(var(--border))', textAlign: 'left' }}>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Event Details</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Category</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Region / Chapter</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Date & Time</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Attendance</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Budget</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))' }}>Status</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, color: 'hsl(var(--on-surface-muted))', textAlign: 'right' }}>Actions</th>
+                <tr
+                  style={{
+                    background: 'hsl(var(--surface))',
+                    borderBottom: '1px solid hsl(var(--border))',
+                    textAlign: 'left',
+                  }}
+                >
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Event Details
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Category
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Region / Chapter
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Date & Time
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Attendance
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Budget
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                    }}
+                  >
+                    Status
+                  </th>
+                  <th
+                    style={{
+                      padding: '12px 16px',
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      textAlign: 'right',
+                    }}
+                  >
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEvents.map((evt) => {
                   const evtDate = evt.date ? new Date(evt.date) : new Date()
-                  const formattedDate = evtDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                  const formattedTime = evtDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                  const formattedDate = evtDate.toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                  const formattedTime = evtDate.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
 
                   return (
-                    <tr key={evt.id} style={{ borderBottom: '1px solid hsl(var(--border))', transition: 'background 0.15s ease' }}>
+                    <tr
+                      key={evt.id}
+                      style={{
+                        borderBottom: '1px solid hsl(var(--border))',
+                        transition: 'background 0.15s ease',
+                      }}
+                    >
                       <td style={{ padding: '12px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           {evt.image_url ? (
                             <img
                               src={evt.image_url}
                               alt={evt.title}
-                              style={{ width: 48, height: 36, objectFit: 'cover', borderRadius: 'var(--radius-xs)', border: '1px solid hsl(var(--border))' }}
+                              style={{
+                                width: 48,
+                                height: 36,
+                                objectFit: 'cover',
+                                borderRadius: 'var(--radius-xs)',
+                                border: '1px solid hsl(var(--border))',
+                              }}
                             />
                           ) : (
                             <div
@@ -522,13 +731,28 @@ export default function AdminEvents() {
                                 justifyContent: 'center',
                               }}
                             >
-                              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>event</span>
+                              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                                event
+                              </span>
                             </div>
                           )}
                           <div>
-                            <div style={{ fontWeight: 600, color: 'hsl(var(--on-surface))' }}>{evt.title}</div>
-                            <div style={{ fontSize: 12, color: 'hsl(var(--on-surface-muted))', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
-                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>location_on</span>
+                            <div style={{ fontWeight: 600, color: 'hsl(var(--on-surface))' }}>
+                              {evt.title}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: 12,
+                                color: 'hsl(var(--on-surface-muted))',
+                                marginTop: 2,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 4,
+                              }}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                                location_on
+                              </span>
                               {evt.location || 'Venue TBA'}
                             </div>
                           </div>
@@ -549,13 +773,23 @@ export default function AdminEvents() {
                         </span>
                       </td>
 
-                      <td style={{ padding: '12px 16px', fontWeight: 500, color: 'hsl(var(--on-surface))' }}>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontWeight: 500,
+                          color: 'hsl(var(--on-surface))',
+                        }}
+                      >
                         {evt.chapter}
                       </td>
 
                       <td style={{ padding: '12px 16px' }}>
-                        <div style={{ fontWeight: 500, color: 'hsl(var(--on-surface))' }}>{formattedDate}</div>
-                        <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>{formattedTime}</div>
+                        <div style={{ fontWeight: 500, color: 'hsl(var(--on-surface))' }}>
+                          {formattedDate}
+                        </div>
+                        <div style={{ fontSize: 11, color: 'hsl(var(--on-surface-muted))' }}>
+                          {formattedTime}
+                        </div>
                       </td>
 
                       <td style={{ padding: '12px 16px' }}>
@@ -578,9 +812,7 @@ export default function AdminEvents() {
                         )}
                       </td>
 
-                      <td style={{ padding: '12px 16px' }}>
-                        {getStatusPill(evt.status)}
-                      </td>
+                      <td style={{ padding: '12px 16px' }}>{getStatusPill(evt.status)}</td>
 
                       <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -589,7 +821,9 @@ export default function AdminEvents() {
                             onClick={() => handleOpenModal(evt)}
                             title="Edit event"
                           >
-                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>edit</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                              edit
+                            </span>
                           </button>
                           <button
                             className="btn btn-ghost btn-sm"
@@ -597,7 +831,9 @@ export default function AdminEvents() {
                             onClick={() => handleDelete(evt)}
                             title="Delete event"
                           >
-                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete</span>
+                            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                              delete
+                            </span>
                           </button>
                         </div>
                       </td>
@@ -638,9 +874,31 @@ export default function AdminEvents() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: 'hsl(var(--on-surface))', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span className="material-symbols-outlined" style={{ color: 'hsl(var(--primary))' }}>event</span>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: 20,
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: 'hsl(var(--on-surface))',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ color: 'hsl(var(--primary))' }}
+                >
+                  event
+                </span>
                 {editingEvent ? 'Edit Mobilization Event' : 'Schedule New Field Event'}
               </h2>
               <button
@@ -652,10 +910,21 @@ export default function AdminEvents() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+            >
               {/* Event Title */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'hsl(var(--on-surface-muted))',
+                    marginBottom: 6,
+                  }}
+                >
                   Event Title *
                 </label>
                 <input
@@ -680,7 +949,15 @@ export default function AdminEvents() {
 
               {/* Event Banner Image Upload & URL */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'hsl(var(--on-surface-muted))',
+                    marginBottom: 6,
+                  }}
+                >
                   Event Banner Image
                 </label>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8 }}>
@@ -688,7 +965,9 @@ export default function AdminEvents() {
                     type="url"
                     placeholder="https://... (or upload image file below)"
                     value={formData.image_url || ''}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, image_url: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, image_url: e.target.value }))
+                    }
                     style={{
                       flex: 1,
                       height: 38,
@@ -703,7 +982,14 @@ export default function AdminEvents() {
                   />
                   <label
                     className="btn btn-outline btn-sm"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer', height: 38, margin: 0 }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      cursor: 'pointer',
+                      height: 38,
+                      margin: 0,
+                    }}
                   >
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
                       {isUploadingBanner ? 'progress_activity' : 'upload'}
@@ -763,7 +1049,9 @@ export default function AdminEvents() {
                       }}
                       title="Remove banner"
                     >
-                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>close</span>
+                      <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                        close
+                      </span>
                     </button>
                   </div>
                 ) : (
@@ -782,7 +1070,9 @@ export default function AdminEvents() {
                       background: 'hsl(var(--surface))',
                     }}
                   >
-                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>image</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                      image
+                    </span>
                     No banner image selected. Upload a file or paste image URL.
                   </div>
                 )}
@@ -790,14 +1080,24 @@ export default function AdminEvents() {
 
               {/* Event Description */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: 'hsl(var(--on-surface-muted))',
+                    marginBottom: 6,
+                  }}
+                >
                   Event Description & Agenda
                 </label>
                 <textarea
                   rows={3}
                   placeholder="Provide detailed description, key speakers, agenda items, and participant guidance..."
                   value={formData.description || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, description: e.target.value }))
+                  }
                   style={{
                     width: '100%',
                     padding: '8px 12px',
@@ -816,7 +1116,15 @@ export default function AdminEvents() {
               {/* Category & Region */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Category Type *
                   </label>
                   <select
@@ -826,7 +1134,10 @@ export default function AdminEvents() {
                         setIsCustomCategory(true)
                       } else {
                         setIsCustomCategory(false)
-                        setFormData((prev) => ({ ...prev, type: e.target.value as FieldEvent['type'] }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          type: e.target.value as FieldEvent['type'],
+                        }))
                       }
                     }}
                     style={{
@@ -855,7 +1166,10 @@ export default function AdminEvents() {
                       value={customCategoryInput}
                       onChange={(e) => {
                         setCustomCategoryInput(e.target.value)
-                        setFormData((prev) => ({ ...prev, type: e.target.value as FieldEvent['type'] }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          type: e.target.value as FieldEvent['type'],
+                        }))
                       }}
                       style={{
                         marginTop: 6,
@@ -873,7 +1187,15 @@ export default function AdminEvents() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Region / Chapter *
                   </label>
                   <select
@@ -902,7 +1224,15 @@ export default function AdminEvents() {
               {/* Venue Location & Date */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Venue / Location
                   </label>
                   <input
@@ -925,7 +1255,15 @@ export default function AdminEvents() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Date & Time *
                   </label>
                   <input
@@ -951,12 +1289,25 @@ export default function AdminEvents() {
               {/* Status & Expected Attendance */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Mobilization Status *
                   </label>
                   <select
                     value={formData.status}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, status: e.target.value as FieldEvent['status'] }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        status: e.target.value as FieldEvent['status'],
+                      }))
+                    }
                     style={{
                       width: '100%',
                       height: 38,
@@ -977,14 +1328,27 @@ export default function AdminEvents() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Target Expected Attendance
                   </label>
                   <input
                     type="number"
                     min={0}
                     value={formData.attendees_expected}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, attendees_expected: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        attendees_expected: Number(e.target.value),
+                      }))
+                    }
                     style={{
                       width: '100%',
                       height: 38,
@@ -1003,14 +1367,24 @@ export default function AdminEvents() {
               {/* Budget Allocated & Spent */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Budget Allocated (GHS)
                   </label>
                   <input
                     type="number"
                     min={0}
                     value={formData.budget_allocated}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, budget_allocated: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, budget_allocated: Number(e.target.value) }))
+                    }
                     style={{
                       width: '100%',
                       height: 38,
@@ -1026,14 +1400,24 @@ export default function AdminEvents() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'hsl(var(--on-surface-muted))', marginBottom: 6 }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: 'hsl(var(--on-surface-muted))',
+                      marginBottom: 6,
+                    }}
+                  >
                     Budget Spent (GHS)
                   </label>
                   <input
                     type="number"
                     min={0}
                     value={formData.budget_spent}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, budget_spent: Number(e.target.value) }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, budget_spent: Number(e.target.value) }))
+                    }
                     style={{
                       width: '100%',
                       height: 38,
@@ -1050,7 +1434,15 @@ export default function AdminEvents() {
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 10, marginTop: 12 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
@@ -1058,12 +1450,12 @@ export default function AdminEvents() {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-sm"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Saving Event...' : editingEvent ? 'Save Changes' : 'Schedule Event'}
+                <button type="submit" className="btn btn-primary btn-sm" disabled={isSubmitting}>
+                  {isSubmitting
+                    ? 'Saving Event...'
+                    : editingEvent
+                      ? 'Save Changes'
+                      : 'Schedule Event'}
                 </button>
               </div>
             </form>
