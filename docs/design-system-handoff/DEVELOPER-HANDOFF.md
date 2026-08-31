@@ -143,12 +143,12 @@ red / gold / green as an editorial rule.
 Never use monotonous line dividers (`<WingDivider />`) between every consecutive section.
 Instead, establish a deliberate visual narrative through alternating surface-tone backgrounds:
 
-| Surface Tone | Class / Color | Usage & Purpose |
-| :--- | :--- | :--- |
-| **Hero / Dark Accent** | `bg-[#0f1310]` / `bg-[#181d19]` | High-impact hero, core foundation pillars, key statements |
-| **Warm Editorial** | `bg-[#F7F5F2]` / `bg-surface-warm` | Secondary pathways, updates, featured news |
-| **Crisp Light** | `bg-white` / `bg-background` | Stats grid, interactive timelines, form panels |
-| **Container Low** | `hsl(var(--container-low))` | Inset content cards, network structure breakdowns |
+| Surface Tone           | Class / Color                      | Usage & Purpose                                           |
+| :--------------------- | :--------------------------------- | :-------------------------------------------------------- |
+| **Hero / Dark Accent** | `bg-[#0f1310]` / `bg-[#181d19]`    | High-impact hero, core foundation pillars, key statements |
+| **Warm Editorial**     | `bg-[#F7F5F2]` / `bg-surface-warm` | Secondary pathways, updates, featured news                |
+| **Crisp Light**        | `bg-white` / `bg-background`       | Stats grid, interactive timelines, form panels            |
+| **Container Low**      | `hsl(var(--container-low))`        | Inset content cards, network structure breakdowns         |
 
 ---
 
@@ -163,6 +163,15 @@ and avoid inventing new ones.
 
 **JS breakpoint:** `useIsMobile()` (`src/hooks/use-mobile.ts`) — `< 768px`.
 Use it, plus `useMediaQuery()`, rather than reading `window.innerWidth` directly.
+
+**Public vs admin mobile/desktop split (as of 2026-09-01):** `.desktop-only` /
+`.mobile-only` (768px) is the **admin/dashboard** convention — leave it alone
+there. **Public-facing pages** (`PublicLayout`) now standardize on `lg`
+(1024px) via plain Tailwind (`lg:hidden` / `hidden lg:flex`) instead, so
+tablet widths (768–1023px) get the same layout as mobile rather than a
+squeezed desktop layout. Reference: `src/pages/Chapters.tsx` (Diaspora page).
+Don't reuse `.desktop-only`/`.mobile-only` on a public page — it disagrees
+with pages already on the `lg` convention in that 768–1023px range.
 
 ### Container
 
