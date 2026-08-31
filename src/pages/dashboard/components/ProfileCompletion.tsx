@@ -64,7 +64,7 @@ export function ProfileCompletion({ avatarUrl, regNo, hasCoreDetails }: Props) {
       window.dispatchEvent(new Event('storage')) // refresh sidebar/topbar avatar
       localStorage.setItem(DISMISS_KEY, '1')
       setModalOpen(false)
-      toast.success("Profile photo added — you're 100% verified!")
+      toast.success("Profile photo added, you're 100% verified!")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to upload photo.')
     } finally {

@@ -229,7 +229,7 @@ export function PollsSection({
                     }}
                   >
                     {isOpen && myVote
-                      ? 'Your vote has been recorded — results so far:'
+                      ? 'Your vote has been recorded, results so far:'
                       : `Final results · ${totalVotes} total vote${totalVotes !== 1 ? 's' : ''}`}
                   </p>
                   {poll.chapter_poll_candidates

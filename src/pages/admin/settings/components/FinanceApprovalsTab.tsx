@@ -55,7 +55,7 @@ const tiers = [
     icon: 'shield',
     bar: 'hsl(var(--primary))',
     description:
-      'All requests that pass Tier 2 are handled here. No ceiling — unlimited approval authority.',
+      'All requests that pass Tier 2 are handled here. No ceiling, unlimited approval authority.',
     limitKey: null,
     limitLabel: null,
   },
@@ -159,7 +159,7 @@ export function FinanceApprovalsTab() {
                       color: 'hsl(var(--on-surface))',
                     }}
                   >
-                    Tier {t.tier} — {t.role}
+                    Tier {t.tier}, {t.role}
                   </span>
                   <span
                     style={{
@@ -250,7 +250,7 @@ export function FinanceApprovalsTab() {
                   <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
                     all_inclusive
                   </span>
-                  No ceiling — unlimited
+                  No ceiling, unlimited
                 </div>
               )}
             </div>

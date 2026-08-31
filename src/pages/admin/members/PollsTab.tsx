@@ -78,7 +78,7 @@ export function PollsTab({ votes }: PollsTabProps) {
                       fontSize: 12.5,
                     }}
                   >
-                    {v.pollNumber ? `Poll #${v.pollNumber} — ` : ''}
+                    {v.pollNumber ? `Poll #${v.pollNumber}, ` : ''}
                     {v.pollTitle}
                   </p>
                   <span

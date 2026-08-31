@@ -275,7 +275,7 @@ export default function DashboardMessages() {
       })
     } else {
       const { toast } = await import('sonner')
-      toast.error(messagingService.lastSendError ?? 'Message not sent — try again')
+      toast.error(messagingService.lastSendError ?? 'Message not sent, try again')
     }
     setSending(false)
   }
@@ -373,7 +373,7 @@ export default function DashboardMessages() {
         return cur.some((m) => m.id === msg.id) ? prev : { ...prev, [activeConv.id]: [...cur, msg] }
       })
     } else {
-      toast.error(messagingService.lastSendError ?? 'Voice note not sent — try again')
+      toast.error(messagingService.lastSendError ?? 'Voice note not sent, try again')
     }
     setSending(false)
   }
@@ -455,7 +455,7 @@ export default function DashboardMessages() {
           void (async () => {
             const ok = await messagingService.flagMessage(messageId, 'Reported by member')
             if (!ok) {
-              toast.error('Could not report — try again')
+              toast.error('Could not report, try again')
               return
             }
             if (activeId) {
@@ -1617,7 +1617,7 @@ export default function DashboardMessages() {
                       : isDeptChat
                         ? 'Official Helpdesk & Secretariat Support'
                         : `${leaderInfo ? roleLabel(leaderInfo.role) : ''}${
-                            activeConv?.scope_value ? ` — ${activeConv.scope_value}` : ''
+                            activeConv?.scope_value ? `, ${activeConv.scope_value}` : ''
                           }`}
                 </p>
               </div>

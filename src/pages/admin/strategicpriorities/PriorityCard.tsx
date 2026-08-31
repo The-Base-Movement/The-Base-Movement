@@ -233,7 +233,7 @@ export function PriorityCard({ campaign, onEdit, onDelete, onSetDefault }: Prior
                 <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
                   star
                 </span>
-                <span>Default priority — receives donations with no priority selected</span>
+                <span>Default priority, receives donations with no priority selected</span>
               </div>
             ) : (
               <button

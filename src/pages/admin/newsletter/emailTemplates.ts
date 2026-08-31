@@ -19,7 +19,7 @@ export const EMAIL_TEMPLATES: {
     description: 'General movement announcement with headline and body',
     defaultSubject: 'Important Update from The Base Movement',
     html: `<h2 style="margin:0 0 12px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19;line-height:1.3">Headline Goes Here</h2>
-<p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Open with a brief summary of the announcement — one or two sentences that explain why this matters to members.</p>
+<p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Open with a brief summary of the announcement, one or two sentences that explain why this matters to members.</p>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Add your main body text here. Keep it clear, direct, and action-oriented. Members appreciate brevity.</p>
 <a href="https://www.thebasemovement.org.gh" style="display:inline-block;background:#006B3F;color:#fff;padding:14px 28px;border-radius:4px;font-family:'Public Sans',Arial;font-weight:800;font-size:14px;text-decoration:none;margin:8px 0 20px">Read More →</a>`,
   },
@@ -28,7 +28,7 @@ export const EMAIL_TEMPLATES: {
     label: 'Event / Rally',
     icon: 'event',
     description: 'Event or rally invitation with date, location, and RSVP',
-    defaultSubject: 'You Are Invited — The Base Movement Rally',
+    defaultSubject: 'You Are Invited, The Base Movement Rally',
     html: `<h2 style="margin:0 0 6px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19">Event Title</h2>
 <p style="margin:0 0 20px;font-size:14px;color:#6f7a71">Join us for this important gathering of compatriots</p>
 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#f4f4f4;border-radius:8px;margin-bottom:20px">
@@ -49,7 +49,7 @@ export const EMAIL_TEMPLATES: {
     label: 'Member Update',
     icon: 'group',
     description: 'Membership news, benefits, or important notices',
-    defaultSubject: 'Membership Update — The Base Movement',
+    defaultSubject: 'Membership Update, The Base Movement',
     html: `<h2 style="margin:0 0 12px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19">Member Notice</h2>
 <p style="margin:0 0 20px;font-size:15px;line-height:1.7;color:#444">Dear Compatriot, we have an important update regarding your membership.</p>
 <ul style="margin:0 0 20px;padding-left:20px;font-size:15px;line-height:2;color:#444">
@@ -65,15 +65,15 @@ export const EMAIL_TEMPLATES: {
     label: 'Policy / Statement',
     icon: 'policy',
     description: 'Official policy position or public statement',
-    defaultSubject: 'Our Position on [Topic] — The Base Movement',
+    defaultSubject: 'Our Position on [Topic], The Base Movement',
     html: `<h2 style="margin:0 0 6px;font-family:'Public Sans',Arial;font-size:22px;font-weight:800;color:#181d19">Official Statement</h2>
 <p style="margin:0 0 20px;font-size:13px;color:#6f7a71;font-style:italic">Issued by The Base Movement National Secretariat</p>
-<p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Opening paragraph — state the issue clearly and our position on it.</p>
+<p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Opening paragraph, state the issue clearly and our position on it.</p>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Second paragraph with supporting reasoning or context. Reference facts, values, or the movement's mandate.</p>
 <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#444">Closing call to action or next steps for members and the public.</p>
 <div style="border-left:4px solid #DAA520;padding:12px 16px;background:#fffdf0;margin:20px 0">
   <p style="margin:0;font-size:14px;font-style:italic;color:#5a4a00">"Quote or key soundbite from leadership goes here."</p>
-  <p style="margin:8px 0 0;font-size:12px;font-weight:700;color:#6f7a71">— Name, Title</p>
+  <p style="margin:8px 0 0;font-size:12px;font-weight:700;color:#6f7a71">Name, Title</p>
 </div>`,
   },
 ]

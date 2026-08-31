@@ -305,8 +305,8 @@ export function ActivityStreamPanel({
                           }}
                         >
                           {inc.region}
-                        </b>{' '}
-                        — {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
+                        </b>
+                        , {inc.incident_type.replace(/_/g, ' ').toLowerCase()}
                       </p>
                       <div
                         style={{
@@ -392,8 +392,8 @@ export function ActivityStreamPanel({
                           }}
                         >
                           {nar.target_platform}
-                        </b>{' '}
-                        — digital directive
+                        </b>
+                        , digital directive
                       </p>
                       <span
                         style={{

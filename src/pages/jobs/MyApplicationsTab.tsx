@@ -136,7 +136,7 @@ export default function MyApplicationsTab({ applications, loading, onBrowse, onV
             color: 'hsl(var(--on-surface-muted))',
           }}
         >
-          No applications yet — browse available jobs and apply.
+          No applications yet, browse available jobs and apply.
         </p>
         <button className="btn btn-outline btn-sm" onClick={onBrowse}>
           Browse Jobs

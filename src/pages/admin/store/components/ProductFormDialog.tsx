@@ -371,7 +371,7 @@ export function ProductFormDialog({
                       addSize(sizeInput)
                     }
                   }}
-                  placeholder="Custom size (e.g. 3XL) — press Enter"
+                  placeholder="Custom size (e.g. 3XL), press Enter"
                 />
               </div>
               {(selectedProduct?.sizes || []).length > 0 && (
@@ -433,7 +433,7 @@ export function ProductFormDialog({
                       addColor(colorInput)
                     }
                   }}
-                  placeholder="Color name (e.g. Jet Black) — press Enter"
+                  placeholder="Color name (e.g. Jet Black), press Enter"
                 />
                 <button
                   type="button"

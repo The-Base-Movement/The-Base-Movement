@@ -93,7 +93,7 @@ export function SimpleFilterRow({
           style={selectStyle}
           aria-label={`${filter.type} value`}
         >
-          <option value="">— select —</option>
+          <option value="">Select</option>
           {options.map((opt) => (
             <option key={opt} value={opt}>
               {opt}
@@ -251,7 +251,7 @@ export function ConstituencySlotRow({
             <option value="">Loading…</option>
           ) : (
             <>
-              <option value="">— All regions —</option>
+              <option value="">All regions</option>
               {regions.map((r) => (
                 <option key={r} value={r}>
                   {r}

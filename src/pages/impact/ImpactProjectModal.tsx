@@ -144,7 +144,7 @@ export function ImpactProjectModal({
                 <img
                   key={i}
                   src={src}
-                  alt={`${project.title} — photo ${i + 1}`}
+                  alt={`${project.title}, photo ${i + 1}`}
                   loading="lazy"
                   style={{
                     width: '100%',

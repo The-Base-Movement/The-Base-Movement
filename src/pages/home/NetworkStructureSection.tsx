@@ -19,7 +19,7 @@ const CONSTITUENCY_POINTS = [
 
 const DIASPORA_POINTS = [
   'Exclusively for Ghanaians in the diaspora. There are no constituencies outside Ghana, so Base Diaspora networks fill that role.',
-  'Base Diaspora networks are organised by country: e.g. Base Diaspora — United Kingdom, Base Diaspora — United States, Base Diaspora — Germany.',
+  'Base Diaspora networks are organised by country: e.g. Base Diaspora, United Kingdom, Base Diaspora, United States, Base Diaspora, Germany.',
   'Diaspora members are equally valued: Base Diaspora networks feed resources, advocacy, and visibility back into the national movement.',
   'Each country network is led by an appointed coordinator who connects directly to the national leadership structure.',
 ]

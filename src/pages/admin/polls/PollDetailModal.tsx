@@ -56,7 +56,7 @@ export function PollDetailModal({ poll, onClose, onDelete, onStatusChange }: Pol
       }
       contentService.sendPushNotification({
         userIds: 'all',
-        title: 'Poll closed — results are in',
+        title: 'Poll closed, results are in',
         body: poll.question.slice(0, 100),
         url: '/dashboard/polls',
       })

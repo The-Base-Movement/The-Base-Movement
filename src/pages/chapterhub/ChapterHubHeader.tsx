@@ -28,7 +28,7 @@ export function ChapterHubHeader({ chapter, slug }: Props) {
             marginTop: 8,
           }}
         >
-          Community management hub — {chapter.city_or_region}, {chapter.country}
+          Community management hub, {chapter.city_or_region}, {chapter.country}
         </p>
       </div>
       <div className="actions">

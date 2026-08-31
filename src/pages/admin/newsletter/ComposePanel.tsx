@@ -284,7 +284,7 @@ export function ComposePanel({ isSending, onSend, onSchedule }: ComposePanelProp
             type="text"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
-            placeholder="Movement update — June 2026"
+            placeholder="Movement update, June 2026"
             style={{
               width: '100%',
               boxSizing: 'border-box',
