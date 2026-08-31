@@ -57,8 +57,8 @@ export function PublicFilterSection({
               Start a Diaspora Community
             </button>
             <p className="text-stone-400 text-[11px] font-medium leading-relaxed mt-3 mb-0">
-              Do not see your country or city? Help bring the Base Diaspora community together where
-              you live.
+              Do not see your country? Help bring the Base Diaspora community together where you
+              live.
             </p>
           </div>
         </div>

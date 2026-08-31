@@ -168,20 +168,27 @@ export default function Constituencies() {
           Region
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {GHANA_REGIONS.map((region) => (
-            <button
-              key={region}
-              onClick={() => handleRegionChange(region)}
-              className={
-                selectedRegion === region
-                  ? 'btn btn-active-tab btn-sm'
-                  : 'btn btn-inactive-tab btn-sm'
-              }
-              style={{ justifyContent: 'flex-start', textAlign: 'left' }}
-            >
-              {region}
-            </button>
-          ))}
+          {GHANA_REGIONS.map((region) => {
+            const isActive = selectedRegion === region
+            return (
+              <button
+                key={region}
+                onClick={() => handleRegionChange(region)}
+                className="btn btn-sm"
+                style={{
+                  justifyContent: 'flex-start',
+                  textAlign: 'left',
+                  background: isActive ? 'hsl(var(--primary))' : 'hsl(var(--container-low))',
+                  color: isActive ? '#fff' : 'hsl(var(--on-surface))',
+                  border: isActive
+                    ? '1px solid hsl(var(--primary))'
+                    : '1px solid hsl(var(--border))',
+                }}
+              >
+                {region}
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -262,18 +269,19 @@ export default function Constituencies() {
               background: 'rgba(0,0,0,0.45)',
               zIndex: 100,
               display: 'flex',
-              alignItems: 'flex-end',
+              alignItems: 'stretch',
+              justifyContent: 'flex-start',
             }}
             onClick={() => setShowMobileFilters(false)}
           >
             <div
               style={{
-                width: '100%',
+                width: 'min(340px, 86vw)',
+                height: '100%',
                 background: 'hsl(var(--background))',
-                borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
                 padding: 24,
-                maxHeight: '85vh',
                 overflowY: 'auto',
+                boxShadow: '4px 0 24px rgba(0,0,0,0.25)',
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -283,17 +291,19 @@ export default function Constituencies() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   marginBottom: 20,
+                  paddingBottom: 16,
+                  borderBottom: '1px solid hsl(var(--border))',
                 }}
               >
                 <span
                   style={{
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'hsl(var(--on-surface))',
                     fontFamily: "'Public Sans', sans-serif",
                   }}
                 >
-                  Filter Constituencies
+                  Filters
                 </span>
                 <button
                   className="btn btn-ghost btn-sm"
@@ -440,6 +450,7 @@ export default function Constituencies() {
                 </div>
               ) : (
                 <div
+                  className="constituency-grid"
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
@@ -721,6 +732,7 @@ export default function Constituencies() {
             </div>
           ) : (
             <div
+              className="constituency-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
