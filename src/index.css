@@ -1726,6 +1726,7 @@ td.leadership-col-secondary {
      second column empty, and switches to a text | form two-up layout. */
   .footer-grid > *:last-child {
     grid-column: 1 / -1;
+    margin-top: 16px;
   }
   .footer-newsletter-inner {
     display: grid;
