@@ -45,7 +45,7 @@ export function ReleaseDetailModal({ release, onClose }: ReleaseDetailModalProps
         <div className="p-8 max-h-[60vh] overflow-y-auto">
           <div className="prose prose-sm max-w-none text-slate-600 leading-relaxed space-y-4">
             {release.isOfficial && (
-              <p className="font-bold text-charcoal-dark">ACCRA, GHANA — Official Statement</p>
+              <p className="font-bold text-charcoal-dark">ACCRA, GHANA, Official Statement</p>
             )}
             {release.excerpt && <p className="font-medium text-charcoal-dark">{release.excerpt}</p>}
             {release.content
