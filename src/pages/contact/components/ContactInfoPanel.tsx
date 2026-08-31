@@ -13,7 +13,7 @@ export function ContactInfoPanel({
   contactAddress,
   contactAddressUrl,
 }: ContactInfoPanelProps) {
-  const hqAddress = contactAddress || 'GI-208-9132, 0kn042 Tesano / Abeka 208, Accra, Ghana'
+  const hqAddress = contactAddress || 'HQXC+Q76 The Base Movement, Accra, Ghana'
 
   return (
     <div className="lg:col-span-2 space-y-8">
@@ -101,10 +101,7 @@ export function ContactInfoPanel({
             </p>
             <div className="text-charcoal-dark font-medium text-sm md:text-base">
               For press kits, official releases &amp; interview requests, visit our{' '}
-              <Link
-                to="/press"
-                className="text-[var(--brand-green)] font-semibold hover:underline"
-              >
+              <Link to="/press" className="text-[var(--brand-green)] font-semibold hover:underline">
                 Press Center →
               </Link>
             </div>
@@ -150,7 +147,7 @@ export function ContactInfoPanel({
               height="100%"
               frameBorder="0"
               style={{ border: 0 }}
-              src={`https://www.google.com/maps?q=${encodeURIComponent(hqAddress)}&output=embed`}
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4658.42845002469!2d-0.23188742436465223!3d5.599442833209982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfdf99e8dc4ab0a9%3A0x5f2ed928ab4a0305!2sThe%20Base%20Movement!5e1!3m2!1sen!2sbe!4v1788182245600!5m2!1sen!2sbe"
               allowFullScreen
               loading="lazy"
             />
@@ -160,7 +157,8 @@ export function ContactInfoPanel({
               Official headquarters
             </p>
             <p className="text-xs text-slate-500 mt-2 font-body-md leading-relaxed">
-              Our central hub in Tesano, Accra, serving as the heart of movement operations and community engagement.
+              Our central hub in Tesano, Accra, serving as the heart of movement operations and
+              community engagement.
             </p>
           </div>
         </div>

@@ -7,6 +7,7 @@ import {
 } from '@/hooks/queries/usePublicContent'
 import { usePerformance } from '@/context/PerformanceContext'
 import { EMPTY_PUBLIC_STATS } from '@/services/publicSiteService'
+import { Helmet } from 'react-helmet-async'
 import SEO from '@/components/SEO'
 import { useBranding } from '@/hooks/useBranding'
 
@@ -129,6 +130,15 @@ export default function Home() {
   return (
     <main className="bg-background font-body-md">
       <SEO title="The Base Movement | Ghana First, Jobs for the Youth" canonical="/" />
+      <Helmet>
+        <link
+          rel="preload"
+          href="/branding/hero-background-image.webp"
+          as="image"
+          type="image/webp"
+          fetchPriority="high"
+        />
+      </Helmet>
 
       <HeroSection
         heroBgUrl={settings.hero_bg_url || '/branding/hero-background-image.webp'}

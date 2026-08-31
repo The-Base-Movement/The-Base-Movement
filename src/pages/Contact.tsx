@@ -80,7 +80,7 @@ export default function Contact() {
     address: {
       '@type': 'PostalAddress',
       streetAddress:
-        (settings.primary_address as string) || 'GI-208-9132, 0kn042 Tesano / Abeka 208',
+        (settings.primary_address as string) || 'HQXC+Q76 The Base Movement, Accra, Ghana',
       addressLocality: 'Accra',
       addressRegion: 'Greater Accra',
       addressCountry: 'GH',
