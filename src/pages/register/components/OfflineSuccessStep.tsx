@@ -20,11 +20,13 @@ export function OfflineSuccessStep({
 }: OfflineSuccessStepProps) {
   const { isOnline, isSyncing, triggerSync } = useOfflineSync()
   const [syncInitiated, setSyncInitiated] = useState(false)
+  const [generatedId] = useState(
+    () =>
+      `TBM-${formData.country === 'Ghana' ? 'GH' : 'DI'}-${new Date().getFullYear().toString().slice(-2)}OFF-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+  )
 
   const firstName = formData.fullName.split(' ')[0]
-  const provisionalId =
-    draft?.provisionalRegNo ||
-    `TBM-${formData.country === 'Ghana' ? 'GH' : 'DI'}-${new Date().getFullYear().toString().slice(-2)}OFF-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+  const provisionalId = draft?.provisionalRegNo || generatedId
 
   const handleManualSync = async () => {
     if (!isOnline || isSyncing) return
@@ -114,7 +116,10 @@ export function OfflineSuccessStep({
               margin: 0,
             }}
           >
-            <strong>Conflict Prevention:</strong> Unique provisional tracking code prevents duplicate ID conflicts across field canvassers. Your permanent official ID (e.g. <code>TBM-GH-2600000028</code>) will be assigned by central HQ sequence counter as soon as signal is restored.
+            <strong>Conflict Prevention:</strong> Unique provisional tracking code prevents
+            duplicate ID conflicts across field canvassers. Your permanent official ID (e.g.{' '}
+            <code>TBM-GH-2600000028</code>) will be assigned by central HQ sequence counter as soon
+            as signal is restored.
           </p>
         </div>
         {/* Offline Status Vault Panel */}
