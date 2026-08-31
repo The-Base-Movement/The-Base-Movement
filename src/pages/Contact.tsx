@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { adminService } from '../services/adminService'
 import { useBranding } from '@/hooks/useBranding'
 import SEO from '@/components/SEO'
-import { ContactInfoPanel } from './contact/components/ContactInfoPanel'
+import { ContactInfoPanel, ContactMap } from './contact/components/ContactInfoPanel'
 import { ContactForm } from './contact/components/ContactForm'
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 export default function Contact() {
@@ -165,6 +165,10 @@ export default function Contact() {
               )}
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 md:mt-12">
+          <ContactMap />
         </div>
       </div>
     </main>
