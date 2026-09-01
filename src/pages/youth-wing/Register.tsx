@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react'
+import type { Area } from 'react-easy-crop'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { youthWingService } from '@/services/youthWingService'
+import { PhotoCropStep } from '../register/components/PhotoCropStep'
+import YouthMembershipCard from '@/components/YouthMembershipCard'
 import { useRegistrationData } from '../register/useRegistrationData'
 import { validatePhone, cleanPhoneInput } from '@/lib/phoneValidation'
 import { religions } from '@/components/admin/RegistrationForm.constants'
@@ -94,6 +97,10 @@ export default function YouthWingRegister() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [membershipNumber, setMembershipNumber] = useState<string | null>(null)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  const [photoError, setPhotoError] = useState(false)
 
   const set = <K extends keyof YouthForm>(key: K, value: YouthForm[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -149,6 +156,24 @@ export default function YouthWingRegister() {
       })
       setMembershipNumber(regNo)
       window.scrollTo({ top: 0, behavior: 'smooth' })
+
+      // The photo can only be filed once the record exists, because the number
+      // it is filed under is issued by the database on insert. Best effort: a
+      // failure here never loses the registration, and they can add it in the
+      // portal afterwards.
+      if (photoUrl) {
+        try {
+          const uploaded = await youthWingService.uploadAvatar(
+            regNo,
+            form.dateOfBirth,
+            photoUrl,
+            croppedAreaPixels
+          )
+          setAvatarUrl(uploaded)
+        } catch {
+          setPhotoError(true)
+        }
+      }
     } catch (error) {
       toast.error((error as Error)?.message || 'Registration failed. Please try again.')
     } finally {
@@ -198,8 +223,9 @@ export default function YouthWingRegister() {
                 lineHeight: 1.65,
               }}
             >
-              Your Youth Wing membership number is below. Keep it safe. Your membership stays
-              pending until our team speaks to your parent or guardian and confirms their consent.
+              Your Youth Wing membership number is below. It was issued by our system, not by an
+              officer, and it is yours alone. Keep it safe. Your membership stays pending until our
+              team speaks to your parent or guardian and confirms their consent.
             </p>
             <div
               style={{
@@ -215,6 +241,46 @@ export default function YouthWingRegister() {
             >
               {membershipNumber}
             </div>
+
+            {photoError && (
+              <p
+                style={{
+                  fontSize: 12.5,
+                  color: 'hsl(var(--destructive))',
+                  margin: '14px 0 0',
+                  lineHeight: 1.55,
+                }}
+              >
+                Your registration was saved, but the photo did not upload. You can add it in the
+                portal with your membership number and date of birth.
+              </p>
+            )}
+
+            <div style={{ marginTop: 26 }}>
+              <YouthMembershipCard
+                userName={form.fullName}
+                membershipNumber={membershipNumber}
+                avatarUrl={avatarUrl}
+                initials={form.fullName
+                  .split(/\s+/)
+                  .slice(0, 2)
+                  .map((p) => p[0])
+                  .join('')
+                  .toUpperCase()}
+                gender={form.gender}
+                age={age ?? undefined}
+                region={form.residence === 'GHANA' ? form.region : undefined}
+                country={form.residence === 'GHANA' ? 'Ghana' : form.country}
+                educationLevel={form.educationLevel}
+                joinedDate={new Date().toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+                status="Pending consent"
+              />
+            </div>
+
             <div className="flex flex-wrap gap-3 justify-center mt-7">
               <Link to="/youth-wing/portal" className="btn btn-outline">
                 Go to the youth portal
@@ -462,6 +528,35 @@ export default function YouthWingRegister() {
               />
             </div>
           </div>
+
+          <h2
+            style={{
+              fontSize: 11,
+              fontWeight: 'var(--font-weight-medium, 500)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              color: YW_ACCENT,
+              margin: '30px 0 8px',
+            }}
+          >
+            Your photo (optional)
+          </h2>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: 'hsl(var(--on-surface-muted))',
+              margin: '0 0 16px',
+              lineHeight: 1.55,
+            }}
+          >
+            This appears on your Youth Wing card. It is attached after your membership number is
+            issued, and you can add or change it any time in the portal.
+          </p>
+          <PhotoCropStep
+            photoUrl={photoUrl}
+            onPhotoChange={setPhotoUrl}
+            onCropComplete={setCroppedAreaPixels}
+          />
 
           <h2
             style={{

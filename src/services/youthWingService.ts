@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import { contentService } from '@/services/contentService'
+import { getCroppedImg } from '@/lib/imageUtils'
 import type { BlogPost } from '@/types/admin'
+import type { Area } from 'react-easy-crop'
 
 /** Youth Wing (14-17) is a civic/mobilization track, not party membership. These
  * records live in their own table and must never be counted as members, folded
@@ -40,6 +42,7 @@ export interface YouthWingMember {
   guardian_name: string
   guardian_relationship: string
   guardian_phone: string
+  avatar_url: string | null
   consent_given: boolean
   consent_at: string | null
   status: YouthWingStatus
@@ -69,6 +72,7 @@ export interface YouthWingLookup {
   school_name: string | null
   date_of_birth: string
   age: number
+  avatar_url: string | null
   created_at: string
 }
 
@@ -219,6 +223,47 @@ export const youthWingService = {
     const { data, error } = await supabase.rpc('flag_youth_wing_graduates')
     if (error) throw new Error(error.message)
     return (data as number) ?? 0
+  },
+
+  /**
+   * Uploads a member's profile photo through the youth-avatar edge function.
+   *
+   * Youth Wing members have no auth account, so they cannot write to storage
+   * directly and the bucket has no anon write policy. The function verifies
+   * membership number + date of birth (or an admin JWT) and writes with the
+   * service role. Returns the public URL.
+   *
+   * The photo can only be attached AFTER the record exists, because the
+   * membership number it is filed under is issued by the database on insert.
+   */
+  async uploadAvatar(
+    membershipNumber: string,
+    dateOfBirth: string,
+    photoDataUrl: string,
+    croppedAreaPixels?: Area | null
+  ): Promise<string> {
+    const blob = croppedAreaPixels
+      ? await getCroppedImg(photoDataUrl, croppedAreaPixels)
+      : await (await fetch(photoDataUrl)).blob()
+    if (!blob) throw new Error('The photo could not be processed.')
+
+    const base64 = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result).split(',')[1] ?? '')
+      reader.onerror = () => reject(new Error('The photo could not be read.'))
+      reader.readAsDataURL(blob)
+    })
+
+    const { data, error } = await supabase.functions.invoke('youth-avatar', {
+      body: {
+        membership_number: membershipNumber,
+        date_of_birth: dateOfBirth,
+        image_base64: base64,
+        content_type: blob.type || 'image/jpeg',
+      },
+    })
+    if (error) throw new Error('The photo could not be uploaded. Please try again.')
+    return (data as { avatar_url: string }).avatar_url
   },
 
   /** Youth Wing articles. Never the adult /blog body of content. */
