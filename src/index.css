@@ -286,6 +286,16 @@
     color: hsl(var(--on-surface));
   }
 
+  /* Footer social icons are full-colour brand marks -- X and TikTok are drawn in
+     black -- so they all but vanish against the dark footer. Sit them on a white
+     chip in dark mode only; the light footer already has the contrast. */
+  :root[data-theme='dark'] .footer-social {
+    display: inline-flex;
+    padding: 5px;
+    background: #fff;
+    border-radius: var(--radius-pill);
+  }
+
   /* Youth Wing (/youth-wing) — its own accent so the 14-17 civic track never
      reads as the adult Ghana Resident / Diaspora party tracks. Scoped to the
      .yw-scope wrapper; nothing global changes. */

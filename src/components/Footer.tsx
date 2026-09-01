@@ -187,6 +187,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   title={title}
+                  className="footer-social"
                   style={{ opacity: 0.7, transition: 'opacity 0.15s, transform 0.15s' }}
                   onMouseEnter={(e) => {
                     ;(e.currentTarget as HTMLElement).style.opacity = '1'
