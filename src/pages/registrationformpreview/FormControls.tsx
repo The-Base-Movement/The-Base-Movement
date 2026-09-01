@@ -8,13 +8,27 @@ interface FormControlsProps {
   onPrint: () => void
   formUrl: string | undefined
   platform: string
+  /** Print/PDF target. Defaults to the adult membership form. */
+  elementId?: string
+  /** Overrides the adult filename and button label (Youth Wing form reuses this). */
+  fileName?: string
+  downloadLabel?: string
+  backLabel?: string
 }
 
-export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
+export function FormControls({
+  onBack,
+  onPrint,
+  platform,
+  elementId = 'membership-form-body',
+  fileName,
+  downloadLabel,
+  backLabel = 'Back to Registration',
+}: FormControlsProps) {
   const [downloading, setDownloading] = useState(false)
 
   const handleDownloadPdf = async () => {
-    const el = document.getElementById('membership-form-body')
+    const el = document.getElementById(elementId)
     if (!el) {
       toast.error('Form element not found')
       return
@@ -41,9 +55,10 @@ export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
       const pdfFilename =
-        platform === 'DIASPORA'
+        fileName ??
+        (platform === 'DIASPORA'
           ? 'Membership Form Base Diaspora _ The Base Movement.pdf'
-          : 'Membership Form Base Ghana _ The Base Movement.pdf'
+          : 'Membership Form Base Ghana _ The Base Movement.pdf')
       pdf.save(pdfFilename)
       toast.success('Registration form PDF downloaded')
     } catch (err) {
@@ -63,7 +78,7 @@ export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
           arrow_back
         </span>
-        Back to Registration
+        {backLabel}
       </button>
 
       <div className="flex items-center gap-4">
@@ -85,7 +100,9 @@ export function FormControls({ onBack, onPrint, platform }: FormControlsProps) {
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
             {downloading ? 'progress_activity' : 'download'}
           </span>
-          {downloading ? 'Generating PDF…' : `Download ${platform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} PDF`}
+          {downloading
+            ? 'Generating PDF…'
+            : (downloadLabel ?? `Download ${platform === 'DIASPORA' ? 'Diaspora' : 'Ghana'} PDF`)}
         </button>
       </div>
     </div>

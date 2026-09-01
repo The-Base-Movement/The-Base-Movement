@@ -332,18 +332,25 @@ export default function YouthWing() {
                 We do not collect a Ghana Card number or a Voter ID number for the Youth Wing.
                 Members are not eligible for either.
               </p>
-              <Link
-                to="/youth-wing/register"
-                className="btn"
-                style={{
-                  marginTop: 18,
-                  background: YW_ACCENT,
-                  color: 'hsl(var(--card))',
-                  border: '1px solid ' + YW_ACCENT,
-                }}
-              >
-                Start Youth Wing registration
-              </Link>
+              <div className="flex flex-wrap gap-3" style={{ marginTop: 18 }}>
+                <Link
+                  to="/youth-wing/register"
+                  className="btn"
+                  style={{
+                    background: YW_ACCENT,
+                    color: 'hsl(var(--card))',
+                    border: '1px solid ' + YW_ACCENT,
+                  }}
+                >
+                  Start Youth Wing registration
+                </Link>
+                <Link to="/youth-wing/form" className="btn btn-outline">
+                  <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                    download
+                  </span>
+                  Download the paper form
+                </Link>
+              </div>
             </div>
           </div>
 

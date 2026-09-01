@@ -64,6 +64,7 @@ const YouthWingPortal = lazy(() => import('./pages/youth-wing/Portal'))
 const YouthWingArticles = lazy(() => import('./pages/youth-wing/Articles'))
 const YouthWingArticleDetail = lazy(() => import('./pages/youth-wing/ArticleDetail'))
 const YouthWingVerify = lazy(() => import('./pages/youth-wing/Verify'))
+const YouthWingFormPreview = lazy(() => import('./pages/youth-wing/FormPreview'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
 
 // Dashboard components
@@ -465,6 +466,7 @@ export const routes: RouteObject[] = [
       { path: '/youth-wing', element: <YouthWing /> },
       { path: '/youth-wing/register', element: <YouthWingRegister /> },
       { path: '/youth-wing/portal', element: <YouthWingPortal /> },
+      { path: '/youth-wing/form', element: <YouthWingFormPreview /> },
       { path: '/youth-wing/articles', element: <YouthWingArticles /> },
       { path: '/youth-wing/articles/:slug', element: <YouthWingArticleDetail /> },
       { path: '/youth-wing/verify/:membershipNumber', element: <YouthWingVerify /> },

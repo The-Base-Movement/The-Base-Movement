@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { BrandLine } from '@/components/ui/BrandLine'
@@ -15,6 +15,10 @@ import { YW_SCOPE, YW_ACCENT, YW_ACCENT_SOFT } from './theme'
  * constituency tools or any internal party process. Sign-in is a membership
  * number plus date of birth, and the only content shown is youth programme
  * material and Youth Wing articles (audience = 'YOUTH'), never adult articles.
+ *
+ * Staff route in with ?member=TBM-YW-xxxxxx, which reads the record through an
+ * admin-gated RPC rather than the youth's date of birth. Authorization lives in
+ * the database: a non-admin following the same link just gets the sign-in form.
  */
 
 const STATUS_COPY: Record<string, { label: string; pill: string; note: string }> = {
@@ -97,12 +101,30 @@ const sectionTitle: React.CSSProperties = {
 }
 
 export default function YouthWingPortal() {
+  const [searchParams] = useSearchParams()
+  const adminMemberParam = searchParams.get('member')
   const [membershipNumber, setMembershipNumber] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [member, setMember] = useState<YouthWingLookup | null>(null)
+  const [viewingAsStaff, setViewingAsStaff] = useState(false)
   const [articles, setArticles] = useState<BlogPost[]>([])
   const [tab, setTab] = useState<'card' | 'programme' | 'articles'>('card')
+
+  // Staff deep link. The RPC is admin-gated, so a member (or a logged-out
+  // visitor) who tries the same URL simply falls through to the sign-in form.
+  useEffect(() => {
+    if (!adminMemberParam) return
+    let cancelled = false
+    youthWingService.adminLookup(adminMemberParam).then((found) => {
+      if (cancelled || !found) return
+      setMember(found)
+      setViewingAsStaff(true)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [adminMemberParam])
 
   useEffect(() => {
     if (!member) return
@@ -218,11 +240,41 @@ export default function YouthWingPortal() {
           </form>
         ) : (
           <>
+            {viewingAsStaff && (
+              <div
+                className="panel"
+                style={{
+                  padding: '14px 18px',
+                  marginTop: 24,
+                  borderColor: 'hsl(var(--accent))',
+                  background: 'hsla(var(--accent), 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: 18, color: 'hsl(var(--accent))' }}
+                >
+                  visibility
+                </span>
+                <p style={{ fontSize: 13, color: 'hsl(var(--on-surface))', margin: 0, flex: 1 }}>
+                  Staff view. You are looking at this member&apos;s own portal, read only. They did
+                  not sign in and are not notified.
+                </p>
+                <Link to="/admin/youth-wing/directory" className="btn btn-outline btn-sm">
+                  Back to directory
+                </Link>
+              </div>
+            )}
+
             <div
               className="panel"
               style={{
                 padding: '24px 26px',
-                marginTop: 24,
+                marginTop: viewingAsStaff ? 12 : 24,
                 borderColor: 'hsla(var(--yw-accent), 0.35)',
               }}
             >
@@ -473,8 +525,15 @@ export default function YouthWingPortal() {
             )}
 
             <div className="flex flex-wrap gap-3 mt-8">
-              <button type="button" className="btn btn-ghost" onClick={() => setMember(null)}>
-                Sign out
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  setMember(null)
+                  setViewingAsStaff(false)
+                }}
+              >
+                {viewingAsStaff ? 'Close staff view' : 'Sign out'}
               </button>
             </div>
           </>
