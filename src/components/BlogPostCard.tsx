@@ -2,11 +2,21 @@
  * BlogPostCard Component
  * -------------------------------------------------------------
  * Displays a blog post preview card in list / grids.
- * Includes post image preview (with tricolor brand flag fallback), category tag,
- * title link, description summary excerpt, author initials/avatar, and formatted publish date.
+ *
+ * Layout: a photo carrying the category pill, a bordered meta bar straddling
+ * the seam between photo and body, then a centred title, excerpt and Read more
+ * button.
+ *
+ * The meta bar deliberately carries date and read time rather than comment and
+ * like counts. Both counts are available (`blog_comments`,
+ * `blog_post_likes`) but are currently zero on almost every post, and a bar
+ * that announces "0 comments, 0 likes" on every card reads worse than one that
+ * never mentions engagement at all. Add them here when the numbers earn it.
+ *
+ * Colours that need a hover live in `.blog-card*` classes in src/index.css --
+ * an inline colour beats every :hover rule for that property.
  */
 
-import { useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { getBlogImageUrl } from '@/lib/blogImages'
 import type { BlogPost } from '@/types/admin'
@@ -18,22 +28,41 @@ interface BlogPostCardProps {
 
 const FONT = "'Public Sans', sans-serif"
 
+/** One entry in the straddling meta bar. */
+function MetaItem({ icon, children }: { icon: string; children: React.ReactNode }) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 6,
+        fontFamily: FONT,
+        fontSize: 12,
+        fontWeight: 'var(--font-weight-medium, 500)',
+        color: 'hsl(var(--on-surface))',
+        fontVariantNumeric: 'tabular-nums',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: 15 }} aria-hidden="true">
+        {icon}
+      </span>
+      {children}
+    </span>
+  )
+}
+
 /**
  * BlogPostCard component definition.
  */
 export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
-  const [hover, setHover] = useState(false)
   const formattedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
         day: 'numeric',
-        month: 'long',
+        month: 'short',
         year: 'numeric',
       })
     : ''
-
-  const authorInitial = post.authorName?.charAt(0)?.toUpperCase() || 'T'
-  const displayName =
-    post.authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : post.authorName
 
   const maxExcerptLength = 120
   const excerptText =
@@ -41,56 +70,34 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
       ? post.excerpt.substring(0, maxExcerptLength) + '...'
       : post.excerpt
 
-  const metaStyle: CSSProperties = {
-    fontFamily: FONT,
-    fontSize: 12,
-    fontWeight: 'var(--font-weight-medium, 500)',
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase',
-    color: 'hsl(var(--on-surface-muted))',
-  }
+  const href = `${baseUrl}/${post.slug}`
 
   return (
     <article
+      className="blog-card"
       aria-labelledby={`blog-post-title-${post.id}`}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       style={{
-        background: 'hsl(var(--card))',
-        border: `1px solid ${hover ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
-        borderRadius: 'var(--radius-md)',
-        transform: hover ? 'translateY(-2px)' : 'none',
-        boxShadow: hover ? '0 16px 32px -8px rgba(0,0,0,.1)' : 'none',
-        transition: 'all 0.2s',
-        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        cursor: 'pointer',
       }}
     >
-      {/* Image with category pill overlay */}
+      {/* Photo, with the category pill in the top corner -- the meta bar
+          overlaps the bottom edge, so the pill cannot live down there. */}
       <div
+        className="blog-card-photo"
         style={{
           aspectRatio: '16 / 10',
           background: 'hsl(var(--container-low))',
-          position: 'relative',
+          borderRadius: 'var(--radius-md) var(--radius-md) 0 0',
           overflow: 'hidden',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          position: 'relative',
         }}
       >
         <img
           src={getBlogImageUrl(post.imageUrl)}
           alt={post.title}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transform: hover ? 'scale(1.05)' : 'none',
-            transition: 'transform 0.7s',
-          }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           decoding="async"
           loading="lazy"
         />
@@ -98,13 +105,14 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           <span
             style={{
               position: 'absolute',
-              bottom: 14,
-              left: 14,
+              top: 12,
+              left: 12,
               padding: '4px 10px',
               background: 'hsl(var(--card))',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 11.5,
               color: 'hsl(var(--primary))',
+              fontFamily: FONT,
+              fontSize: 11,
+              fontWeight: 'var(--font-weight-medium, 500)',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
               borderRadius: 'var(--radius-xs)',
@@ -115,73 +123,64 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
         )}
       </div>
 
-      {/* Body */}
-      <div style={{ padding: 18, display: 'flex', flexDirection: 'column', flex: 1 }}>
-        {/* Meta */}
-        <div
-          style={{ ...metaStyle, display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}
-        >
-          <span>{post.category || 'Movement'}</span>
-          <span
-            style={{
-              width: 3,
-              height: 3,
-              borderRadius: '50%',
-              background: 'currentColor',
-              opacity: 0.6,
-              flexShrink: 0,
-            }}
-          />
-          <span>{post.readTime}</span>
-        </div>
+      {/* Meta bar, pulled up over the seam */}
+      <div
+        className="blog-card-meta"
+        style={{
+          margin: '-30px 18px 0',
+          position: 'relative',
+          zIndex: 3,
+          borderRadius: 'var(--radius-sm)',
+          padding: '11px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 14,
+          flexWrap: 'wrap',
+        }}
+      >
+        {formattedDate && <MetaItem icon="calendar_month">{formattedDate}</MetaItem>}
+        {post.readTime && <MetaItem icon="schedule">{post.readTime}</MetaItem>}
+      </div>
 
-        <Link
-          to={`${baseUrl}/${post.slug}`}
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}
-        >
+      {/* Body */}
+      <div
+        style={{
+          padding: '18px 20px 22px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          gap: 10,
+          flex: 1,
+        }}
+      >
+        <Link to={href} style={{ textDecoration: 'none' }}>
           <h3
             id={`blog-post-title-${post.id}`}
+            className="blog-card-title"
             style={{
               fontFamily: FONT,
               fontWeight: 'var(--font-weight-medium, 500)',
-              fontSize: 17,
+              fontSize: 18,
               lineHeight: 1.3,
               letterSpacing: '-0.01em',
-              marginBottom: 8,
-              color: hover ? 'hsl(var(--primary))' : 'hsl(var(--on-surface))',
-              transition: 'color 0.2s',
+              margin: 0,
+              textWrap: 'balance',
             }}
           >
             {post.title}
           </h3>
-          <span
-            className="material-symbols-outlined"
-            style={{
-              flexShrink: 0,
-              marginTop: 4,
-              fontSize: 16,
-              color: 'hsl(var(--primary))',
-              opacity: hover ? 1 : 0,
-              transform: hover ? 'translateX(0)' : 'translateX(-8px)',
-              transition: 'all 0.3s',
-            }}
-          >
-            arrow_forward
-          </span>
         </Link>
 
         <p
           style={{
-            fontSize: 13,
+            fontFamily: FONT,
+            fontSize: 13.5,
             color: 'hsl(var(--on-surface-muted))',
-            lineHeight: 1.55,
-            marginBottom: 14,
-            flex: 1,
+            lineHeight: 1.6,
+            margin: 0,
+            maxWidth: '34ch',
             display: '-webkit-box',
             WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
@@ -191,69 +190,31 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           {excerptText}
         </p>
 
-        {/* Author row */}
-        <div
+        {/* Pushed to the bottom so the button lines up across a row of
+            uneven titles. */}
+        <Link
+          to={href}
+          className="blog-card-cta"
+          aria-label={`Read more: ${post.title}`}
           style={{
-            display: 'flex',
+            marginTop: 'auto',
+            paddingTop: 9,
+            paddingBottom: 9,
+            paddingLeft: 20,
+            paddingRight: 20,
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: 8,
-            paddingTop: 14,
-            borderTop: '1px solid hsl(var(--border))',
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: FONT,
+            fontSize: 11.5,
+            fontWeight: 'var(--font-weight-medium, 500)',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
           }}
         >
-          {post.authorImage ? (
-            <img
-              src={post.authorImage}
-              alt={displayName || ''}
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                flexShrink: 0,
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: 10,
-                fontWeight: 'var(--font-weight-medium, 500)',
-                flexShrink: 0,
-                background: 'hsl(var(--primary))',
-              }}
-            >
-              {authorInitial}
-            </div>
-          )}
-          <span
-            style={{
-              fontFamily: FONT,
-              fontSize: 11.5,
-              fontWeight: 'var(--font-weight-medium, 500)',
-              color: 'hsl(var(--on-surface))',
-            }}
-          >
-            {displayName}
-          </span>
-          <span
-            style={{
-              marginLeft: 'auto',
-              fontSize: 10.5,
-              color: 'hsl(var(--on-surface-muted))',
-              fontWeight: 'var(--font-weight-medium, 500)',
-              fontFamily: FONT,
-            }}
-          >
-            {formattedDate}
-          </span>
-        </div>
+          Read more
+        </Link>
       </div>
     </article>
   )
