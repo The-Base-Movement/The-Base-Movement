@@ -2258,6 +2258,21 @@ td.leadership-col-secondary {
 .btn-accent:hover {
   background: hsl(var(--accent-hover, 45 80% 35%));
 }
+/* Blog card grid. Cards hold at the reference layout's 310px rather than
+   narrowing: below that the meta bar's two items wrap onto separate rows and
+   the title starts breaking badly, so columns drop instead. min(310px, 100%)
+   keeps the track from overflowing a container narrower than one card.
+
+   auto-fill, not auto-fit: auto-fit collapses the empty tracks and stretches
+   what is left, so a row holding fewer posts than it has room for blew the
+   cards out to 582px. auto-fill keeps the tracks and the cards keep their
+   width. */
+.blog-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(310px, 100%), 1fr));
+  gap: 20px;
+}
+
 /* ------------------------------------------------------------------
    Blog post card
    ------------------------------------------------------------------
