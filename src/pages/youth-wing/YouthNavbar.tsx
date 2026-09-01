@@ -30,13 +30,14 @@ export function YouthNavbar() {
   const isActive = (to: string) =>
     to === '/youth-wing' ? pathname === '/youth-wing' : pathname.startsWith(to)
 
+  // The colour lives in .yw-navlink / .yw-navlink.is-active (src/index.css).
+  // Set inline it would beat the :hover rule, which is why these never lit up.
   const linkStyle = (active: boolean): React.CSSProperties => ({
     fontFamily: "'Public Sans', sans-serif",
     fontWeight: 'var(--font-weight-medium, 500)',
     fontSize: 12,
     letterSpacing: '.01em',
     textDecoration: 'none',
-    color: active ? YW_ACCENT : 'hsl(var(--on-surface-muted))',
     borderBottom: active ? `2px solid ${YW_ACCENT}` : '2px solid transparent',
     paddingBottom: 2,
     transition: 'color 0.15s, border-color 0.15s',
@@ -108,28 +109,28 @@ export function YouthNavbar() {
           className="nav-desktop-only"
         >
           {YOUTH_LINKS.map((link) => (
-            <Link key={link.to} to={link.to} style={linkStyle(isActive(link.to))}>
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`yw-navlink${isActive(link.to) ? ' is-active' : ''}`}
+              style={linkStyle(isActive(link.to))}
+            >
               {link.label}
             </Link>
           ))}
           <Link
             to="/youth-wing/register"
-            className="btn btn-sm"
-            style={{
-              background: YW_ACCENT,
-              color: 'hsl(var(--card))',
-              border: '1px solid ' + YW_ACCENT,
-              textDecoration: 'none',
-            }}
+            className="btn btn-sm btn-yw"
+            style={{ textDecoration: 'none' }}
           >
             Join
           </Link>
           <Link
             to="/"
+            className="yw-link"
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 11,
-              color: 'hsl(var(--on-surface-muted))',
               textDecoration: 'none',
             }}
           >
@@ -172,6 +173,7 @@ export function YouthNavbar() {
               key={link.to}
               to={link.to}
               onClick={() => setIsOpen(false)}
+              className={`yw-navlink${isActive(link.to) ? ' is-active' : ''}`}
               style={{ ...linkStyle(isActive(link.to)), fontSize: 14, borderBottom: 'none' }}
             >
               {link.label}
@@ -180,24 +182,18 @@ export function YouthNavbar() {
           <Link
             to="/youth-wing/register"
             onClick={() => setIsOpen(false)}
-            className="btn btn-sm"
-            style={{
-              background: YW_ACCENT,
-              color: 'hsl(var(--card))',
-              border: '1px solid ' + YW_ACCENT,
-              textDecoration: 'none',
-              justifyContent: 'center',
-            }}
+            className="btn btn-sm btn-yw"
+            style={{ textDecoration: 'none', justifyContent: 'center' }}
           >
             Join the Youth Wing
           </Link>
           <Link
             to="/"
             onClick={() => setIsOpen(false)}
+            className="yw-link"
             style={{
               fontFamily: "'Public Sans', sans-serif",
               fontSize: 12,
-              color: 'hsl(var(--on-surface-muted))',
               textDecoration: 'none',
             }}
           >

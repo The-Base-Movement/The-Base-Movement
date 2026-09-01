@@ -302,11 +302,74 @@
   .yw-scope {
     --yw-accent: 187 72% 32%;
     --yw-accent-soft: 187 60% 96%;
+    --yw-accent-hover: 187 72% 24%;
   }
 
   :root[data-theme='dark'] .yw-scope {
     --yw-accent: 187 62% 58%;
     --yw-accent-soft: 187 30% 11%;
+    --yw-accent-hover: 187 62% 70%;
+  }
+
+  /* Youth Wing buttons and links.
+     The teal CTAs carried `background: <accent>` as an inline style, which no
+     :hover rule can override, so every one of them sat dead under the cursor.
+     The colour lives here instead. The inherited .btn-outline / .btn-ghost
+     hovers are re-pointed at the accent too: left alone they turn brand green
+     on a youth page, which is the identity the teal exists to avoid. */
+  .yw-scope .btn-yw {
+    background: hsl(var(--yw-accent));
+    border: 1px solid hsl(var(--yw-accent));
+    color: hsl(var(--card));
+  }
+
+  .yw-scope .btn-yw:hover:not(:disabled) {
+    background: hsl(var(--yw-accent-hover));
+    border-color: hsl(var(--yw-accent-hover));
+  }
+
+  .yw-scope .btn-outline:hover {
+    border-color: hsl(var(--yw-accent));
+    color: hsl(var(--yw-accent));
+  }
+
+  /* Colour only: the adult ghost hover draws no border, and adding one here
+     would make the youth ghost buttons a different shape on hover. */
+  .yw-scope .btn-ghost:hover {
+    color: hsl(var(--yw-accent));
+  }
+
+  .yw-scope .yw-link {
+    color: hsl(var(--on-surface-muted));
+    transition: color 0.15s;
+  }
+
+  .yw-scope .yw-link:hover,
+  .yw-scope .yw-navlink:hover {
+    color: hsl(var(--yw-accent));
+  }
+
+  .yw-scope .yw-navlink {
+    color: hsl(var(--on-surface-muted));
+  }
+
+  .yw-scope .yw-navlink.is-active {
+    color: hsl(var(--yw-accent));
+  }
+
+  /* Clickable cards (article tiles) had no hover state at all. */
+  .yw-scope a.panel {
+    transition: border-color 0.15s;
+  }
+
+  .yw-scope a.panel:hover {
+    border-color: hsl(var(--yw-accent));
+  }
+
+  /* Teal inline links: the colour is already the accent, so the hover is the
+     underline. */
+  .yw-scope .yw-tlink:hover {
+    text-decoration: underline;
   }
 
   :root[data-theme='dark'] .public-layout [class*='bg-on-surface'],

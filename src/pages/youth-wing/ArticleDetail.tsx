@@ -76,6 +76,7 @@ export default function YouthWingArticleDetail() {
       <article className="max-w-[820px] mx-auto px-5 lg:px-8 py-12">
         <Link
           to="/youth-wing/articles"
+          className="yw-tlink"
           style={{ fontSize: 12.5, color: YW_ACCENT, textDecoration: 'none' }}
         >
           &larr; Youth Wing articles

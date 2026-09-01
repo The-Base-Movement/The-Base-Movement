@@ -110,10 +110,10 @@ export function YouthFooter() {
                   <Link
                     key={link.label}
                     to={link.to}
+                    className="yw-link"
                     style={{
                       fontFamily: "'Public Sans', sans-serif",
                       fontSize: 13,
-                      color: 'hsl(var(--on-surface-muted))',
                       textDecoration: 'none',
                     }}
                   >
@@ -173,7 +173,7 @@ export function YouthFooter() {
           }}
         >
           <span>&copy; {new Date().getFullYear()} The Base Movement. Ghana First.</span>
-          <Link to="/" style={{ color: 'hsl(var(--on-surface-muted))', textDecoration: 'none' }}>
+          <Link to="/" className="yw-link" style={{ textDecoration: 'none' }}>
             Main site &rarr;
           </Link>
         </div>

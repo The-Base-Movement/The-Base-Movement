@@ -101,15 +101,7 @@ export default function YouthWing() {
                 habits of leadership, so that the day they turn 18 they are ready.
               </p>
               <div className="flex flex-wrap gap-3 mt-7">
-                <Link
-                  to="/youth-wing/register"
-                  className="btn"
-                  style={{
-                    background: YW_ACCENT,
-                    color: 'hsl(var(--card))',
-                    border: '1px solid ' + YW_ACCENT,
-                  }}
-                >
+                <Link to="/youth-wing/register" className="btn btn-yw">
                   Join the Youth Wing
                 </Link>
                 <Link to="/youth-wing/articles" className="btn btn-outline">
@@ -333,15 +325,7 @@ export default function YouthWing() {
                 Members are not eligible for either.
               </p>
               <div className="flex flex-wrap gap-3" style={{ marginTop: 18 }}>
-                <Link
-                  to="/youth-wing/register"
-                  className="btn"
-                  style={{
-                    background: YW_ACCENT,
-                    color: 'hsl(var(--card))',
-                    border: '1px solid ' + YW_ACCENT,
-                  }}
-                >
+                <Link to="/youth-wing/register" className="btn btn-yw">
                   Start Youth Wing registration
                 </Link>
                 <Link to="/youth-wing/form" className="btn btn-outline">
