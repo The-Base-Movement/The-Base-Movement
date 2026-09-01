@@ -103,29 +103,23 @@ export function AdminSidebar({
       )
 
       if (activeGroup) {
-        setOpenGroups((prev) => {
-          const nextGroups: Record<string, boolean> = {}
-          Object.keys(prev).forEach((key) => {
-            nextGroups[key] = key === activeGroup.label
-          })
-          return nextGroups
-        })
+        // Same reason as toggleGroup: name the active group directly instead of
+        // filtering the seeded key list, which would silently drop new groups.
+        setOpenGroups({ [activeGroup.label]: true })
       }
     }, 0)
 
     return () => clearTimeout(timer)
   }, [location.pathname, filteredNavGroups, prevPathname])
 
+  // Accordion: at most one group open. Keyed off the group being toggled rather
+  // than rebuilt from the previous object's keys -- those only ever held the
+  // labels hardcoded in the initial seed above, so a group added to navConfig
+  // later could never be opened and clicking its header did nothing at all.
+  // An absent key reads as closed, so naming just the open group is enough.
   const toggleGroup = (groupLabel: string) => {
     if (!isSidebarOpen) setIsSidebarOpen(true)
-    setOpenGroups((prev) => {
-      const isCurrentlyOpen = prev[groupLabel]
-      const newOpenGroups: Record<string, boolean> = {}
-      Object.keys(prev).forEach((key) => {
-        newOpenGroups[key] = key === groupLabel ? !isCurrentlyOpen : false
-      })
-      return newOpenGroups
-    })
+    setOpenGroups((prev) => ({ [groupLabel]: !prev[groupLabel] }))
   }
 
   return (
