@@ -57,6 +57,14 @@ as **HSL triplets** (not hex) so opacity modifiers and theming work:
 > `--primary` fails WCAG AA behind white text. Any green surface with white text on
 > it must use `--panel-header`, not `--primary`.
 
+**Youth Wing accent — scoped, not global.** `/youth-wing/*` swaps the brand green
+for a teal so the youth track never reads as adult party membership. The tokens
+are `--yw-accent`, `--yw-accent-soft` and `--yw-accent-hover`, defined on
+`.yw-scope` in `src/index.css` with a `:root[data-theme='dark'] .yw-scope`
+variant. `YouthLayout` applies the class, so youth pages get the accent by being
+inside it. Do not reach for these tokens outside that scope, and do not promote
+them to `:root`.
+
 ### Surfaces and text
 
 | Token                | Light                   | Dark         | Usage                                                      |
@@ -354,6 +362,22 @@ Every interactive element ships all of these:
 | Table / list | empty        | `<EmptyState />` with an action where one exists                         |
 | Table / list | error        | `<Banner />` with retry                                                  |
 | Card         | hover        | `hover-lift` — `-translate-y-1` + `shadow-lift`                          |
+
+> **An inline style silently deletes a hover.** `style={{ background: X }}` beats
+> every `:hover` rule for that property, so a button coloured inline has no hover
+> state at all — and it fails quietly: the button looks right, so nothing in
+> review or in a screenshot flags it. This is how the entire Youth Wing shipped
+> hover-less. If a colour needs a hover, it belongs in a class, not in `style`.
+> Keep inline styles for what is genuinely per-instance (a disabled `opacity`, a
+> one-off layout tweak).
+>
+> The same trap applies to a `transition` on an inline-coloured element: it will
+> appear correct in the code and never fire, because nothing ever changes the
+> value.
+>
+> When verifying a hover in a browser, read the computed style **after** the
+> transition settles. Sampling mid-fade returns the start colour and reads as a
+> broken hover.
 
 ---
 
