@@ -480,13 +480,26 @@ export default function AdminYouthWingDirectory() {
                   {selected.membership_number} &middot; age {selected.age}
                 </p>
               </div>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm"
-                onClick={() => setSelected(null)}
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2">
+                <a
+                  className="btn btn-outline btn-sm"
+                  href={`/youth-wing/portal?member=${encodeURIComponent(selected.membership_number)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                    open_in_new
+                  </span>
+                  Open member portal
+                </a>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setSelected(null)}
+                >
+                  Close
+                </button>
+              </div>
             </div>
 
             <YouthMembershipCard

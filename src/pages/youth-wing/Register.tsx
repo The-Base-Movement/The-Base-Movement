@@ -585,6 +585,12 @@ export default function YouthWingRegister() {
             >
               {isLoading ? 'Submitting…' : 'Submit registration'}
             </button>
+            <Link to="/youth-wing/form" className="btn btn-outline">
+              <span className="material-symbols-outlined" style={{ fontSize: 15 }}>
+                download
+              </span>
+              Download paper form
+            </Link>
             <Link to="/youth-wing" className="btn btn-ghost">
               Cancel
             </Link>

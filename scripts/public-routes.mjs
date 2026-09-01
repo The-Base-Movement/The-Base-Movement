@@ -15,6 +15,7 @@ export const STATIC_ROUTES = [
   { path: '/youth-wing', changefreq: 'monthly', priority: '0.8' },
   { path: '/youth-wing/register', changefreq: 'monthly', priority: '0.7' },
   { path: '/youth-wing/articles', changefreq: 'weekly', priority: '0.6' },
+  { path: '/youth-wing/form', changefreq: 'monthly', priority: '0.5' },
   { path: '/login', changefreq: 'monthly', priority: '0.6' },
   { path: '/forgot-password', changefreq: 'yearly', priority: '0.3' },
   { path: '/our-agenda', changefreq: 'weekly', priority: '0.8' },

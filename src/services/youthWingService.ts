@@ -124,6 +124,19 @@ export const youthWingService = {
     return (data as YouthWingLookup[])?.[0] ?? null
   },
 
+  /**
+   * Opens a member's own portal view for an admin, without their date of birth.
+   * Authorization is the RPC's is_admin() gate, not a client-side role check, so
+   * a non-admin calling this gets an error rather than a record.
+   */
+  async adminLookup(membershipNumber: string): Promise<YouthWingLookup | null> {
+    const { data, error } = await supabase.rpc('admin_get_youth_wing_member', {
+      p_membership_number: membershipNumber,
+    })
+    if (error) return null
+    return (data as YouthWingLookup[])?.[0] ?? null
+  },
+
   /** Card QR target. Public, deliberately minimal. */
   async verify(membershipNumber: string): Promise<YouthWingVerification | null> {
     const { data, error } = await supabase.rpc('verify_youth_wing_member', {
