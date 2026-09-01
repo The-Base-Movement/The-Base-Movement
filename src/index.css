@@ -2258,6 +2258,63 @@ td.leadership-col-secondary {
 .btn-accent:hover {
   background: hsl(var(--accent-hover, 45 80% 35%));
 }
+/* ------------------------------------------------------------------
+   Blog post card
+   ------------------------------------------------------------------
+   The card's colours live here rather than inline because both the card
+   and its Read more button need hover states, and an inline colour beats
+   every :hover rule for that property.
+   ------------------------------------------------------------------ */
+.blog-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-md);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+.blog-card:hover {
+  border-color: hsl(var(--accent));
+  box-shadow: 0 16px 32px -8px rgba(12, 40, 24, 0.12);
+  transform: translateY(-2px);
+}
+.blog-card-photo img {
+  transition: transform 0.7s;
+}
+.blog-card:hover .blog-card-photo img {
+  transform: scale(1.05);
+}
+.blog-card-title {
+  color: hsl(var(--on-surface));
+  transition: color 0.2s;
+}
+.blog-card:hover .blog-card-title {
+  color: hsl(var(--primary));
+}
+/* The bar that straddles the seam between photo and body. */
+.blog-card-meta {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 6px 16px -8px rgba(12, 40, 24, 0.18);
+}
+.blog-card-meta .material-symbols-outlined {
+  color: hsl(var(--accent));
+}
+.blog-card-cta {
+  background: transparent;
+  border: 1px solid hsl(var(--accent));
+  color: hsl(var(--accent));
+  transition:
+    background 0.18s,
+    color 0.18s;
+}
+.blog-card-cta:hover,
+.blog-card-cta:focus-visible {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground, 0 0% 100%));
+}
+
 .btn-outline-dest {
   background: transparent;
   color: hsl(var(--destructive));
