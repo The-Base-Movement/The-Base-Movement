@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
-import { getBlogImageUrl } from '@/lib/blogImages'
 import { type BlogPost } from '@/services/adminService'
+import { BlogPostCard } from '@/components/BlogPostCard'
 import { ButtonPrimary } from '@/components/buttons/ButtonPrimary'
 import { Skeleton } from '@/components/states'
 
@@ -44,7 +44,7 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
         </div>
 
         {latestPosts.length === 0 ? (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="blog-card-grid">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <Skeleton variant="img" style={{ aspectRatio: '16/10', height: 'auto' }} />
@@ -64,74 +64,22 @@ export function LatestUpdatesSection({ latestPosts }: LatestUpdatesSectionProps)
                 style={{ paddingBottom: 36 }}
               >
                 {latestPosts.map((post) => (
-                  <SwiperSlide key={post.id}>
-                    <Link to={`/blog/${post.slug}`} className="group block">
-                      <div className="aspect-[16/10] overflow-hidden mb-3 border border-border/60 bg-muted">
-                        <img
-                          src={getBlogImageUrl(post.imageUrl)}
-                          alt={post.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                          decoding="async"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-micro font-meta font-medium text-primary tracking-tight">
-                          {post.category}
-                        </span>
-                        <span className="text-micro text-muted-foreground font-meta">
-                          {post.publishedAt
-                            ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric',
-                              })
-                            : ''}
-                        </span>
-                      </div>
-                      <h3 className="text-base font-meta font-medium text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h3>
-                    </Link>
+                  <SwiperSlide key={post.id} style={{ height: 'auto' }}>
+                    <BlogPostCard post={post} baseUrl="/blog" />
                   </SwiperSlide>
                 ))}
               </Swiper>
             </div>
 
-            <div
-              className="hidden sm:grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8"
-              data-fade-stagger
-            >
-              {latestPosts.map((post) => (
-                <Link key={post.id} to={`/blog/${post.slug}`} className="group block">
-                  <div className="aspect-[16/10] overflow-hidden mb-4 md:mb-6 border border-border/60 bg-muted">
-                    <img
-                      src={getBlogImageUrl(post.imageUrl)}
-                      alt={post.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      decoding="async"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-micro font-meta font-medium text-primary tracking-tight">
-                      {post.category}
-                    </span>
-                    <span className="text-micro text-muted-foreground font-meta">
-                      {post.publishedAt
-                        ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })
-                        : ''}
-                    </span>
-                  </div>
-                  <h3 className="text-base md:text-lg font-meta font-medium text-on-surface tracking-tight leading-tight group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-                </Link>
-              ))}
+            {/* .blog-card-grid holds cards at 310px and drops columns rather than
+                narrowing them, so it needs a plain wrapper to hide on mobile --
+                Tailwind's `hidden` would fight its `display: grid`. */}
+            <div className="hidden sm:block">
+              <div className="blog-card-grid" data-fade-stagger>
+                {latestPosts.map((post) => (
+                  <BlogPostCard key={post.id} post={post} baseUrl="/blog" />
+                ))}
+              </div>
             </div>
           </>
         )}
