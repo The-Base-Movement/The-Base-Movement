@@ -16,7 +16,7 @@ import { createPortal } from 'react-dom'
 import { usePageLabel } from '@/contexts/PageLabelContext'
 import { adminService } from '@/services/adminService'
 import { contentService } from '@/services/contentService'
-import type { BlogPost, AdminUser, Author } from '@/types/admin'
+import type { BlogPost, AdminUser, Author, PostAudience } from '@/types/admin'
 import { useDeleteModal } from '@/hooks/useDeleteModal'
 import { toast } from 'sonner'
 
@@ -32,6 +32,7 @@ import { SortToggle } from '@/components/ui/SortToggle'
 type FormData = Omit<BlogPost, 'id'>
 
 const EMPTY_FORM: FormData = {
+  audience: 'ADULT',
   title: '',
   slug: '',
   excerpt: '',
@@ -64,7 +65,19 @@ const withAuthorSnapshot = (form: FormData, author?: Author): FormData => {
   }
 }
 
-export default function AdminBlogs() {
+interface AdminBlogsProps {
+  /** Which readership this editor manages. Adult (/admin/blogs) and Youth Wing
+   * (/admin/youth-wing/articles) are separate bodies of content: each view only
+   * ever lists, edits and creates its own audience, and their draft state is
+   * kept under separate sessionStorage keys so they cannot bleed together. */
+  audience?: PostAudience
+}
+
+export default function AdminBlogs({ audience = 'ADULT' }: AdminBlogsProps = {}) {
+  const isYouth = audience === 'YOUTH'
+  /** sessionStorage key, namespaced per audience so the adult and Youth Wing
+   * editors never restore each other's draft. */
+  const sk = useCallback((key: string) => (isYouth ? `yw_${key}` : key), [isYouth])
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [authors, setAuthors] = useState<Author[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -76,19 +89,19 @@ export default function AdminBlogs() {
 
   const [currentView, setCurrentView] = useState<'list' | 'edit' | 'view'>(() =>
     isBrowser
-      ? (sessionStorage.getItem('blogs_currentView') as 'list' | 'edit' | 'view') || 'list'
+      ? (sessionStorage.getItem(sk('blogs_currentView')) as 'list' | 'edit' | 'view') || 'list'
       : 'list'
   )
   const [editingPost, setEditPost] = useState<BlogPost | null>(() => {
-    const saved = isBrowser ? sessionStorage.getItem('blogs_editingPost') : null
+    const saved = isBrowser ? sessionStorage.getItem(sk('blogs_editingPost')) : null
     return saved ? JSON.parse(saved) : null
   })
   const [viewPost, setViewPost] = useState<BlogPost | null>(() => {
-    const saved = isBrowser ? sessionStorage.getItem('blogs_viewPost') : null
+    const saved = isBrowser ? sessionStorage.getItem(sk('blogs_viewPost')) : null
     return saved ? JSON.parse(saved) : null
   })
   const [formData, setFormData] = useState<FormData>(() => {
-    const saved = isBrowser ? sessionStorage.getItem('blogs_formData') : null
+    const saved = isBrowser ? sessionStorage.getItem(sk('blogs_formData')) : null
     return saved ? JSON.parse(saved) : EMPTY_FORM
   })
 
@@ -127,23 +140,23 @@ export default function AdminBlogs() {
 
   // Sync state to sessionStorage
   useEffect(() => {
-    if (isBrowser) sessionStorage.setItem('blogs_currentView', currentView)
-  }, [currentView, isBrowser])
+    if (isBrowser) sessionStorage.setItem(sk('blogs_currentView'), currentView)
+  }, [currentView, isBrowser, sk])
   useEffect(() => {
     if (isBrowser) {
-      if (editingPost) sessionStorage.setItem('blogs_editingPost', JSON.stringify(editingPost))
-      else sessionStorage.removeItem('blogs_editingPost')
+      if (editingPost) sessionStorage.setItem(sk('blogs_editingPost'), JSON.stringify(editingPost))
+      else sessionStorage.removeItem(sk('blogs_editingPost'))
     }
-  }, [editingPost, isBrowser])
+  }, [editingPost, isBrowser, sk])
   useEffect(() => {
     if (isBrowser) {
-      if (viewPost) sessionStorage.setItem('blogs_viewPost', JSON.stringify(viewPost))
-      else sessionStorage.removeItem('blogs_viewPost')
+      if (viewPost) sessionStorage.setItem(sk('blogs_viewPost'), JSON.stringify(viewPost))
+      else sessionStorage.removeItem(sk('blogs_viewPost'))
     }
-  }, [viewPost, isBrowser])
+  }, [viewPost, isBrowser, sk])
   useEffect(() => {
-    if (isBrowser) sessionStorage.setItem('blogs_formData', JSON.stringify(formData))
-  }, [formData, isBrowser])
+    if (isBrowser) sessionStorage.setItem(sk('blogs_formData'), JSON.stringify(formData))
+  }, [formData, isBrowser, sk])
 
   // Data fetching functions
   // Fetches the list of media library files for the active folder
@@ -163,14 +176,14 @@ export default function AdminBlogs() {
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
-      const data = await adminService.getBlogPosts()
+      const data = await adminService.getBlogPosts(audience)
       setPosts(data)
     } catch {
       toast.error('Could not retrieve blog intelligence from vault.')
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [audience])
 
   // Fetches all registered personnel/authors
   const fetchAuthors = useCallback(async () => {
@@ -242,7 +255,7 @@ export default function AdminBlogs() {
       })
     } else {
       setEditPost(null)
-      setFormData({ ...EMPTY_FORM, publishedAt: new Date().toISOString() })
+      setFormData({ ...EMPTY_FORM, audience, publishedAt: new Date().toISOString() })
     }
     setCurrentView('edit')
   }
@@ -259,6 +272,9 @@ export default function AdminBlogs() {
         handleEditPost(target)
       }
     }
+    // handleEditPost is re-created every render; this deep-link effect must run
+    // only when the loaded post list changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts])
 
   // Routes to the read-only preview screen for a post
@@ -281,7 +297,8 @@ export default function AdminBlogs() {
     setIsLoading(true)
     try {
       const editorContent = editorRef.current ? editorRef.current.getContent() : formData.content
-      const postData = { ...effectiveFormData, content: editorContent }
+      // audience is pinned to this editor's readership; it is never user-selectable.
+      const postData = { ...effectiveFormData, content: editorContent, audience }
       let success = false
       if (editingPost) {
         success = await adminService.updateBlogPost(editingPost.id, postData)
@@ -476,7 +493,7 @@ export default function AdminBlogs() {
   // List view layout
   return (
     <div className="main">
-      <BlogsHeader onWrite={() => handleEditPost()} />
+      <BlogsHeader onWrite={() => handleEditPost()} audience={audience} />
       <BlogsKPIs posts={posts} />
 
       {/* Mobile search & Sort — shown above the grid on small screens */}

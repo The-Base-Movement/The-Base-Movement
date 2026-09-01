@@ -19,6 +19,7 @@ import { OfflineSuccessStep } from './register/components/OfflineSuccessStep'
 import { saveDraftRegistration, type DraftRegistration } from '@/utils/offlineDb'
 import { useOfflineSync } from '@/hooks/useOfflineSync'
 import { validatePhone, cleanPhoneInput, capToCountryDigits } from '@/lib/phoneValidation'
+import { isMinorAgeInput } from '@/lib/ageGate'
 
 export default function Register() {
   const { session } = useAuth()
@@ -164,6 +165,18 @@ export default function Register() {
     field: K,
     value: RegistrationFormData[K]
   ) => {
+    // Under-18s are not eligible for party membership (voting age), so the adult
+    // flow hands them straight to the Youth Wing at the point of age input rather
+    // than letting them fill the rest of the form first.
+    if (
+      (field === 'birthYear' || field === 'ageRange') &&
+      typeof value === 'string' &&
+      isMinorAgeInput(field, value)
+    ) {
+      toast.info('Under 18? The Youth Wing is your track. Taking you there now.')
+      navigate('/youth-wing/register')
+      return
+    }
     if (formErrors[field as string]) {
       setFormErrors((prev) => {
         const next = { ...prev }
@@ -305,6 +318,12 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Backstop for values that never went through handleChange (e.g. a scanned form).
+    if (isMinorAgeInput('birthYear', formData.birthYear || '') || formData.ageRange === '14-17') {
+      toast.info('Under 18? The Youth Wing is your track. Taking you there now.')
+      navigate('/youth-wing/register')
+      return
+    }
     const errs = validateStepErrors(formStep)
     if (Object.keys(errs).length > 0) {
       setFormErrors(errs)

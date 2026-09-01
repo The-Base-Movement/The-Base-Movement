@@ -947,7 +947,7 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       id="input-birth-year"
                       type="number"
                       min={1900}
-                      max={new Date().getFullYear() - 14}
+                      max={new Date().getFullYear() - 18}
                       value={formData.birthYear || ''}
                       onChange={(e) => onInputChange('birthYear', e.target.value)}
                       autoComplete="bday-year"
@@ -980,7 +980,6 @@ export function RegistrationForm(props: RegistrationFormProps) {
                       )}
                     >
                       <option value="">Select</option>
-                      <option value="14-17">14 – 17</option>
                       <option value="18-25">18 – 25</option>
                       <option value="26-35">26 – 35</option>
                       <option value="36-45">36 – 45</option>
@@ -1000,6 +999,13 @@ export function RegistrationForm(props: RegistrationFormProps) {
                         Set automatically from your birth year.
                       </p>
                     )}
+                    <p className="text-[10px] text-on-surface-muted/80 mt-1 leading-relaxed">
+                      Under 18?{' '}
+                      <Link to="/youth-wing/register" className="text-primary underline">
+                        Join the Youth Wing (14 to 17)
+                      </Link>{' '}
+                      instead. Party membership is tied to the voting age of 18.
+                    </p>
                   </div>
                   <div className="space-y-1.5">
                     <label

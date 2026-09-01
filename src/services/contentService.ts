@@ -1,5 +1,12 @@
 import { supabase } from '@/lib/supabase'
-import type { BlogPost, MediaAsset, Author, PressRelease, MediaKitAsset } from '@/types/admin'
+import type {
+  BlogPost,
+  MediaAsset,
+  Author,
+  PressRelease,
+  MediaKitAsset,
+  PostAudience,
+} from '@/types/admin'
 import { compressForUpload } from '@/lib/imageUtils'
 import { pingIndexNow } from '@/lib/indexNow'
 import mediaManifest from '@/data/media-manifest.json'
@@ -38,6 +45,12 @@ async function resolveAuthorAvatars(authors: DBAuthor[]): Promise<Map<string, st
   return avatarMap
 }
 
+/** Public URL of an article. Youth Wing articles live under their own path so
+ * they never appear in, or link into, the adult /blog surface. */
+function articlePath(slug: string, audience: PostAudience = 'ADULT'): string {
+  return audience === 'YOUTH' ? `/youth-wing/articles/${slug}` : `/blog/${slug}`
+}
+
 function withoutImageUrl<T extends { image_url?: unknown }>(data: T) {
   const fallbackData = { ...data }
   delete fallbackData.image_url
@@ -49,6 +62,7 @@ type BlogPostSnapshot = {
   title: string
   slug: string
   status: BlogPost['status']
+  audience: PostAudience
 }
 
 type ContentActivityAction =
@@ -74,7 +88,7 @@ class ContentService {
   private async getBlogPostSnapshot(id: string): Promise<BlogPostSnapshot | null> {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, status')
+      .select('id, title, slug, status, audience')
       .eq('id', id)
       .maybeSingle()
 
@@ -88,6 +102,7 @@ class ContentService {
       title: data.title,
       slug: data.slug,
       status: (data.status as BlogPost['status']) || 'Draft',
+      audience: (data.audience as PostAudience) || 'ADULT',
     }
   }
 
@@ -116,12 +131,15 @@ class ContentService {
     return ContentService.instance
   }
 
-  async getBlogPosts(): Promise<BlogPost[]> {
+  /** Published articles for one readership. Adult and Youth Wing articles are
+   * separate bodies of content and must never be listed together. */
+  async getBlogPosts(audience: PostAudience = 'ADULT'): Promise<BlogPost[]> {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*, authors(name, role, image_url, bio)')
       .is('deleted_at', null)
       .eq('status', 'Published')
+      .eq('audience', audience)
       .order('published_at', { ascending: false })
 
     if (error) {
@@ -156,26 +174,34 @@ class ContentService {
         tags: (p.tags as string[]) || [],
         seoTitle: p.seo_title as string | undefined,
         metaDescription: p.meta_description as string | undefined,
+        audience: (p.audience as PostAudience) || 'ADULT',
       }
     })
   }
 
-  async getPublishedPostCount(): Promise<number> {
+  async getPublishedPostCount(audience: PostAudience = 'ADULT'): Promise<number> {
     const { count, error } = await supabase
       .from('blog_posts')
       .select('id', { count: 'exact', head: true })
       .is('deleted_at', null)
       .eq('status', 'Published')
+      .eq('audience', audience)
 
     if (error) return 0
     return count ?? 0
   }
 
-  async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  /** Slug lookup is audience-scoped on purpose: a Youth Wing slug must 404 on
+   * /blog, and an adult slug must 404 under /youth-wing/articles. */
+  async getBlogPostBySlug(
+    slug: string,
+    audience: PostAudience = 'ADULT'
+  ): Promise<BlogPost | null> {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*, authors(name, role, image_url, bio)')
       .eq('slug', slug)
+      .eq('audience', audience)
       .is('deleted_at', null)
       .maybeSingle()
 
@@ -215,6 +241,7 @@ class ContentService {
       tags: data.tags || [],
       seoTitle: data.seo_title,
       metaDescription: data.meta_description,
+      audience: (data.audience as PostAudience) || 'ADULT',
     }
   }
 
@@ -234,6 +261,7 @@ class ContentService {
       tags: post.tags,
       seo_title: post.seoTitle || null,
       meta_description: post.metaDescription || null,
+      audience: post.audience || 'ADULT',
     }
 
     let { data: createdRow, error } = await supabase
@@ -272,7 +300,11 @@ class ContentService {
         post.authorName || 'Admin',
         post.slug
       )
-      pingIndexNow([`/blog/${post.slug}`, '/blog'])
+      pingIndexNow(
+        post.audience === 'YOUTH'
+          ? [articlePath(post.slug, 'YOUTH'), '/youth-wing/articles']
+          : [articlePath(post.slug), '/blog']
+      )
     }
     await this.notifyMediaContentActivity(
       post.status === 'Published'
@@ -285,6 +317,7 @@ class ContentService {
         title: post.title,
         slug: post.slug,
         status: post.status || 'Draft',
+        audience: post.audience || 'ADULT',
       }
     )
     return true
@@ -313,8 +346,8 @@ class ContentService {
       const { redirectService } = await import('@/services/redirectService')
       await redirectService
         .createRedirectRule({
-          sourcePath: `/blog/${beforeUpdate.slug}`,
-          destinationPath: `/blog/${post.slug}`,
+          sourcePath: articlePath(beforeUpdate.slug, beforeUpdate.audience),
+          destinationPath: articlePath(post.slug, beforeUpdate.audience),
           statusCode: 301,
           isActive: true,
           preserveQuery: true,
@@ -342,6 +375,7 @@ class ContentService {
       return false
     }
     if (post.status === 'Published' && post.title && post.slug) {
+      const audience = post.audience || beforeUpdate?.audience || 'ADULT'
       const { discordService } = await import('@/services/discordService')
       discordService.blogPostPublished(
         post.title,
@@ -349,7 +383,11 @@ class ContentService {
         post.authorName || 'Admin',
         post.slug
       )
-      pingIndexNow([`/blog/${post.slug}`, '/blog'])
+      pingIndexNow(
+        audience === 'YOUTH'
+          ? [articlePath(post.slug, 'YOUTH'), '/youth-wing/articles']
+          : [articlePath(post.slug), '/blog']
+      )
     }
     const snapshot = await this.getBlogPostSnapshot(id)
     if (snapshot) {
@@ -381,11 +419,12 @@ class ContentService {
     return true
   }
 
-  async getTrashedBlogPosts(): Promise<BlogPost[]> {
+  async getTrashedBlogPosts(audience: PostAudience = 'ADULT'): Promise<BlogPost[]> {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
       .not('deleted_at', 'is', null)
+      .eq('audience', audience)
       .order('deleted_at', { ascending: false })
 
     if (error) {
@@ -1019,7 +1058,11 @@ class ContentService {
       label: item.label,
     }))
 
-    if (!foldersList.some((f) => f.id === 'events-media' || f.id === 'events' || f.id === 'field-events')) {
+    if (
+      !foldersList.some(
+        (f) => f.id === 'events-media' || f.id === 'events' || f.id === 'field-events'
+      )
+    ) {
       foldersList.push({ id: 'events-media', label: 'Field Events' })
     }
     if (!foldersList.some((f) => f.id === 'party-affiliations')) {
@@ -1117,6 +1160,7 @@ class ContentService {
         .from('blog_posts')
         .select('*, authors(name, role, image_url, bio)')
         .in('id', postIds)
+        .eq('audience', 'ADULT')
         .is('deleted_at', null)
 
       if (postsError || !posts) return []

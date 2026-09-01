@@ -51,6 +51,9 @@ async function main() {
       .select('title, slug, excerpt, content, published_at, category')
       .is('deleted_at', null)
       .eq('status', 'Published')
+      // The public RSS feed is the adult Updates feed. Youth Wing articles are
+      // written for 14-17s and are never syndicated here.
+      .eq('audience', 'ADULT')
       .order('published_at', { ascending: false })
       .limit(30)
 
