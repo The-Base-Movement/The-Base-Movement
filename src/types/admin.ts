@@ -844,7 +844,13 @@ export interface BlogPost {
   seoTitle?: string
   metaDescription?: string
   deletedAt?: string | null
+  /** Which readership the article belongs to. Youth Wing articles are written for
+   * 14-17s and must never surface in the adult /blog feeds, and vice versa. */
+  audience?: PostAudience
 }
+
+/** @see BlogPost.audience */
+export type PostAudience = 'ADULT' | 'YOUTH'
 
 export interface PressRelease {
   id: string

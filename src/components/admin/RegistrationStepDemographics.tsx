@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ageRanges, religions } from './RegistrationForm.constants'
+import { adultAgeRanges, religions } from './RegistrationForm.constants'
 import type { RegistrationChangeHandler, RegistrationFormData } from './RegistrationForm.types'
 import {
   getConstituenciesByRegion,
@@ -236,7 +236,7 @@ export function RegistrationStepDemographics(props: RegistrationStepDemographics
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              {ageRanges.map((range) => (
+              {adultAgeRanges.map((range) => (
                 <label
                   key={range}
                   style={{

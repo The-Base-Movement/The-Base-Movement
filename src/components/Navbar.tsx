@@ -41,6 +41,8 @@ const NAV_LINKS = [
   { label: 'Leadership', publicPath: '/officers', dashPath: '/dashboard/leadership' },
   { label: 'Constituencies', publicPath: '/constituencies', dashPath: '/dashboard/constituencies' },
   { label: 'Jobs', publicPath: '/jobs', dashPath: '/dashboard/jobs' },
+  // Youth Wing (14-17) is a civic programme, not party membership — public link only.
+  { label: 'Youth Wing', publicPath: '/youth-wing', dashPath: '/youth-wing' },
   { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
 ]
 

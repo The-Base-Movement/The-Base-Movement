@@ -58,6 +58,12 @@ const OfficerDetail = lazy(() => import('./pages/OfficerDetail'))
 const About = lazy(() => import('./pages/About'))
 const AppDownload = lazy(() => import('./pages/AppDownload'))
 const Events = lazy(() => import('./pages/Events'))
+const YouthWing = lazy(() => import('./pages/YouthWing'))
+const YouthWingRegister = lazy(() => import('./pages/youth-wing/Register'))
+const YouthWingPortal = lazy(() => import('./pages/youth-wing/Portal'))
+const YouthWingArticles = lazy(() => import('./pages/youth-wing/Articles'))
+const YouthWingArticleDetail = lazy(() => import('./pages/youth-wing/ArticleDetail'))
+const YouthWingVerify = lazy(() => import('./pages/youth-wing/Verify'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
 
 // Dashboard components
@@ -82,6 +88,10 @@ const AdminSEOManager = lazy(() => import('./pages/admin/SEOManager'))
 const AdminRedirects = lazy(() => import('./pages/admin/Redirects'))
 const AdminPlanManager = lazy(() => import('./pages/admin/PlanManager'))
 const AdminMemberVerification = lazy(() => import('./pages/admin/MemberVerification'))
+const AdminYouthWing = lazy(() => import('./pages/admin/YouthWing'))
+const AdminYouthWingDirectory = lazy(() => import('./pages/admin/youth-wing/Directory'))
+const AdminYouthWingConsent = lazy(() => import('./pages/admin/youth-wing/ConsentQueue'))
+const AdminYouthWingArticles = lazy(() => import('./pages/admin/youth-wing/Articles'))
 const AdminRegions = lazy(() => import('./pages/admin/Regions'))
 const AdminBlogs = lazy(() => import('./pages/admin/Blogs'))
 const AdminFAQManagement = lazy(() => import('./pages/admin/FAQManagement'))
@@ -352,6 +362,10 @@ export const routes: RouteObject[] = [
               { path: '/admin/membership-cards', element: <AdminMembershipCards /> },
               { path: '/admin/members/:memberId', element: <AdminMemberDetail /> },
               { path: '/admin/verification', element: <AdminMemberVerification /> },
+              { path: '/admin/youth-wing', element: <AdminYouthWing /> },
+              { path: '/admin/youth-wing/directory', element: <AdminYouthWingDirectory /> },
+              { path: '/admin/youth-wing/consent', element: <AdminYouthWingConsent /> },
+              { path: '/admin/youth-wing/articles', element: <AdminYouthWingArticles /> },
               { path: '/admin/chapters', element: <AdminChapters /> },
               { path: '/admin/constituencies', element: <AdminConstituencies /> },
               { path: '/admin/constituencies/:id', element: <AdminConstituencyLeadHub /> },
@@ -448,6 +462,12 @@ export const routes: RouteObject[] = [
       { path: '/blog/:id', element: <BlogPost /> },
       { path: '/our-agenda', element: <OurAgenda /> },
       { path: '/register', element: <Register /> },
+      { path: '/youth-wing', element: <YouthWing /> },
+      { path: '/youth-wing/register', element: <YouthWingRegister /> },
+      { path: '/youth-wing/portal', element: <YouthWingPortal /> },
+      { path: '/youth-wing/articles', element: <YouthWingArticles /> },
+      { path: '/youth-wing/articles/:slug', element: <YouthWingArticleDetail /> },
+      { path: '/youth-wing/verify/:membershipNumber', element: <YouthWingVerify /> },
       { path: '/contact', element: <Contact /> },
       { path: '/donate', element: <Donate /> },
       { path: '/login', element: <Login /> },

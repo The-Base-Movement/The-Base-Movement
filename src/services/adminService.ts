@@ -76,6 +76,7 @@ import type {
   MemberPollVote,
   MemberSession,
   MemberNote,
+  PostAudience,
 } from '@/types/admin'
 
 const approvedAdminRoles = new Set<string>(ROLE_CATALOG.map((entry) => entry.role))
@@ -232,6 +233,7 @@ export type {
   MemberPollVote,
   MemberSession,
   MemberNote,
+  PostAudience,
 } from '@/types/admin'
 
 class AdminService {
@@ -1594,11 +1596,14 @@ class AdminService {
 
   // --- Blog Operations ---
 
-  async getBlogPosts(): Promise<BlogPost[]> {
+  /** Admin article list for one readership. Adult and Youth Wing articles are
+   * managed from separate pages and are never listed together. */
+  async getBlogPosts(audience: PostAudience = 'ADULT'): Promise<BlogPost[]> {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*, authors(name, role, image_url, bio)')
       .is('deleted_at', null)
+      .eq('audience', audience)
       .order('published_at', { ascending: false })
 
     if (error) {
@@ -1633,12 +1638,16 @@ class AdminService {
         tags: (p.tags as string[]) || [],
         seoTitle: p.seo_title as string | undefined,
         metaDescription: p.meta_description as string | undefined,
+        audience: (p.audience as PostAudience) || 'ADULT',
       }
     })
   }
 
-  async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-    return contentService.getBlogPostBySlug(slug)
+  async getBlogPostBySlug(
+    slug: string,
+    audience: PostAudience = 'ADULT'
+  ): Promise<BlogPost | null> {
+    return contentService.getBlogPostBySlug(slug, audience)
   }
 
   async createBlogPost(post: Omit<BlogPost, 'id'>): Promise<boolean> {
@@ -3449,7 +3458,7 @@ class AdminService {
         this.searchMembers(query),
         supabase
           .from('blog_posts')
-          .select('id, title, slug')
+          .select('id, title, slug, audience')
           .ilike('title', `%${query}%`)
           .is('deleted_at', null)
           .limit(5),
@@ -3480,14 +3489,16 @@ class AdminService {
         })
       })
 
-      // Map blog posts
+      // Map blog posts. Youth Wing articles open in the Youth Wing editor, never
+      // in the adult one.
       blogPosts.data?.forEach((p) => {
+        const isYouth = p.audience === 'YOUTH'
         results.push({
           type: 'Article',
           title: p.title,
-          subtitle: 'Editorial Update',
+          subtitle: isYouth ? 'Youth Wing article' : 'Editorial Update',
           id: p.id,
-          to: `/admin/blogs?edit=${p.id}`,
+          to: isYouth ? `/admin/youth-wing/articles?edit=${p.id}` : `/admin/blogs?edit=${p.id}`,
         })
       })
 

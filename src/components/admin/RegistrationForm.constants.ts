@@ -7,6 +7,11 @@
 
 export const ageRanges = ['14-17', '18-25', '26-35', '36-45', '46-60', '60+']
 
+/** Registration brackets. 14-17 is excluded: minors go to the Youth Wing
+ * (/youth-wing/register), never onto an adult membership roll. `ageRanges`
+ * keeps the full list so legacy records can still be displayed and edited. */
+export const adultAgeRanges = ageRanges.filter((r) => r !== '14-17')
+
 // Optional dropdown; free-form intentionally avoided to keep the data clean.
 export const religions = ['Christian', 'Muslim', 'Traditionalist', 'Other', 'Prefer not to say']
 

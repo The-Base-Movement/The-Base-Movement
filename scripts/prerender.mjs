@@ -111,13 +111,14 @@ async function prerenderDynamic(template, distDir) {
 
   const { data: posts } = await supabase
     .from('blog_posts')
-    .select('slug, title, seo_title, excerpt, meta_description, image_url')
+    .select('slug, title, seo_title, excerpt, meta_description, image_url, audience')
     .is('deleted_at', null)
     .eq('status', 'Published')
   for (const p of posts ?? [])
     if (p.slug)
       pages.push({
-        path: `/blog/${p.slug}`,
+        // Youth Wing articles get their own URL space so they never appear on /blog.
+        path: p.audience === 'YOUTH' ? `/youth-wing/articles/${p.slug}` : `/blog/${p.slug}`,
         title: p.seo_title || p.title || 'Update',
         description: p.meta_description || p.excerpt,
         image: absImg(p.image_url),

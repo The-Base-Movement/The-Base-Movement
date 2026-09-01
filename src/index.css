@@ -286,6 +286,19 @@
     color: hsl(var(--on-surface));
   }
 
+  /* Youth Wing (/youth-wing) — its own accent so the 14-17 civic track never
+     reads as the adult Ghana Resident / Diaspora party tracks. Scoped to the
+     .yw-scope wrapper; nothing global changes. */
+  .yw-scope {
+    --yw-accent: 187 72% 32%;
+    --yw-accent-soft: 187 60% 96%;
+  }
+
+  :root[data-theme='dark'] .yw-scope {
+    --yw-accent: 187 62% 58%;
+    --yw-accent-soft: 187 30% 11%;
+  }
+
   :root[data-theme='dark'] .public-layout [class*='bg-on-surface'],
   :root[data-theme='dark'] .public-layout .bg-white,
   :root[data-theme='dark'] .public-layout .bg-stone-50,

@@ -65,12 +65,13 @@ async function dynamicEntries(today) {
 
   const { data: posts } = await supabase
     .from('blog_posts')
-    .select('slug, published_at')
+    .select('slug, published_at, audience')
     .is('deleted_at', null)
     .eq('status', 'Published')
   for (const p of posts ?? [])
     entries.push(
-      urlEntry(`/blog/${p.slug}`, {
+      // Youth Wing articles live under their own path, never under /blog.
+      urlEntry(p.audience === 'YOUTH' ? `/youth-wing/articles/${p.slug}` : `/blog/${p.slug}`, {
         changefreq: 'monthly',
         priority: '0.6',
         lastmod: iso(p.published_at) ?? today,

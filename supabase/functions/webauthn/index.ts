@@ -267,6 +267,9 @@ serve(async (req: Request) => {
           p_location: location,
           p_user_agent: req.headers.get('user-agent'),
           p_isp: isp,
+          // Required on the service_role path: the RPC cannot use auth.uid()
+          // here, so the rebind is scoped to the admin we resolved from the JWT.
+          p_admin_id: user.id,
         })
         if (rebindError) {
           await supabase.from('admin_webauthn_credentials').delete().eq('id', insertedCredential.id)
@@ -380,6 +383,10 @@ serve(async (req: Request) => {
           p_location: location,
           p_user_agent: req.headers.get('user-agent'),
           p_isp: isp,
+          // Scopes the rebind to the JWT-verified admin. device_id comes from the
+          // request body here, so without this a verified admin could aim the
+          // step-up at another admin's slot.
+          p_admin_id: user.id,
         })
         if (stepUpError) {
           console.error('[webauthn] device step-up confirmation failed:', stepUpError)

@@ -96,6 +96,39 @@ export const getNavGroups = (
     ],
   },
   {
+    // The Youth Wing (14-17) is its own department, not a section of Members.
+    // Its records are a separate roll and must never be managed from, counted
+    // in, or filtered alongside adult membership.
+    label: 'Youth Wing',
+    icon: 'volunteer_activism',
+    items: [
+      {
+        to: '/admin/youth-wing',
+        icon: 'dashboard',
+        label: 'Youth overview',
+        permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
+      },
+      {
+        to: '/admin/youth-wing/directory',
+        icon: 'groups_2',
+        label: 'Youth directory',
+        permission: { action: 'VIEW_MEMBER_DIRECTORY', resource: 'MEMBERS' },
+      },
+      {
+        to: '/admin/youth-wing/consent',
+        icon: 'family_restroom',
+        label: 'Guardian consent queue',
+        permission: { action: 'VERIFY_MEMBER', resource: 'MEMBERS' },
+      },
+      {
+        to: '/admin/youth-wing/articles',
+        icon: 'auto_stories',
+        label: 'Youth articles',
+        permission: { action: 'MANAGE_BLOGS', resource: 'BLOGS' },
+      },
+    ],
+  },
+  {
     label: 'Members',
     icon: 'group',
     items: [
