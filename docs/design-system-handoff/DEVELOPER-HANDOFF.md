@@ -2,7 +2,7 @@
 
 **Version:** 2.1 · **Date:** 2026-08-09 · **Target:** React 19 + TypeScript 5.9 + Vite 7
 **Apple Design Benchmark:** 7.7 / 10 (Strong / Premium Standard)
-**Source of truth:** `src/index.css` (62 KB) + `tailwind.config.js`
+**Source of truth:** `src/index.css` (68 KB) + `tailwind.config.js`
 **Companion doc:** [`the-base-movement-design-system/project/README.md`](the-base-movement-design-system/project/README.md) — brand foundations and rationale
 
 > This document is the authority on the rules below. Where it disagrees with
@@ -614,7 +614,7 @@ history is out of sync.
 
 | Path                                     | Contents                                                                  |
 | :--------------------------------------- | :------------------------------------------------------------------------ |
-| `src/index.css`                          | the design system — tokens, all classes (62 KB; search, don't read whole) |
+| `src/index.css`                          | the design system — tokens, all classes (68 KB; search, don't read whole) |
 | `tailwind.config.js`                     | font families, weight variable mapping, legacy Tailwind                   |
 | `src/components/`                        | shared components — **check here first**                                  |
 | `src/components/states/`                 | Skeleton, Spinner, EmptyState, Banner, FullPageState                      |
