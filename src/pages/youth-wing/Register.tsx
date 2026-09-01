@@ -669,14 +669,9 @@ export default function YouthWingRegister() {
           <div className="flex flex-wrap gap-3 mt-7">
             <button
               type="submit"
-              className="btn"
+              className="btn btn-yw"
               disabled={isLoading}
-              style={{
-                background: YW_ACCENT,
-                color: 'hsl(var(--card))',
-                border: '1px solid ' + YW_ACCENT,
-                opacity: isLoading ? 0.6 : 1,
-              }}
+              style={{ opacity: isLoading ? 0.6 : 1 }}
             >
               {isLoading ? 'Submitting…' : 'Submit registration'}
             </button>

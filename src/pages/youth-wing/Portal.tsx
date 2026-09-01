@@ -260,14 +260,9 @@ export default function YouthWingPortal() {
             </div>
             <button
               type="submit"
-              className="btn"
+              className="btn btn-yw"
               disabled={isLoading}
-              style={{
-                background: YW_ACCENT,
-                color: 'hsl(var(--card))',
-                border: '1px solid ' + YW_ACCENT,
-                opacity: isLoading ? 0.6 : 1,
-              }}
+              style={{ opacity: isLoading ? 0.6 : 1 }}
             >
               {isLoading ? 'Checking…' : 'View my membership'}
             </button>
@@ -502,15 +497,10 @@ export default function YouthWingPortal() {
                       <div className="flex flex-wrap gap-2 mt-4">
                         <button
                           type="button"
-                          className="btn btn-sm"
+                          className="btn btn-sm btn-yw"
                           disabled={!photoUrl || savingPhoto}
                           onClick={savePhoto}
-                          style={{
-                            background: YW_ACCENT,
-                            color: 'hsl(var(--card))',
-                            border: '1px solid ' + YW_ACCENT,
-                            opacity: !photoUrl || savingPhoto ? 0.6 : 1,
-                          }}
+                          style={{ opacity: !photoUrl || savingPhoto ? 0.6 : 1 }}
                         >
                           {savingPhoto ? 'Saving…' : 'Save photo'}
                         </button>
