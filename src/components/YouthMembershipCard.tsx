@@ -28,6 +28,7 @@ const GREEN = '#006B3F'
 interface YouthMembershipCardProps {
   userName?: string
   membershipNumber?: string
+  avatarUrl?: string | null
   initials?: string
   gender?: string
   age?: number
@@ -42,6 +43,7 @@ interface YouthMembershipCardProps {
 const YouthMembershipCardInner: React.FC<YouthMembershipCardProps> = ({
   userName,
   membershipNumber,
+  avatarUrl,
   initials,
   gender,
   age,
@@ -216,21 +218,34 @@ const YouthMembershipCardInner: React.FC<YouthMembershipCardProps> = ({
               overflow: 'hidden',
             }}
           >
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                background: TEAL,
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 24,
-                fontWeight: 'var(--font-weight-medium, 500)',
-              }}
-            >
-              {initials || 'Y'}
-            </div>
+            {avatarUrl ? (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `url(${avatarUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center top',
+                  borderRadius: 'var(--radius-xs)',
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: TEAL,
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 24,
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                }}
+              >
+                {initials || 'Y'}
+              </div>
+            )}
           </div>
         </div>
 

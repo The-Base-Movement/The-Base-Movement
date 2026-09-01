@@ -65,6 +65,7 @@ const YouthWingArticles = lazy(() => import('./pages/youth-wing/Articles'))
 const YouthWingArticleDetail = lazy(() => import('./pages/youth-wing/ArticleDetail'))
 const YouthWingVerify = lazy(() => import('./pages/youth-wing/Verify'))
 const YouthWingFormPreview = lazy(() => import('./pages/youth-wing/FormPreview'))
+const YouthLayout = lazy(() => import('./pages/youth-wing/YouthLayout'))
 const EventDetail = lazy(() => import('./pages/EventDetail'))
 
 // Dashboard components
@@ -453,6 +454,21 @@ export const routes: RouteObject[] = [
     ],
   },
   {
+    // The Youth Wing is its own surface: separate navigation and footer, so it
+    // sits beside PublicLayout rather than inside it.
+    element: <YouthLayout />,
+    children: [
+      { path: '/youth-wing', element: <YouthWing /> },
+      { path: '/youth-wing/register', element: <YouthWingRegister /> },
+      { path: '/youth-wing/portal', element: <YouthWingPortal /> },
+      { path: '/youth-wing/articles', element: <YouthWingArticles /> },
+      { path: '/youth-wing/articles/:slug', element: <YouthWingArticleDetail /> },
+      { path: '/youth-wing/verify/:membershipNumber', element: <YouthWingVerify /> },
+    ],
+  },
+  // The printable form has no chrome of its own: it renders a bare A4 sheet.
+  { path: '/youth-wing/form', element: <YouthWingFormPreview /> },
+  {
     element: <PublicLayout />,
     children: [
       { path: '/', element: <Home /> },
@@ -463,13 +479,6 @@ export const routes: RouteObject[] = [
       { path: '/blog/:id', element: <BlogPost /> },
       { path: '/our-agenda', element: <OurAgenda /> },
       { path: '/register', element: <Register /> },
-      { path: '/youth-wing', element: <YouthWing /> },
-      { path: '/youth-wing/register', element: <YouthWingRegister /> },
-      { path: '/youth-wing/portal', element: <YouthWingPortal /> },
-      { path: '/youth-wing/form', element: <YouthWingFormPreview /> },
-      { path: '/youth-wing/articles', element: <YouthWingArticles /> },
-      { path: '/youth-wing/articles/:slug', element: <YouthWingArticleDetail /> },
-      { path: '/youth-wing/verify/:membershipNumber', element: <YouthWingVerify /> },
       { path: '/contact', element: <Contact /> },
       { path: '/donate', element: <Donate /> },
       { path: '/login', element: <Login /> },

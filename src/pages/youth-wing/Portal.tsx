@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import type { Area } from 'react-easy-crop'
 import { Link, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import SEO from '@/components/SEO'
 import { BrandLine } from '@/components/ui/BrandLine'
 import YouthMembershipCard from '@/components/YouthMembershipCard'
+import { PhotoCropStep } from '../register/components/PhotoCropStep'
 import { YouthMembershipCardActions } from '@/components/YouthMembershipCardActions'
 import { youthWingService, type YouthWingLookup } from '@/services/youthWingService'
 import type { BlogPost } from '@/types/admin'
@@ -110,6 +112,10 @@ export default function YouthWingPortal() {
   const [viewingAsStaff, setViewingAsStaff] = useState(false)
   const [articles, setArticles] = useState<BlogPost[]>([])
   const [tab, setTab] = useState<'card' | 'programme' | 'articles'>('card')
+  const [editingPhoto, setEditingPhoto] = useState(false)
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null)
+  const [savingPhoto, setSavingPhoto] = useState(false)
 
   // Staff deep link. The RPC is admin-gated, so a member (or a logged-out
   // visitor) who tries the same URL simply falls through to the sign-in form.
@@ -152,6 +158,34 @@ export default function YouthWingPortal() {
       toast.error((error as Error)?.message || 'Lookup failed. Please try again.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  /**
+   * Photo changes go through the youth-avatar edge function, which re-checks the
+   * membership number against the date of birth on the record. Imported members
+   * use exactly this path: they sign in with the number and date of birth we
+   * hold for them, then add a photo they never had.
+   */
+  async function savePhoto() {
+    if (!member || !photoUrl) return
+    setSavingPhoto(true)
+    try {
+      const uploaded = await youthWingService.uploadAvatar(
+        member.membership_number,
+        member.date_of_birth,
+        photoUrl,
+        croppedAreaPixels
+      )
+      setMember({ ...member, avatar_url: uploaded })
+      setEditingPhoto(false)
+      setPhotoUrl(null)
+      setCroppedAreaPixels(null)
+      toast.success('Photo updated.')
+    } catch (error) {
+      toast.error((error as Error)?.message || 'The photo could not be uploaded.')
+    } finally {
+      setSavingPhoto(false)
     }
   }
 
@@ -380,6 +414,7 @@ export default function YouthWingPortal() {
                 <YouthMembershipCard
                   userName={member.full_name}
                   membershipNumber={member.membership_number}
+                  avatarUrl={member.avatar_url}
                   initials={initials}
                   gender={member.gender || undefined}
                   age={member.age}
@@ -398,6 +433,7 @@ export default function YouthWingPortal() {
                     cardProps={{
                       userName: member.full_name,
                       membershipNumber: member.membership_number,
+                      avatarUrl: member.avatar_url,
                       initials,
                       gender: member.gender || undefined,
                       age: member.age,
@@ -412,6 +448,87 @@ export default function YouthWingPortal() {
                       status: status?.label,
                     }}
                   />
+                </div>
+
+                <div
+                  className="panel"
+                  style={{ padding: '20px 22px', maxWidth: 520, margin: '18px auto 0' }}
+                >
+                  <p
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 'var(--font-weight-medium, 500)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      color: 'hsl(var(--on-surface-muted))',
+                      margin: '0 0 10px',
+                    }}
+                  >
+                    {member.avatar_url ? 'Change your photo' : 'Add your photo'}
+                  </p>
+
+                  {!editingPhoto ? (
+                    <>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: 'hsl(var(--on-surface-muted))',
+                          margin: '0 0 14px',
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        {member.avatar_url
+                          ? 'This is the photo printed on your card.'
+                          : 'Your card has no photo yet. Add one and it will appear on the card straight away.'}
+                      </p>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => setEditingPhoto(true)}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                          photo_camera
+                        </span>
+                        {member.avatar_url ? 'Change photo' : 'Add photo'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <PhotoCropStep
+                        photoUrl={photoUrl}
+                        onPhotoChange={setPhotoUrl}
+                        onCropComplete={setCroppedAreaPixels}
+                      />
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        <button
+                          type="button"
+                          className="btn btn-sm"
+                          disabled={!photoUrl || savingPhoto}
+                          onClick={savePhoto}
+                          style={{
+                            background: YW_ACCENT,
+                            color: 'hsl(var(--card))',
+                            border: '1px solid ' + YW_ACCENT,
+                            opacity: !photoUrl || savingPhoto ? 0.6 : 1,
+                          }}
+                        >
+                          {savingPhoto ? 'Saving…' : 'Save photo'}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          disabled={savingPhoto}
+                          onClick={() => {
+                            setEditingPhoto(false)
+                            setPhotoUrl(null)
+                            setCroppedAreaPixels(null)
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
