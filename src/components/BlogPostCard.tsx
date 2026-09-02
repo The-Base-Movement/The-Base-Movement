@@ -139,7 +139,7 @@ export function BlogPostCard({ post, baseUrl }: BlogPostCardProps) {
           flexWrap: 'wrap',
         }}
       >
-        {formattedDate && <MetaItem icon="calendar_month">{formattedDate}</MetaItem>}
+        {formattedDate && <MetaItem icon="calendar_today">{formattedDate}</MetaItem>}
         {post.readTime && <MetaItem icon="schedule">{post.readTime}</MetaItem>}
       </div>
 

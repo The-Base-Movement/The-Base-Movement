@@ -38,6 +38,8 @@ const LABEL_OVERRIDES: Record<string, string> = {
   donate: 'Donate',
   impact: 'Impact',
   register: 'Register',
+  'youth-wing': 'Youth Wing',
+  articles: 'Articles',
 }
 
 // Routes where the Breadcrumbs component should render
@@ -57,6 +59,7 @@ const SUPPORTED_PREFIXES = [
   '/terms',
   '/officers',
   '/register',
+  '/youth-wing',
 ]
 
 /**
