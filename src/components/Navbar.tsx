@@ -41,8 +41,6 @@ const NAV_LINKS = [
   { label: 'Leadership', publicPath: '/officers', dashPath: '/dashboard/leadership' },
   { label: 'Constituencies', publicPath: '/constituencies', dashPath: '/dashboard/constituencies' },
   { label: 'Jobs', publicPath: '/jobs', dashPath: '/dashboard/jobs' },
-  // Youth Wing (14-17) is a civic programme, not party membership — public link only.
-  { label: 'Youth Wing', publicPath: '/youth-wing', dashPath: '/youth-wing' },
   { label: 'Store', publicPath: '/store', dashPath: '/dashboard/store' },
 ]
 
@@ -58,6 +56,15 @@ const PRIMARY_NAV_LABELS = new Set([
   'Contact',
 ])
 const PRIMARY_NAV_LINKS = NAV_LINKS.filter((link) => PRIMARY_NAV_LABELS.has(link.label))
+
+/**
+ * The Youth Wing (14-17) is a civic programme, not party membership, and it has
+ * its own surface. It sits in the actions row in its own teal rather than in the
+ * More dropdown, so a young person or a parent can find the way in without
+ * hunting through adult party navigation. Public path only -- youth have no
+ * dashboard.
+ */
+const YOUTH_WING_PATH = '/youth-wing'
 const MORE_NAV_LINKS = NAV_LINKS.filter((link) => !PRIMARY_NAV_LABELS.has(link.label))
 
 export default function Navbar() {
@@ -396,6 +403,15 @@ export default function Navbar() {
           className="nav-desktop-only"
         >
           {themeToggle}
+
+          <Link
+            to={YOUTH_WING_PATH}
+            className="btn btn-sm btn-yw"
+            style={{ textDecoration: 'none' }}
+          >
+            Youth Wing
+          </Link>
+
           {isLoggedIn ? (
             <div style={{ position: 'relative' }} ref={dropdownRef}>
               <button
@@ -579,6 +595,25 @@ export default function Navbar() {
         {/* Mobile actions */}
         <div className="nav-mobile-only" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Link
+            to={YOUTH_WING_PATH}
+            aria-label="Youth Wing"
+            title="Youth Wing"
+            className="yw-nav-icon"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 'var(--radius-sm)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+              diversity_3
+            </span>
+          </Link>
+          <Link
             to={isLoggedIn ? '/dashboard/donate' : '/donate'}
             aria-label="Donate"
             title="Donate"
@@ -686,6 +721,29 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Its own entry rather than a line in More: the drawer is where a
+                  parent looking for the youth programme will search first. */}
+              <Link
+                to={YOUTH_WING_PATH}
+                className="yw-nav-icon"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 14px',
+                  borderRadius: 'var(--radius-sm)',
+                  textDecoration: 'none',
+                  fontFamily: "'Public Sans', sans-serif",
+                  fontWeight: 'var(--font-weight-medium, 500)',
+                  fontSize: 13,
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>
+                  diversity_3
+                </span>
+                Youth Wing
+              </Link>
 
               <button
                 onClick={() => setIsMobileMoreOpen((value) => !value)}

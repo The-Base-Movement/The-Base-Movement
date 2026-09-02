@@ -8,6 +8,7 @@ import { CommentSection } from '@/components/CommentSection'
 import DOMPurify from 'dompurify'
 import { adminService, type BlogPost as BlogPostType } from '@/services/adminService'
 import SEO from '@/components/SEO'
+import { sharePost } from '@/lib/sharePost'
 import { PostToolbar } from './blogpost/PostToolbar'
 import { PostHeader } from './blogpost/PostHeader'
 import { PostHeroImage } from './blogpost/PostHeroImage'
@@ -71,35 +72,7 @@ export default function BlogPost() {
 
   const handleShare = (platform?: string) => {
     if (!post) return
-    const url = window.location.href
-    const title = post.title
-    let shareUrl: string
-    switch (platform) {
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
-        break
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
-        break
-      case 'linkedin':
-        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`
-        break
-      case 'whatsapp':
-        shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + url)}`
-        break
-      case 'telegram':
-        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`
-        break
-      default:
-        if (navigator.share) {
-          navigator.share({ title, url }).catch(() => {})
-        } else {
-          navigator.clipboard.writeText(url)
-          alert('Link copied to clipboard')
-        }
-        return
-    }
-    window.open(shareUrl, '_blank', 'width=600,height=400')
+    sharePost(post.title, window.location.href, platform)
   }
 
   if (loading) {

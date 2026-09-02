@@ -4,15 +4,33 @@ interface PostHeaderProps {
   readTime: string | undefined
   title: string
   excerpt: string | undefined
+  /**
+   * Colour for the category chip and the excerpt rule. Defaults to the party
+   * brand green and gold. The Youth Wing passes its teal, because a header in
+   * party colours on a page written for 14-17s reads as party membership --
+   * which is the one thing the youth track is not. The colours are set inline
+   * (an inline style beats any :hover or scoped rule), so this has to be a prop
+   * rather than a CSS override.
+   */
+  accent?: string
 }
 
-export function PostHeader({ category, publishedAt, readTime, title, excerpt }: PostHeaderProps) {
+export function PostHeader({
+  category,
+  publishedAt,
+  readTime,
+  title,
+  excerpt,
+  accent,
+}: PostHeaderProps) {
+  const chip = accent ?? 'hsl(var(--primary))'
+  const rule = accent ?? 'hsl(var(--accent))'
   return (
     <header className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <span
           className="px-3 py-1 text-xs font-medium tracking-tight"
-          style={{ background: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' }}
+          style={{ background: `color-mix(in srgb, ${chip} 10%, transparent)`, color: chip }}
         >
           {category}
         </span>
@@ -52,7 +70,7 @@ export function PostHeader({ category, publishedAt, readTime, title, excerpt }: 
         className="leading-relaxed font-medium italic pl-6 py-2 mb-0"
         style={{
           color: 'hsl(var(--on-surface-muted))',
-          borderLeft: '4px solid hsl(var(--accent))',
+          borderLeft: `4px solid ${rule}`,
         }}
       >
         {excerpt}

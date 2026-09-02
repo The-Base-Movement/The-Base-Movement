@@ -7,6 +7,16 @@ interface PostSidebarProps {
   authorRole: string | undefined
   authorBio: string | undefined
   onShare: (platform: string) => void
+  /**
+   * Categories to list, and the feed they link into. Both default to the adult
+   * blog. The Youth Wing passes its own so a 14-year-old following a category
+   * from a youth article lands in the youth reading list, never in the adult
+   * feed -- the two bodies of content are kept apart end to end.
+   */
+  categories?: string[]
+  categoryBasePath?: string
+  /** Accent for the hovered category and the author initial. */
+  accent?: string
 }
 
 const SHARE_BUTTONS = [
@@ -66,7 +76,7 @@ const SHARE_BUTTONS = [
   },
 ]
 
-const CATEGORIES = ['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community']
+const DEFAULT_CATEGORIES = ['Movement', 'Youth', 'Diaspora', 'Integrity', 'Economy', 'Community']
 
 export function PostSidebar({
   authorImage,
@@ -74,6 +84,9 @@ export function PostSidebar({
   authorRole,
   authorBio,
   onShare,
+  categories = DEFAULT_CATEGORIES,
+  categoryBasePath = '/blog',
+  accent = 'hsl(var(--primary))',
 }: PostSidebarProps) {
   const displayName = authorName?.toUpperCase() === 'ADMIN' ? 'The Base Editorial' : authorName
   const displayRole = authorName?.toUpperCase() === 'ADMIN' ? 'Movement Research' : authorRole
@@ -106,8 +119,8 @@ export function PostSidebar({
               <div
                 className="w-12 h-12 flex items-center justify-center rounded-none"
                 style={{
-                  background: 'rgba(0,107,63,0.08)',
-                  border: '1px solid rgba(0,107,63,0.12)',
+                  background: `color-mix(in srgb, ${accent} 8%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${accent} 14%, transparent)`,
                 }}
               >
                 <span
@@ -115,7 +128,7 @@ export function PostSidebar({
                     fontFamily: "'Public Sans', sans-serif",
                     fontWeight: 'var(--font-weight-medium, 500)',
                     fontSize: 16,
-                    color: 'var(--brand-green)',
+                    color: accent,
                   }}
                 >
                   {(displayName || 'A').charAt(0).toUpperCase()}
@@ -169,11 +182,11 @@ export function PostSidebar({
             Explore categories
           </p>
           <div className="space-y-2">
-            {CATEGORIES.map((cat) => {
+            {categories.map((cat) => {
               const hovered = hoverCat === cat
               return (
                 <Link
-                  to={`/blog?category=${cat.toLowerCase()}`}
+                  to={`${categoryBasePath}?category=${encodeURIComponent(cat.toLowerCase())}`}
                   key={cat}
                   onMouseEnter={() => setHoverCat(cat)}
                   onMouseLeave={() => setHoverCat(null)}
@@ -181,7 +194,7 @@ export function PostSidebar({
                   style={{
                     background: hovered ? 'hsl(var(--card))' : 'hsl(var(--container-low))',
                     border: `1px solid ${hovered ? 'hsl(var(--border))' : 'transparent'}`,
-                    color: hovered ? 'hsl(var(--primary))' : 'hsl(var(--on-surface-muted))',
+                    color: hovered ? accent : 'hsl(var(--on-surface-muted))',
                   }}
                 >
                   {cat}

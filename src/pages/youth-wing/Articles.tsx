@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import SEO from '@/components/SEO'
 import { BrandLine } from '@/components/ui/BrandLine'
 import { youthWingService } from '@/services/youthWingService'
@@ -14,6 +14,18 @@ import { YW_SCOPE, YW_ACCENT, YW_ACCENT_SOFT } from './theme'
 export default function YouthWingArticles() {
   const [articles, setArticles] = useState<BlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [searchParams] = useSearchParams()
+
+  // The article page's aside links categories here, so this page has to honour
+  // ?category= or those links are dead ends.
+  const category = searchParams.get('category')
+  const visible = useMemo(
+    () =>
+      category
+        ? articles.filter((a) => (a.category || '').toLowerCase() === category.toLowerCase())
+        : articles,
+    [articles, category]
+  )
 
   useEffect(() => {
     youthWingService
@@ -82,13 +94,24 @@ export default function YouthWingArticles() {
       <div className="max-w-[1100px] mx-auto px-5 lg:px-8 py-12">
         {isLoading ? (
           <p style={{ color: 'hsl(var(--on-surface-muted))' }}>Loading…</p>
-        ) : articles.length === 0 ? (
-          <p style={{ color: 'hsl(var(--on-surface-muted))' }}>
-            No Youth Wing articles have been published yet.
-          </p>
+        ) : visible.length === 0 ? (
+          <div
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 14 }}
+          >
+            <p style={{ color: 'hsl(var(--on-surface-muted))', margin: 0 }}>
+              {category
+                ? `No Youth Wing articles in ${category} yet.`
+                : 'No Youth Wing articles have been published yet.'}
+            </p>
+            {category && (
+              <Link to="/youth-wing/articles" className="btn btn-outline">
+                All Youth Wing articles
+              </Link>
+            )}
+          </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {articles.map((a) => (
+            {visible.map((a) => (
               <Link
                 key={a.id}
                 to={`/youth-wing/articles/${a.slug}`}
