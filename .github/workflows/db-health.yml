@@ -1,0 +1,131 @@
+name: Database health
+
+# Polls the production database every 10 minutes and posts to Discord when it
+# goes down or recovers.
+#
+# This runs on GitHub, not in the database, on purpose. On 2026-09-16 the
+# database was starved of CPU for ten hours; scheduled jobs inside it were
+# timing out too, so a check scheduled in there would have gone silent exactly
+# when it was needed. A request from here either gets an answer or it doesn't.
+#
+# One message when it breaks, one when it recovers, nothing in between. The
+# previous run's result is the state: an unhealthy check fails the run.
+#
+# Secrets:
+#   SUPABASE_ANON_KEY              the public anon key (already in the website)
+#   DISCORD_DB_ALERTS_WEBHOOK_URL  Discord channel webhook for the alerts
+#
+# Run it by hand from the Actions tab with "send_test" ticked to check that
+# the Discord message arrives.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      send_test:
+        description: 'Post a test message to Discord'
+        type: boolean
+        default: false
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: db-health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: https://vhlyekyxutwbxlvktnzd.supabase.co
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_DB_ALERTS_WEBHOOK_URL }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check the database
+        id: health
+        run: |
+          set +e
+          start=$(date +%s)
+          response=$(curl -sS --max-time 20 -X POST "$SUPABASE_URL/rest/v1/rpc/db_health" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}' -w '\n%{http_code}' 2>&1)
+          curl_exit=$?
+          elapsed=$(( $(date +%s) - start ))
+          http_code=$(printf '%s' "$response" | tail -n1)
+          body=$(printf '%s' "$response" | sed '$d')
+
+          healthy=true
+          if [ "$curl_exit" -ne 0 ]; then
+            healthy=false
+            summary="The database is not responding (no answer within 20 seconds)."
+          elif [ "$http_code" != "200" ]; then
+            healthy=false
+            summary="The database API returned HTTP $http_code."
+          elif [ "$(printf '%s' "$body" | jq -r '.ok')" != "true" ]; then
+            healthy=false
+            summary="The database is degraded: $(printf '%s' "$body" | jq -r '.issues | join("; ")')."
+          elif [ "$elapsed" -ge 8 ]; then
+            healthy=false
+            summary="The database is slow: a trivial health check took ${elapsed} seconds."
+          else
+            summary="Healthy in ${elapsed}s: $(printf '%s' "$body" | jq -c '{connections_pct, longest_query_s, cron_failed_15m}')"
+          fi
+
+          echo "$summary"
+          echo "healthy=$healthy" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<EOF"
+            echo "$summary"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post to Discord if the state changed
+        env:
+          HEALTHY: ${{ steps.health.outputs.healthy }}
+          SUMMARY: ${{ steps.health.outputs.summary }}
+          SEND_TEST: ${{ inputs.send_test }}
+        run: |
+          # The run in progress is excluded by --status completed.
+          previous=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow db-health.yml \
+            --status completed --limit 1 --json conclusion -q '.[0].conclusion')
+          echo "Previous run: ${previous:-none}. Healthy now: $HEALTHY."
+
+          message=""
+          if [ "$SEND_TEST" = "true" ]; then
+            message="🧪 **Database monitor test.** Alerts will arrive in this channel. Current state: $SUMMARY"
+          elif [ "$HEALTHY" != "true" ] && [ "$previous" != "failure" ]; then
+            message="🔴 **Database problem.** $SUMMARY The website may be failing to load data. Supabase: https://supabase.com/dashboard/project/vhlyekyxutwbxlvktnzd/settings/infrastructure"
+          elif [ "$HEALTHY" = "true" ] && [ "$previous" = "failure" ]; then
+            message="✅ **Database recovered.** $SUMMARY"
+          fi
+
+          if [ -z "$message" ]; then
+            echo "No change, nothing to post."
+            exit 0
+          fi
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "::warning::DISCORD_DB_ALERTS_WEBHOOK_URL is not set, so this alert was not sent: $message"
+            exit 0
+          fi
+
+          # A failed post must not fail the run: the run's result is the health
+          # state, and a false failure here would announce a false recovery next.
+          jq -n --arg content "$message" '{content: $content, allowed_mentions: {parse: []}}' \
+            | curl -sS --fail --max-time 20 -X POST "$DISCORD_WEBHOOK" \
+                -H "Content-Type: application/json" -d @- \
+            || echo "::warning::Could not post to Discord."
+
+      - name: Record the result
+        if: steps.health.outputs.healthy != 'true'
+        env:
+          SUMMARY: ${{ steps.health.outputs.summary }}
+        run: |
+          echo "::error::$SUMMARY"
+          exit 1
