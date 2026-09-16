@@ -239,7 +239,7 @@ Deno.serve(async (req: Request) => {
           body: JSON.stringify({
             embeds: [
               {
-                title: 'ðŸ†• New Member Registration Verified',
+                title: '🆕 New Member Registration Verified',
                 description: `A new member has completed registration and verification.`,
                 color: 2067276, // Green
                 fields: [

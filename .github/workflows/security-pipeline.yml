@@ -29,6 +29,18 @@ jobs:
         with:
           deno-version: v2.x
 
+      # UTF-8 files re-saved by a tool that read them as Windows-1252 (Windows
+      # PowerShell 5.1's default) turn emoji and punctuation into sequences like
+      # "ðŸ”‘" and "â€¢". That shipped to the password-reset Discord alerts for five
+      # weeks after commit c78dbaac. These sequences never occur in real text.
+      - name: Check for garbled text
+        run: |
+          if grep -rnF -e 'ðŸ' -e 'â€' -e 'ï¸' -e 'âš' -e 'âœ' supabase src scripts \
+              --include='*.ts' --include='*.tsx' --include='*.mjs' --include='*.sql'; then
+            echo "::error::Garbled text found (UTF-8 read as Windows-1252). Restore the original characters and re-save as UTF-8."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 

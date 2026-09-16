@@ -1,4 +1,4 @@
-﻿// THE BASE: DONATION RECEIPT â€” generates HTML receipt + emails + SMS member
+﻿// THE BASE: DONATION RECEIPT — generates HTML receipt + emails + SMS member
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 import { donationReceiptEmail, donationReceiptHtml } from '../_shared/email-templates.ts'
 import { sendSms } from '../_shared/sms.ts'
@@ -107,9 +107,9 @@ if (import.meta.main)
           timeZone: 'Africa/Accra',
         }) + ' GMT'
 
-      const amountStr = `â‚µ${Number(row.amount).toFixed(2)}`
+      const amountStr = `₵${Number(row.amount).toFixed(2)}`
 
-      // â”€â”€ 1. Generate + upload receipt HTML if not already stored â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ── 1. Generate + upload receipt HTML if not already stored ──────────────
       let receiptUrl = row.receipt_url ?? null
 
       if (!receiptUrl) {
@@ -169,11 +169,11 @@ if (import.meta.main)
         }
       }
 
-      // â”€â”€ 2. Send email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ── 2. Send email ─────────────────────────────────────────────────────────
       const memberEmail = row.users?.email
       let emailSent = false
       if (!memberEmail) {
-        console.warn('[RECEIPT] No email for member_id', row.member_id, 'â€” skipping email')
+        console.warn('[RECEIPT] No email for member_id', row.member_id, '— skipping email')
       } else {
         const emailHtml = donationReceiptEmail({
           name: row.full_name,
@@ -188,14 +188,14 @@ if (import.meta.main)
         const r = await sendEmail({
           to: memberEmail,
           from: `The Base Movement <${senderEmail}>`,
-          subject: `Your ${amountStr} contribution is confirmed â€” Receipt ${row.reference}`,
+          subject: `Your ${amountStr} contribution is confirmed — Receipt ${row.reference}`,
           html: emailHtml,
         })
         emailSent = r.ok
         console.log('[RECEIPT] Email dispatch to', memberEmail, r.ok ? 'ok' : r.detail)
       }
 
-      // â”€â”€ 3. Send SMS via MNotify â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+      // ── 3. Send SMS via MNotify ───────────────────────────────────────────────
       const rawPhone = row.users?.phone_number
       let smsSent = false
       if (rawPhone) {

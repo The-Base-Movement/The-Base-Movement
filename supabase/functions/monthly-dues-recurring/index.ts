@@ -1,10 +1,10 @@
 ﻿/**
  * monthly-dues-recurring
- * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * ─────────────────────────────────────────────────────────────
  * Authenticated member lifecycle for Hubtel Recurring Invoice:
- *   action: 'create'  â€” create the provider invoice for a pending enrollment
- *   action: 'verify'  â€” reconcile provider state; activate on confirmation
- *   action: 'cancel'  â€” cancel at the provider; opt out only on success
+ *   action: 'create'  — create the provider invoice for a pending enrollment
+ *   action: 'verify'  — reconcile provider state; activate on confirmation
+ *   action: 'cancel'  — cancel at the provider; opt out only on success
  *
  * Credentials come from the same env vars as checkout. No provider error
  * ever activates an enrollment or completes a cancellation.

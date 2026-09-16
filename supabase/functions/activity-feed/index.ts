@@ -1,4 +1,4 @@
-// activity-feed â†’ Discord
+// activity-feed → Discord
 //
 // Near-real-time feed of member activity (logins, logouts, on-site actions).
 // Invoked by a pg_cron job every few minutes. Reads new rows from
@@ -31,11 +31,11 @@ interface ActivityRow {
 function icon(actionType: string | null): string {
   switch ((actionType || '').toLowerCase()) {
     case 'login':
-      return 'ðŸŸ¢'
+      return '🟢'
     case 'logout':
-      return 'ðŸ”´'
+      return '🔴'
     default:
-      return 'â–«ï¸'
+      return '▫️'
   }
 }
 
@@ -145,10 +145,10 @@ serve(async (req: Request) => {
     const lines = rows.map((r) => {
       const who = nameById[r.user_id] || 'Unknown member'
       const what = r.description || r.action_type || 'activity'
-      return `${icon(r.action_type)} \`${hhmm(r.created_at)}\` **${who}** â€” ${what}`
+      return `${icon(r.action_type)} \`${hhmm(r.created_at)}\` **${who}** — ${what}`
     })
 
-    const header = `**Member activity** Â· ${rows.length} event${rows.length === 1 ? '' : 's'}`
+    const header = `**Member activity** · ${rows.length} event${rows.length === 1 ? '' : 's'}`
     const chunks: string[] = []
     let buf = header
     for (const line of lines) {

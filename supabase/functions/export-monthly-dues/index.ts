@@ -1,13 +1,13 @@
 /**
  * export-monthly-dues
- * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * ─────────────────────────────────────────────────────────────
  * Server-authorized dues exports.
- *   scope 'member'  â€” the caller's own dues rows (JWT-bound)
- *   scope 'finance' â€” filtered rows with minimal member identity;
+ *   scope 'member'  — the caller's own dues rows (JWT-bound)
+ *   scope 'finance' — filtered rows with minimal member identity;
  *                     requires MANAGE_DONATIONS:DONATIONS
  * format 'csv' returns a complete CSV file; 'json' returns the same
  * whitelisted rows for client-side PDF rendering. Columns are a strict
- * whitelist â€” national id, notes, and contact details can never appear.
+ * whitelist — national id, notes, and contact details can never appear.
  * Failures return a JSON error, never a partial file.
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -64,7 +64,7 @@ function modeLabel(mode: string): string {
 
 /**
  * Maps a payment onto whitelisted export columns. This is the only place
- * export data is produced â€” anything not named here cannot leak.
+ * export data is produced — anything not named here cannot leak.
  */
 export function toExportRow(payment: ExportPaymentRow, scope: ExportScope): Record<string, string> {
   const row: Record<string, string> = {
@@ -155,7 +155,7 @@ if (import.meta.main) {
       const scopeResult = resolveExportScope(user.id, isFinance, body.scope ?? 'member')
       if (!scopeResult.ok) return json({ error: scopeResult.error }, 403)
 
-      // Whitelisted select only â€” national_id and contact fields are never
+      // Whitelisted select only — national_id and contact fields are never
       // part of this query.
       let query = supabaseAdmin
         .from('monthly_dues_payments')

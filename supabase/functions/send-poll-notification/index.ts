@@ -115,7 +115,7 @@ Deno.serve(async (req: Request) => {
     const emailResult = await sendEmailBatch(messages)
     const sentCount = emailResult.sent
 
-    // Push notifications for all matching members â€” fire and forget
+    // Push notifications for all matching members — fire and forget
     const memberIds = ((members ?? []) as Member[]).map((m) => m.id)
     if (memberIds.length > 0) {
       // @ts-ignore: Deno global
@@ -130,7 +130,7 @@ Deno.serve(async (req: Request) => {
         },
         body: JSON.stringify({
           userIds: memberIds,
-          title: `Poll closing in ${hoursRemaining}h â€” vote now`,
+          title: `Poll closing in ${hoursRemaining}h — vote now`,
           body: row.title.slice(0, 100),
           url: '/dashboard/polls',
         }),
