@@ -10,8 +10,8 @@
 // Caller must be a privileged admin (SUPER_ADMIN / FOUNDER / EXECUTIVE).
 //
 // Body:
-//   { user_id: string, check_only: true }            â†’ { needsEmail, currentEmail }
-//   { user_id: string, email: string }               â†’ performs the switch
+//   { user_id: string, check_only: true }            → { needsEmail, currentEmail }
+//   { user_id: string, email: string }               → performs the switch
 //
 // Optional secret: RESEND_API_KEY (notifies the appointee of their login email)
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
 
     const admin = createClient(supabaseUrl, serviceKey)
 
-    // â”€â”€ Authenticate + authorize the caller â”€â”€
+    // ── Authenticate + authorize the caller ──
     const authHeader = req.headers.get('Authorization') ?? ''
     const jwt = authHeader.replace('Bearer ', '')
     if (!jwt) return json({ error: 'Not authenticated.' }, 401)
@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
       return json({ error: 'Not authorized to manage admin credentials.' }, 403)
     }
 
-    // â”€â”€ Load the target user â”€â”€
+    // ── Load the target user ──
     const { user_id, email, check_only } = await req.json()
     if (!user_id) return json({ error: 'user_id is required.' }, 400)
 
@@ -90,7 +90,7 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    // â”€â”€ Perform the switch â”€â”€
+    // ── Perform the switch ──
     const newEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
     if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
       return json({ error: 'A valid email address is required.' }, 400)
@@ -115,18 +115,18 @@ Deno.serve(async (req: Request) => {
 
     await admin.from('users').update({ email: newEmail }).eq('id', user_id)
 
-    // â”€â”€ Notify the appointee (best-effort) â”€â”€
+    // ── Notify the appointee (best-effort) ──
     {
       try {
         const senderEmail = await getSenderEmail(admin)
         await sendEmail({
           to: newEmail,
           from: `The Base Movement <${senderEmail}>`,
-          subject: 'Admin access granted â€” The Base Movement',
+          subject: 'Admin access granted — The Base Movement',
           text:
             `You have been granted administrative access to The Base Movement.\n\n` +
             `Sign in to the admin panel with this email address (${newEmail}) and your existing password.\n\n` +
-            `For security, please set up two-factor authentication in Settings â†’ Security after your first login.`,
+            `For security, please set up two-factor authentication in Settings → Security after your first login.`,
         })
       } catch (mailErr) {
         console.warn('[ASSIGN-ADMIN-EMAIL] Notification email failed:', mailErr)

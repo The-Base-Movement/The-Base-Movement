@@ -62,26 +62,26 @@ serve(async (req: Request) => {
       const nowStr = new Date().toISOString()
 
       const embed = {
-        title: 'ðŸ“Š Weekly Password & Security Summary',
+        title: '📊 Weekly Password & Security Summary',
         description: 'Automated 7-day summary report of member password updates & reset requests.',
         color: 0x006b3f, // Ghana Green
         fields: [
           {
-            name: 'ðŸ“ˆ 7-Day Activity Totals',
+            name: '📈 7-Day Activity Totals',
             value: [
-              `â€¢ Total Security Events: **${summary.total_events || 0}**`,
-              `â€¢ Passwords Updated: **${summary.password_updated || 0}**`,
-              `â€¢ Member Reset Requests: **${summary.reset_requested || 0}**`,
-              `â€¢ Admin Resets Initiated: **${summary.admin_reset_triggered || 0}**`,
-              `â€¢ Account Recoveries Approved: **${summary.recovery_approved || 0}**`,
+              `• Total Security Events: **${summary.total_events || 0}**`,
+              `• Passwords Updated: **${summary.password_updated || 0}**`,
+              `• Member Reset Requests: **${summary.reset_requested || 0}**`,
+              `• Admin Resets Initiated: **${summary.admin_reset_triggered || 0}**`,
+              `• Account Recoveries Approved: **${summary.recovery_approved || 0}**`,
             ].join('\n'),
           },
           {
-            name: 'ðŸ“… Reporting Window',
+            name: '📅 Reporting Window',
             value: `From <t:${Math.floor(new Date(summary.period_start || Date.now() - 7 * 86400000).getTime() / 1000)}:f> to <t:${Math.floor(Date.now() / 1000)}:f>`,
           },
         ],
-        footer: { text: 'The Base Movement â€” Automated Security Operations' },
+        footer: { text: 'The Base Movement — Automated Security Operations' },
         timestamp: nowStr,
       }
 
@@ -126,32 +126,32 @@ serve(async (req: Request) => {
     })
 
     // Prepare Discord Embed based on event_type
-    let eventTitle = 'ðŸ” Password Activity Alert'
+    let eventTitle = '🔐 Password Activity Alert'
     let eventColor = 0x006b3f // Green
     let eventDescription = 'A password event was recorded.'
 
     if (eventType === 'password_updated') {
-      eventTitle = 'ðŸ”‘ Password Updated'
+      eventTitle = '🔑 Password Updated'
       eventColor = 0x006b3f // Green
       eventDescription = `Password was successfully changed for **${fullName}**.`
     } else if (eventType === 'reset_requested') {
-      eventTitle = 'ðŸ“© Password Reset Requested'
+      eventTitle = '📩 Password Reset Requested'
       eventColor = 0xfcd116 // Yellow / Gold
       eventDescription = `A password reset OTP/link was requested for **${fullName}**.`
     } else if (eventType === 'admin_reset_triggered') {
-      eventTitle = 'ðŸ›¡ï¸ Admin Triggered Password Reset'
+      eventTitle = '🛡️ Admin Triggered Password Reset'
       eventColor = 0xe65100 // Orange
       eventDescription = `An administrator initiated a password reset link for **${fullName}**.`
     } else if (eventType === 'recovery_approved') {
-      eventTitle = 'âœ… Password Recovery Request Approved'
+      eventTitle = '✅ Password Recovery Request Approved'
       eventColor = 0x7b1fa2 // Purple
       eventDescription = `Account recovery request was approved for **${fullName}**.`
     } else if (eventType === 'reset_failed') {
-      eventTitle = 'ðŸš¨ Failed Password Reset Attempt'
+      eventTitle = '🚨 Failed Password Reset Attempt'
       eventColor = 0xd32f2f // Red
       eventDescription = `A password reset attempt failed for phone/account **${phone || fullName}** (Invalid/expired OTP or invalid credentials).`
     } else if (eventType === 'rate_limit_exceeded') {
-      eventTitle = 'âš ï¸ Password Reset Rate Limit Exceeded'
+      eventTitle = '⚠️ Password Reset Rate Limit Exceeded'
       eventColor = 0xc62828 // Dark Red
       eventDescription = `Multiple invalid password reset attempts were detected and throttled for **${phone || fullName}**.`
     }
@@ -162,17 +162,17 @@ serve(async (req: Request) => {
       color: eventColor,
       fields: [
         {
-          name: 'ðŸ‘¤ Member / Account',
-          value: `â€¢ **Name:** ${fullName}\nâ€¢ **Phone:** ${phone || 'N/A'}\nâ€¢ **Email:** ${email || 'N/A'}`,
+          name: '👤 Member / Account',
+          value: `• **Name:** ${fullName}\n• **Phone:** ${phone || 'N/A'}\n• **Email:** ${email || 'N/A'}`,
           inline: true,
         },
         {
-          name: 'âš™ï¸ Event Context',
-          value: `â€¢ **Event:** \`${eventType}\`\nâ€¢ **Initiated By:** ${triggeredBy}\nâ€¢ **IP:** \`${ip}\``,
+          name: '⚙️ Event Context',
+          value: `• **Event:** \`${eventType}\`\n• **Initiated By:** ${triggeredBy}\n• **IP:** \`${ip}\``,
           inline: true,
         },
       ],
-      footer: { text: 'The Base Movement â€” Security Operations' },
+      footer: { text: 'The Base Movement — Security Operations' },
       timestamp: new Date().toISOString(),
     }
 

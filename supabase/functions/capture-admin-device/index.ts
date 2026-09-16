@@ -6,7 +6,7 @@
 // enrol-or-validate logic via the evaluate_admin_device RPC (service role).
 //
 // Returns: { tracked, decision, device_id, webauthn_required }
-//   decision âˆˆ enrolled | verified | step_up_required | blocked
+//   decision ∈ enrolled | verified | step_up_required | blocked
 //   tracked=false  -> caller is not a device-tracked role; client treats as allow.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
@@ -81,7 +81,7 @@ async function geoLocate(
       }
     }
   } catch {
-    // ignore â€” geo/ISP is best-effort
+    // ignore — geo/ISP is best-effort
   }
 
   return { location: null, isp: null }
@@ -125,19 +125,19 @@ async function alertBlocked(
         channel: 'alerts',
         embeds: [
           {
-            title: 'ðŸ”´ Blocked device login attempt',
+            title: '🔴 Blocked device login attempt',
             description,
             color: 0xce1126,
             fields: [
               { name: 'Leader', value: adminName, inline: true },
-              { name: 'Device Type', value: deviceType ?? 'â€”', inline: true },
+              { name: 'Device Type', value: deviceType ?? '—', inline: true },
               {
                 name: 'Browser / OS',
-                value: `${browser ?? 'â€”'} on ${osType ?? 'â€”'}`,
+                value: `${browser ?? '—'} on ${osType ?? '—'}`,
                 inline: true,
               },
-              { name: 'IP', value: ip ?? 'â€”', inline: true },
-              { name: 'Location', value: location ?? 'â€”', inline: true },
+              { name: 'IP', value: ip ?? '—', inline: true },
+              { name: 'Location', value: location ?? '—', inline: true },
             ],
             timestamp: new Date().toISOString(),
           },
@@ -174,7 +174,7 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (!admin || !TRACKED_ROLES.includes(admin.role)) {
-      // Not tracked â€” nothing to capture; client proceeds normally.
+      // Not tracked — nothing to capture; client proceeds normally.
       return json({ tracked: false, decision: 'verified' })
     }
 

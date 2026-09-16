@@ -71,7 +71,7 @@ Deno.serve(async (req: Request) => {
       preheader: subject ?? 'An important update from The Base Movement.',
       body: body ? `<p style="line-height:1.65;color:#444;margin-bottom:14px">${body}</p>` : '',
       region: region ?? targetValue,
-      ctaLabel: 'Read the full update â†’',
+      ctaLabel: 'Read the full update →',
       ctaUrl: 'https://www.thebasemovement.org.gh/dashboard',
     })
 
@@ -110,10 +110,10 @@ Deno.serve(async (req: Request) => {
     }
 
     console.warn(
-      `[URGENT DISPATCH] ${broadcastId} â€” ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
+      `[URGENT DISPATCH] ${broadcastId} — ${emailRecipients.length} email / ${phoneRecipients.length} SMS recipients`
     )
 
-    // Push notifications â€” fire and forget
+    // Push notifications — fire and forget
     const userIds = (users as Compatriot[])?.map((u) => u.id) ?? []
     if (userIds.length > 0) {
       const supabaseUrl: string = Deno.env.get('SUPABASE_URL') ?? ''

@@ -48,7 +48,7 @@ async function sendAlert(
         channel: 'alerts',
         embeds: [
           {
-            title: `ðŸ”´ ${title}`,
+            title: `🔴 ${title}`,
             description,
             color: 0xce1126,
             fields,
@@ -80,7 +80,7 @@ async function sendPaymentNotification(
         channel: 'payments',
         embeds: [
           {
-            title: `ðŸ’° ${title}`,
+            title: `💰 ${title}`,
             description,
             color,
             fields,
@@ -257,7 +257,7 @@ if (import.meta.main)
         // Send Discord payment notification matching the premium client-side style
         const campaignTitle = (donation as any).donation_campaigns?.title || 'Strategic Fund'
         await sendPaymentNotification(
-          'Donation Confirmed âœ…',
+          'Donation Confirmed ✅',
           `A successful donation was processed.`,
           0xfcd116, // Premium Gold / Yellow color matching original screenshots
           [
@@ -268,7 +268,7 @@ if (import.meta.main)
             },
             {
               name: 'Amount',
-              value: `â‚µ ${Number((donation as any).amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+              value: `₵ ${Number((donation as any).amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
               inline: true,
             },
             { name: 'Method', value: (donation as any).payment_method || 'Hubtel', inline: true },
@@ -293,7 +293,7 @@ if (import.meta.main)
           .eq('id', reference)
           .maybeSingle()
         await sendPaymentNotification(
-          'Donation Failed âŒ',
+          'Donation Failed ❌',
           'A donation attempt did not complete.',
           0xce1126,
           [
@@ -301,8 +301,8 @@ if (import.meta.main)
             {
               name: 'Amount',
               value: failed
-                ? `â‚µ ${Number(failed.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                : 'â€”',
+                ? `₵ ${Number(failed.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                : '—',
               inline: true,
             },
             { name: 'Method', value: failed?.payment_method || 'Hubtel', inline: true },
@@ -337,7 +337,7 @@ if (import.meta.main)
                 })
             }
             await sendPaymentNotification(
-              'Group Donation Confirmed âœ…',
+              'Group Donation Confirmed ✅',
               'A successful group donation was processed.',
               0xfcd116,
               [
@@ -351,10 +351,10 @@ if (import.meta.main)
                   value: (groupResult.paid_by_name as string) || 'Anonymous Compatriot',
                   inline: true,
                 },
-                { name: 'Members', value: String(groupResult.member_count ?? 'â€”'), inline: true },
+                { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
                 {
                   name: 'Amount',
-                  value: `â‚µ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                  value: `₵ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   inline: true,
                 },
                 {
@@ -365,10 +365,10 @@ if (import.meta.main)
               ]
             )
           } else {
-            // Failed group donation â€” one organiser covering several people, so
+            // Failed group donation — one organiser covering several people, so
             // a silent failure strands the whole group.
             await sendPaymentNotification(
-              'Group Donation Failed âŒ',
+              'Group Donation Failed ❌',
               'A group donation attempt did not complete.',
               0xce1126,
               [
@@ -382,10 +382,10 @@ if (import.meta.main)
                   value: (groupResult.paid_by_name as string) || 'Anonymous Compatriot',
                   inline: true,
                 },
-                { name: 'Members', value: String(groupResult.member_count ?? 'â€”'), inline: true },
+                { name: 'Members', value: String(groupResult.member_count ?? '—'), inline: true },
                 {
                   name: 'Amount',
-                  value: `â‚µ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                  value: `₵ ${Number(groupResult.total_amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   inline: true,
                 },
                 {
@@ -423,10 +423,10 @@ if (import.meta.main)
         if (duesDecision?.alert) {
           await sendAlert(
             'Monthly dues amount mismatch',
-            'A Hubtel callback reported a settlement amount that does not match the dues obligation. The payment was NOT marked paid â€” reconcile manually.',
+            'A Hubtel callback reported a settlement amount that does not match the dues obligation. The payment was NOT marked paid — reconcile manually.',
             [
               { name: 'Reference', value: reference },
-              { name: 'Transaction', value: transactionId ?? 'â€”' },
+              { name: 'Transaction', value: transactionId ?? '—' },
             ]
           )
           await sendMonthlyDuesDiscordAlert({
@@ -444,7 +444,7 @@ if (import.meta.main)
               .eq('id', reference)
               .maybeSingle()
             // Name the payer: a truncated reference alone does not tell finance
-            // staff who paid. Best-effort â€” a lookup failure must not block the
+            // staff who paid. Best-effort — a lookup failure must not block the
             // alert, which is why this is a separate query.
             let payer: { full_name: string | null; registration_number: string | null } | null =
               null
@@ -489,7 +489,7 @@ if (import.meta.main)
               payer = data ?? null
             }
             await sendPaymentNotification(
-              'Monthly Dues Failed âŒ',
+              'Monthly Dues Failed ❌',
               'A monthly dues payment did not complete.',
               0xce1126,
               [
@@ -497,15 +497,15 @@ if (import.meta.main)
                   name: 'Member',
                   value: payer?.full_name
                     ? payer.registration_number
-                      ? `${payer.full_name} Â· ${payer.registration_number}`
+                      ? `${payer.full_name} · ${payer.registration_number}`
                       : payer.full_name
                     : 'Unknown member',
                   inline: true,
                 },
-                { name: 'Month', value: duesPayment?.dues_month ?? 'â€”', inline: true },
+                { name: 'Month', value: duesPayment?.dues_month ?? '—', inline: true },
                 {
                   name: 'Amount',
-                  value: duesPayment ? `GHS ${Number(duesPayment.amount_ghs).toFixed(2)}` : 'â€”',
+                  value: duesPayment ? `GHS ${Number(duesPayment.amount_ghs).toFixed(2)}` : '—',
                   inline: true,
                 },
                 { name: 'Reference', value: reference.substring(0, 8).toUpperCase(), inline: true },
@@ -556,10 +556,10 @@ if (import.meta.main)
         if (paid && !order) {
           await sendAlert(
             'Orphaned Hubtel payment',
-            'A successful payment callback matched no donation or order. Funds may be unrecorded â€” investigate.',
+            'A successful payment callback matched no donation or order. Funds may be unrecorded — investigate.',
             [
               { name: 'Reference', value: reference },
-              { name: 'Transaction', value: transactionId ?? 'â€”' },
+              { name: 'Transaction', value: transactionId ?? '—' },
             ]
           )
         }
@@ -568,13 +568,13 @@ if (import.meta.main)
           // Send Discord payment notification for store order
           await sendPaymentNotification(
             'Store Order Paid',
-            `A store order of **â‚µ${Number((order as any).total_amount).toFixed(2)}** was successfully paid.`,
+            `A store order of **₵${Number((order as any).total_amount).toFixed(2)}** was successfully paid.`,
             0xdaa520, // Accent / Brand Gold color
             [
               { name: 'Customer Name', value: (order as any).full_name || 'Anonymous Compatriot' },
               { name: 'Order ID', value: order.id.substring(0, 8) },
-              { name: 'Email', value: (order as any).email || 'â€”' },
-              { name: 'Transaction ID', value: transactionId || 'â€”' },
+              { name: 'Email', value: (order as any).email || '—' },
+              { name: 'Transaction ID', value: transactionId || '—' },
             ]
           )
         }

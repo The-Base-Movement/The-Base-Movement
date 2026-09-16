@@ -89,7 +89,7 @@ async function geoLocate(ip: string | null): Promise<string | null> {
       }
     }
   } catch {
-    // ignore â€” geo is non-essential
+    // ignore — geo is non-essential
   }
   return null
 }

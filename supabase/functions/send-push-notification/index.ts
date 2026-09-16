@@ -40,7 +40,7 @@ Deno.serve(async (req: Request) => {
       Deno.env.get('VAPID_PRIVATE_KEY') ?? ''
     )
 
-    // Fetch subscriptions â€” either all opted-in users or a specific list
+    // Fetch subscriptions — either all opted-in users or a specific list
     let query = supabaseAdmin.from('push_subscriptions').select('id, user_id, subscription')
     if (userIds !== 'all') {
       if (!Array.isArray(userIds) || userIds.length === 0) {
@@ -78,7 +78,7 @@ Deno.serve(async (req: Request) => {
       } catch (err: unknown) {
         const status = (err as { statusCode?: number }).statusCode
         if (status === 410 || status === 404) {
-          // Subscription expired or revoked â€” clean up
+          // Subscription expired or revoked — clean up
           expiredIds.push(row.id)
         } else {
           failed++

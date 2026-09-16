@@ -41,8 +41,8 @@ async function fetchSmsBalance(): Promise<SmsBalancePayload> {
 }
 
 /**
- * Resend exposes no balance or quota endpoint â€” an email plan is a monthly
- * allowance, not a credit pool â€” so "remaining" is not knowable from the API.
+ * Resend exposes no balance or quota endpoint — an email plan is a monthly
+ * allowance, not a credit pool — so "remaining" is not knowable from the API.
  * Report what IS knowable: how many emails the account has sent this month.
  */
 async function fetchEmailsSentThisMonth(): Promise<{ ok: boolean; sent: number | null }> {

@@ -1,6 +1,6 @@
 ﻿/**
  * monthly-dues-recurring-callback
- * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * ─────────────────────────────────────────────────────────────
  * Hubtel recurring-invoice charge callback. The signed reference is the
  * enrollment id. A successful charge:
  *   1. activates a pending enrollment (provider confirmation), then
@@ -99,7 +99,7 @@ if (import.meta.main) {
           channel: 'alerts',
           embeds: [
             {
-              title: `ðŸ”´ ${title}`,
+              title: `🔴 ${title}`,
               description,
               color: 0xce1126,
               footer: { text: 'Monthly dues recurring callback' },
@@ -197,7 +197,7 @@ if (import.meta.main) {
       if (decision?.alert) {
         await sendAlert(
           'Recurring dues amount mismatch',
-          'A recurring charge callback reported an amount that does not match the obligation. The payment was NOT marked paid â€” reconcile manually.'
+          'A recurring charge callback reported an amount that does not match the obligation. The payment was NOT marked paid — reconcile manually.'
         )
         await sendMonthlyDuesDiscordAlert({
           type: 'callback_anomaly',
@@ -208,7 +208,7 @@ if (import.meta.main) {
       }
 
       if (charge.success && decision?.handled) {
-        // Name the payer â€” a truncated reference does not tell finance staff
+        // Name the payer — a truncated reference does not tell finance staff
         // who paid. Best-effort: a lookup failure must not block the alert.
         const { data: payer } = await supabaseAdmin
           .from('users')

@@ -1,4 +1,4 @@
-// Weekly security digest â†’ Discord.
+// Weekly security digest → Discord.
 //
 // Invoked by a pg_cron job. Pulls the security posture + recent activity summary
 // from the security_posture_summary() RPC (using this function's own service-role
@@ -92,53 +92,51 @@ serve(async (req: Request) => {
     const drifted: string[] = []
     for (const [key, base] of Object.entries(BASELINE)) {
       const val = Number(posture[key] ?? 0)
-      if (val > base) drifted.push(`${key}: ${val} (was â‰¤ ${base})`)
+      if (val > base) drifted.push(`${key}: ${val} (was ≤ ${base})`)
     }
     const failed = Number(activity.failed_or_denied_events ?? 0)
     const attention = drifted.length > 0 || failed > 0
 
     const fmt = (n: unknown) => String(n ?? 0)
     const embed = {
-      title: attention
-        ? 'ðŸ›¡ï¸ Security Digest â€” attention needed'
-        : 'ðŸ›¡ï¸ Security Digest â€” all clear',
+      title: attention ? '🛡️ Security Digest — attention needed' : '🛡️ Security Digest — all clear',
       description: attention
-        ? 'âš ï¸ One or more metrics drifted from baseline or failed/denied events occurred. Review below.'
+        ? '⚠️ One or more metrics drifted from baseline or failed/denied events occurred. Review below.'
         : 'No configuration drift and no failed/denied admin events in the last 7 days.',
       color: attention ? 0xce1126 : 0x006b3f,
       fields: [
         {
           name: 'Configuration posture',
           value: [
-            `â€¢ SECURITY DEFINER fns callable by anon: **${fmt(posture.secdef_fns_anon_executable)}**`,
-            `â€¢ Public storage listing policies: **${fmt(posture.storage_public_listing_policies)}**`,
-            `â€¢ Tables with RLS disabled: **${fmt(posture.rls_disabled_tables)}**`,
-            `â€¢ Always-true RLS policies: **${fmt(posture.always_true_policies)}**`,
-            `â€¢ SECURITY DEFINER fns w/ mutable search_path: **${fmt(posture.secdef_fns_mutable_search_path)}**`,
+            `• SECURITY DEFINER fns callable by anon: **${fmt(posture.secdef_fns_anon_executable)}**`,
+            `• Public storage listing policies: **${fmt(posture.storage_public_listing_policies)}**`,
+            `• Tables with RLS disabled: **${fmt(posture.rls_disabled_tables)}**`,
+            `• Always-true RLS policies: **${fmt(posture.always_true_policies)}**`,
+            `• SECURITY DEFINER fns w/ mutable search_path: **${fmt(posture.secdef_fns_mutable_search_path)}**`,
           ].join('\n'),
         },
         {
           name: 'Activity (last 7 days)',
           value: [
-            `â€¢ Audit events: **${fmt(activity.audit_events)}**`,
-            `â€¢ Failed / denied events: **${fmt(activity.failed_or_denied_events)}**`,
-            `â€¢ Admins added: **${fmt(activity.admins_added)}**`,
-            `â€¢ New admin devices: **${fmt(activity.new_admin_devices)}**`,
+            `• Audit events: **${fmt(activity.audit_events)}**`,
+            `• Failed / denied events: **${fmt(activity.failed_or_denied_events)}**`,
+            `• Admins added: **${fmt(activity.admins_added)}**`,
+            `• New admin devices: **${fmt(activity.new_admin_devices)}**`,
           ].join('\n'),
         },
         {
           name: 'Totals',
-          value: `â€¢ Admins: **${fmt(totals.admins)}**\nâ€¢ Verified 2FA factors: **${fmt(totals.verified_mfa_factors)}**`,
+          value: `• Admins: **${fmt(totals.admins)}**\n• Verified 2FA factors: **${fmt(totals.verified_mfa_factors)}**`,
         },
       ] as { name: string; value: string }[],
-      footer: { text: 'The Base Movement â€” automated weekly security digest' },
+      footer: { text: 'The Base Movement — automated weekly security digest' },
       timestamp: data.generated_at ?? new Date().toISOString(),
     }
 
     if (drifted.length > 0) {
       embed.fields.push({
         name: 'Drift detected',
-        value: drifted.map((d) => `â€¢ ${d}`).join('\n'),
+        value: drifted.map((d) => `• ${d}`).join('\n'),
       })
     }
 
